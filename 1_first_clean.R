@@ -7,17 +7,17 @@ library(ggspatial)
 library(leaflet)
 library(geojsonio)
 #建立我存放資料的資料夾
-dir.create('input')
+dir.create('Input')
 options(encoding = "UTF8")
 
 #畫土地使用分區
 
 # 檢查檔案是否存在會回傳TRUE
-file.exists("C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/input/Zoning/zoning_regu.shp") 
+file.exists("Input/Zoning/zoning_regu.shp") 
 # 定義檔案為land向量
-land <- "C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/input/Zoning/zoning_regu.shp"
+land <- "Input/Zoning/zoning_regu.shp"
 # 然後讀取向量
-land <- st_read("C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/input/Zoning/zoning_regu.shp")
+land <- st_read("Input/Zoning/zoning_regu.shp")
 
 #plot(land)
 # 地址轉座標
@@ -40,21 +40,21 @@ addresses$address <- addresses$address %>%
   gsub("[[:punct:]]", "", .)
 #--------------------------------------------------------------------------------------------------------
 #刪除舊檔geojson
-file.remove("C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/ouput/test")
+file.remove("ouput/test")
 
 #將編碼轉向量點位Convert foreign object to an sf object
 sf_geocoded <- st_as_sf(geocoded_addresses, coords = c("longitude", "latitude"), crs = 4326)
 print(sf_geocoded)
 dir.create('ouput')
-output_path_shp <- "C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/ouput/test"
+output_path_shp <- "ouput/test"
 print('output_path_shp')
 #--------------------------------------------------------------------------------------------------------
 
 #讀入轉換後的檔案
 st_write(sf_geocoded, output_path_shp, driver = "GeoJSON")
-file.exists("C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/ouput/test")
-output <- "C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/ouput/test"
-output <- st_read("C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/ouput/test")
+file.exists("ouput/test")
+output <- "ouput/test"
+output <- st_read("ouput/test")
 
 #--------------------------------------------------------------------------------------------------------
 
@@ -73,7 +73,7 @@ print(nrow(location_data))  # 應為 3
 #--------------------------------------------------------------------------------------------------------
 
 # 讀取 GeoJSON
-location_data <- st_read('C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/ouput/test')
+location_data <- st_read('ouput/test')
 
 # 創建 leaflet 地圖
 leaflet() %>%
@@ -99,17 +99,17 @@ point_with_landuse <- st_join(output, land_simplified, join = st_within)
 print(point_with_landuse)
 
 #--------------------------------------------------------------------------------------------------------
-land_public <- 'C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/input/land_public_fix.gpkg'
-land_public <- st_read('C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/input/land_public_fix.gpkg')
+land_public <- 'Input/land_public_fix.gpkg'
+land_public <- st_read('Input/land_public_fix.gpkg')
 land_pub_simp <- land_public %>%
   select(c(Name,Area)) # 保留 "公有土地名稱" 欄位和幾何資訊
 polygon_land <- land_pub_simp %>%
   filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON"))
 
 #--------------------------------------------------------------------------------------------------------
-file.exists('C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/input/zoning/zoning_fixed.gpkg')
-output <- 'C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/input/zoning/zoning_fixed.gpkg'
-output <- st_read('C:/Users/folow/Desktop/大三下上課/20225創業競賽/創業R語言/input/zoning/zoning_fixed.gpkg')
+file.exists('Input/zoning/zoning_fixed.gpkg')
+output <- 'Input/zoning/zoning_fixed.gpkg'
+output <- st_read('Input/zoning/zoning_fixed.gpkg')
 
 full_zone  <- output %>%
   filter(st_geometry_type(.) %in% c("POLYGON", "MULTIPOLYGON"))
