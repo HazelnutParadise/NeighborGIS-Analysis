@@ -15,7 +15,7 @@ df = pd.DataFrame({
 })
 
 # 查詢函式
-def arcgis_geocode_free(addr):
+def arcgis_geocode(addr) -> pd.Series:
     try:
         location = geolocator.geocode(addr)
         time.sleep(1)  # 禮貌性加個 delay
@@ -25,6 +25,6 @@ def arcgis_geocode_free(addr):
         return pd.Series({'latitude': None, 'longitude': None})
 
 # 批次轉換
-df[['latitude', 'longitude']] = df['address'].apply(arcgis_geocode_free)
+df[['latitude', 'longitude']] = df['address'].apply(arcgis_geocode)
 
 print(df)
