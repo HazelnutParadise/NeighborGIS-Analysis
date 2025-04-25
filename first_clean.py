@@ -36,7 +36,7 @@ addresses = pd.DataFrame(
     }
 )
 
-addresses["latitudes", "longitudes"] = addresses["address"].apply(
+addresses[["latitude", "longitude"]] = addresses["address"].apply(
     arcgis_geocode
 )
 
