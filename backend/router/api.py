@@ -1,4 +1,8 @@
 from fastapi import FastAPI, APIRouter
+import pandas as pd
+import asyncio
+
+from services.geocoding import arcgis_geocode
 
 
 def _set_api_routes(app: FastAPI) -> None:
@@ -9,7 +13,10 @@ def _set_api_routes(app: FastAPI) -> None:
 
     @api_router.get("/geocoding/{address}")
     async def geocoding(address: str):
-        # Placeholder for geocoding logic
-        return {"address": address, "coordinates": [0.0, 0.0]}
+        coordinates: pd.Series = await asyncio.to_thread(arcgis_geocode, address)
+        return {"address": address, "coordinates": {
+            "latitude": coordinates["latitude"],
+            "longitude": coordinates["longitude"]
+        }}
 
     app.include_router(api_router)
