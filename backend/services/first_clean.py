@@ -2,7 +2,6 @@ import os
 import pandas as pd
 import geopandas as gpd
 from shapely.geometry import Point
-from geopy.geocoders import ArcGIS
 import matplotlib.pyplot as plt
 import folium
 
