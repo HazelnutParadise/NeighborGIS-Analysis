@@ -2,11 +2,12 @@ import os
 import geopandas as gpd
 from shapely.geometry import Point
 from enum import Enum
-import math
+import asyncio
 
 from structs.adress_point import AddressPoint
 from structs.zoing import Zoning
 from utils.safe_extract import safe_extract
+from utils.cache import cache
 
 
 class LandUseData(Enum):
@@ -14,11 +15,14 @@ class LandUseData(Enum):
     TAIWAN = 2
 
 
-def intersect_with_zones(address_point: AddressPoint) -> Zoning:
-    _, land_simp = _load_landuse_data(LandUseData.TAIPEI)
-    gdf_pts: gpd.GeoDataFrame = _make_geoDataframe(address_point)
-    pts_with_zone: gpd.GeoDataFrame = _space_join(gdf_pts, land_simp)
-    poly_land = _load_public_land()
+async def intersect_with_zones(address_point: AddressPoint) -> Zoning:
+    (_, land_simp),  poly_land = await asyncio.gather(
+        _load_landuse_data(LandUseData.TAIPEI),
+        _load_public_land()
+    )
+    gdf_pts = _make_geoDataframe(address_point)
+    pts_with_zone = _space_join(gdf_pts, land_simp)
+
     pts_pub = _mark_public_land(pts_with_zone, poly_land)
     return Zoning(
         zone=safe_extract(pts_pub['zone'][0]),
@@ -28,11 +32,12 @@ def intersect_with_zones(address_point: AddressPoint) -> Zoning:
     )
 
 
-def _load_landuse_data(data: LandUseData) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
+@cache(expire=5*60)
+async def _load_landuse_data(data: LandUseData) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
     land: gpd.GeoDataFrame
     match data:
         case LandUseData.TAIPEI:
-            land = _read_taipei_landuse_shp()
+            land = _read_taipei_landuse()
         case LandUseData.TAIWAN:
             land = _read_taiwan_landuse()
         case _:
@@ -41,7 +46,7 @@ def _load_landuse_data(data: LandUseData) -> tuple[gpd.GeoDataFrame, gpd.GeoData
     return land, land_simp
 
 
-def _read_taipei_landuse_shp():
+def _read_taipei_landuse():
     shp_path = os.path.join("Input", "zoning_regu.shp")
     if not os.path.exists(shp_path):
         raise FileNotFoundError(f"{shp_path} 不存在，請確認檔案路徑")
@@ -52,7 +57,7 @@ def _read_taiwan_landuse() -> gpd.GeoDataFrame:
     # * 全台的土地使用分區，先不用
     full_zone_gpkg = "Input/zoning_fixed.gpkg"
     full_zone = gpd.read_file(full_zone_gpkg)
-    full_zone = full_zone[full_zone.geometry.geom_type.isin(
+    return full_zone[full_zone.geometry.geom_type.isin(
         ["Polygon", "MultiPolygon"]
     )]
 
@@ -65,7 +70,13 @@ def _get_land_simp(landuse: gpd.GeoDataFrame, data: LandUseData) -> gpd.GeoDataF
         case LandUseData.TAIPEI:
             return landuse[["zone", "FAR", "BCR", "geometry"]].copy()
         case LandUseData.TAIWAN:
-            return landuse[["zone", "geometry"]].copy()
+            return landuse[["使用分", "容積率", "建蔽率", "geometry"]].copy().rename(
+                columns={
+                    "使用分": "zone",
+                    "容積率": "FAR",
+                    "建蔽率": "BCR"
+                }
+            )
 
 
 def _make_geoDataframe(address_point: AddressPoint) -> gpd.GeoDataFrame:
@@ -93,13 +104,21 @@ def _space_join(gdf_pts: gpd.GeoDataFrame, land_simp: gpd.GeoDataFrame) -> gpd.G
     )
 
 
-def _load_public_land() -> gpd.GeoDataFrame:
+@cache(expire=5*60)
+async def _load_public_land() -> gpd.GeoDataFrame:
     public_gpkg = os.path.join("Input", "land_public_fix.gpkg")
-    land_public = gpd.read_file(public_gpkg)
-    land_public_simp = land_public[["Name", "Area", "geometry"]].copy()
-    return land_public_simp[
-        land_public_simp.geometry.geom_type.isin(["Polygon", "MultiPolygon"])
-    ]
+
+    def sync_load():
+        land_public = gpd.read_file(public_gpkg)
+        land_public_simp = land_public[["Name", "Area", "geometry"]].copy()
+        return land_public_simp[
+            land_public_simp.geometry.geom_type.isin(
+                ["Polygon", "MultiPolygon"]
+            )
+        ]
+
+    loop = asyncio.get_running_loop()
+    return await loop.run_in_executor(None, sync_load)
 
 
 def _mark_public_land(pts_with_zone: gpd.GeoDataFrame, poly_land: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
