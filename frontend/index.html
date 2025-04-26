@@ -241,16 +241,22 @@
                 return alert(`查詢失敗，伺服器 ${res.status}`);
             }
             const data = await res.json();
-            const lat = data.lat || 0;
-            const lng = data.lng || 0;
+            const coordinates = data.coordinates;
+            const lat = Number(coordinates.lat);
+            const lng = Number(coordinates.lng);
             RESULT_DIV.innerText = JSON.stringify(data, null, 2);
 
             // 標記地圖
-            if (lat && lng) {
+            if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
                 if (marker) map.removeLayer(marker);
                 marker = L.marker([lat, lng]).addTo(map);
                 marker.bindPopup(address).openPopup();
                 map.setView([lat, lng], 16);
+            } else {
+                if (marker) {
+                    map.removeLayer(marker);
+                    marker = null;
+                }
             }
             SEARCH_BTN.disabled = false;
         });
