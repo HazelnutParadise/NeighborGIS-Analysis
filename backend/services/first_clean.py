@@ -10,7 +10,6 @@ from geocoding import arcgis_geocode
 # ----------------------------------------------------------------------------
 # Step 1. 建立資料夾
 # ----------------------------------------------------------------------------
-# os.makedirs('Input/Zoning', exist_ok=True)
 os.makedirs("output", exist_ok=True)
 
 # ----------------------------------------------------------------------------
@@ -69,7 +68,7 @@ for _, row in gdf_pts.iterrows():
         location=[row.latitude, row.longitude],
         popup=f"ID: {row.id}<br>Address: {row.address}",
     ).add_to(m)
- 
+
 m.save("output/geocoded_map.html")
 
 # ----------------------------------------------------------------------------
