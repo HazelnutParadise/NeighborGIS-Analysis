@@ -10,8 +10,7 @@ def _set_page_routes(app: FastAPI) -> None:
     @app.get("/")
     async def index():
         index_path = path.join(
-            path.dirname(__file__),
-            "..", "..", "frontend", "index.html"
+            "frontend", "index.html"
         )
         print(f"Serving index.html from {index_path}")
         return FileResponse(index_path)
