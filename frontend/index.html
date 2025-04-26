@@ -301,38 +301,48 @@
 
         SEARCH_BTN.addEventListener('click', async () => {
             const original_btn_text = SEARCH_BTN.innerText;
+            const original_result_text = RESULT_DIV.innerText;
             SEARCH_BTN.disabled = true;
             SEARCH_BTN.innerText = '查詢中...';
             RESULT_DIV.innerHTML = SPINNER_HTML;
             const address = document.getElementById('address').value;
             if (!address) {
                 SEARCH_BTN.disabled = false;
+                SEARCH_BTN.innerText = original_btn_text;
+                RESULT_DIV.innerText = original_result_text;
                 return alert('請輸入地址');
             }
-            const res = await fetch(`/api/geocoding/${encodeURIComponent(address)}`)
-            SEARCH_BTN.innerText = original_btn_text;
-            SEARCH_BTN.disabled = false;
-            if (!res.ok) {
-                RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
-                return alert(`查詢失敗，伺服器 ${res.status}`);
-            }
-            const data = await res.json();
-            const coordinates = data.coordinates;
-            const lat = Number(coordinates.lat);
-            const lng = Number(coordinates.lng);
-            RESULT_DIV.innerText = `地址：${data.address}\n經度：${lng}\n緯度：${lat}`;
-
-            // 標記地圖
-            if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-                if (marker) map.removeLayer(marker);
-                marker = L.marker([lat, lng]).addTo(map);
-                marker.bindPopup(address).openPopup();
-                map.setView([lat, lng], 16);
-            } else {
-                if (marker) {
-                    map.removeLayer(marker);
-                    marker = null;
+            try {
+                const res = await fetch(`/api/intersect/${encodeURIComponent(address)}`)
+                if (!res.ok) {
+                    RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
+                    return alert(`查詢失敗，伺服器 ${res.status}`);
                 }
+                const data = await res.json();
+                const coordinate = data.coordinate;
+                const lat = Number(coordinate.lat);
+                const lng = Number(coordinate.lng);
+                RESULT_DIV.innerText = `地址：${data.address}\n經度：${lng}\n緯度：${lat}`;
+
+                // 標記地圖
+                if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                    if (marker) map.removeLayer(marker);
+                    marker = L.marker([lat, lng]).addTo(map);
+                    marker.bindPopup(address).openPopup();
+                    map.setView([lat, lng], 16);
+                } else {
+                    if (marker) {
+                        map.removeLayer(marker);
+                        marker = null;
+                    }
+                }
+            }
+            catch (error) {
+                RESULT_DIV.innerHTML = `查詢失敗，請稍後再試`;
+                console.error('Error:', error);
+            } finally {
+                SEARCH_BTN.innerText = original_btn_text;
+                SEARCH_BTN.disabled = false;
             }
         });
     </script>

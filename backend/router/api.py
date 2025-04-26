@@ -1,8 +1,9 @@
 from fastapi import FastAPI, APIRouter
-import pandas as pd
 import asyncio
-
 from services.geocoding import arcgis_geocode
+
+from structs.adress_point import Coordinate, AddressPoint
+from services.intersect import intersect_with_zones
 
 
 def _set_api_routes(app: FastAPI) -> None:
@@ -11,12 +12,16 @@ def _set_api_routes(app: FastAPI) -> None:
     """
     api_router = APIRouter(prefix="/api")
 
-    @api_router.get("/geocoding/{address}")
-    async def geocoding(address: str):
-        coordinates: pd.Series = await asyncio.to_thread(arcgis_geocode, address)
-        return {"address": address, "coordinates": {
-            "lat": coordinates["latitude"],
-            "lng": coordinates["longitude"]
-        }}
+    @api_router.get("/intersect/{address}")
+    async def intersect(address: str):
+        coordinates: Coordinate = await asyncio.to_thread(arcgis_geocode, address)
+        address_point = AddressPoint(
+            address=address,
+            coordinate=coordinates,
+        )
+        print(intersect_with_zones(address_point))
+
+        # todo: 要包含zone
+        return address_point
 
     app.include_router(api_router)
