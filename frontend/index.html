@@ -28,9 +28,11 @@
         }
 
         h1 {
-            font-size: 24px;
+            padding: 0;
+            padding-top: 1rem;
+            font-size: 2rem;
             font-weight: 600;
-            margin-bottom: 16px;
+            text-align: center;
         }
 
         .input-row {
@@ -184,8 +186,9 @@
 </head>
 
 <body>
+    <h1>鄰里DNA</h1>
     <div class="container">
-        <h1>地址查詢</h1>
+        <h2>地址查詢</h2>
         <div class="input-rows">
             <!-- 第一列：縣市、區、路 -->
             <div class="input-row">
@@ -244,7 +247,7 @@
             const coordinates = data.coordinates;
             const lat = Number(coordinates.lat);
             const lng = Number(coordinates.lng);
-            RESULT_DIV.innerText = JSON.stringify(data, null, 2);
+            RESULT_DIV.innerText = `地址：${data.address}\n經度：${lng}\n緯度：${lat}`;
 
             // 標記地圖
             if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
