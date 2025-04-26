@@ -15,8 +15,8 @@ def _set_api_routes(app: FastAPI) -> None:
     async def geocoding(address: str):
         coordinates: pd.Series = await asyncio.to_thread(arcgis_geocode, address)
         return {"address": address, "coordinates": {
-            "latitude": coordinates["latitude"],
-            "longitude": coordinates["longitude"]
+            "lat": coordinates["latitude"],
+            "lng": coordinates["longitude"]
         }}
 
     app.include_router(api_router)
