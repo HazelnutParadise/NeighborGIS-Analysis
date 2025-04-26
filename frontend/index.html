@@ -182,6 +182,67 @@
         .leaflet-container {
             z-index: 0;
         }
+
+        /* spinner */
+        .spinner-wrapper {
+            margin: 0;
+            padding: 0;
+        }
+
+        .spinner {
+            width: 100%;
+            border-radius: 50%;
+        }
+
+        .spinner svg {
+            width: 100%;
+            height: 100%;
+            transform-origin: center;
+            animation: rotate 2s linear infinite;
+            border-radius: 50%;
+            display: block;
+        }
+
+        .spinner circle {
+            fill: none;
+            stroke-width: 6;
+            stroke-linecap: round;
+        }
+
+        .spinner .bg {
+            stroke: #e8f0fe;
+            /* 淺藍色背景圈 */
+        }
+
+        .spinner .fg {
+            stroke: #0096ff;
+            stroke-dasharray: 60;
+            stroke-dashoffset: 0;
+            animation: dash 1.5s ease-in-out infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes dash {
+            0% {
+                stroke-dasharray: 1, 150;
+                stroke-dashoffset: 0;
+            }
+
+            50% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -35;
+            }
+
+            100% {
+                stroke-dasharray: 90, 150;
+                stroke-dashoffset: -124;
+            }
+        }
     </style>
 </head>
 
@@ -222,6 +283,14 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
+        const SPINNER_HTML = `<div class="spinner-wrapper" style="display: block;width: min(50px, 100%);justify-self: center;margin: 0 auto;padding: 0;">
+            <div class="spinner">
+                <svg viewBox="22 22 44 44">
+                    <circle class="bg" cx="44" cy="44" r="20.2" />
+                    <circle class="fg" cx="44" cy="44" r="20.2" />
+                </svg>
+            </div>
+        </div>`;
         const SEARCH_BTN = document.getElementById('searchBtn');
         const RESULT_DIV = document.getElementById('result');
 
@@ -231,16 +300,20 @@
         let marker;
 
         SEARCH_BTN.addEventListener('click', async () => {
+            const original_btn_text = SEARCH_BTN.innerText;
             SEARCH_BTN.disabled = true;
-            RESULT_DIV.innerText = '查詢中...';
+            SEARCH_BTN.innerText = '查詢中...';
+            RESULT_DIV.innerHTML = SPINNER_HTML;
             const address = document.getElementById('address').value;
             if (!address) {
                 SEARCH_BTN.disabled = false;
                 return alert('請輸入地址');
             }
             const res = await fetch(`/api/geocoding/${encodeURIComponent(address)}`)
+            SEARCH_BTN.innerText = original_btn_text;
+            SEARCH_BTN.disabled = false;
             if (!res.ok) {
-                SEARCH_BTN.disabled = false;
+                RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
                 return alert(`查詢失敗，伺服器 ${res.status}`);
             }
             const data = await res.json();
@@ -261,7 +334,6 @@
                     marker = null;
                 }
             }
-            SEARCH_BTN.disabled = false;
         });
     </script>
 </body>
