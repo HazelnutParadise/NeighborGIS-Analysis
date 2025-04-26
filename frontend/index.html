@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>地址查詢</title>
+    <title>鄰里DNA</title>
     <!-- Canva 常用字體、Leaflet 與 Choices.js 樣式 -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
@@ -103,6 +103,19 @@
             margin: 0;
         }
 
+        .text-input {
+            box-sizing: border-box;
+            height: 40px;
+            padding: 0 8px;
+            width: 100%;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            background: #FFF;
+            outline: none;
+            font-size: 14px;
+            line-height: normal;
+        }
+
         /* 數字欄位樣式 */
         .number-input {
             box-sizing: border-box;
@@ -171,12 +184,12 @@
         <div class="input-rows">
             <!-- 第一列：縣市、區、路 -->
             <div class="input-row">
-                <select id="city"></select>
+                <!-- <select id="city"></select>
                 <select id="district"></select>
                 <select id="road"></select>
-            </div>
-            <!-- 第二列：段、巷、弄、號 與按鈕 -->
-            <div class="input-row">
+            </div> -->
+                <!-- 第二列：段、巷、弄、號 與按鈕 -->
+                <!-- <div class="input-row">
                 <input id="section" class="number-input" type="number" inputmode="numeric" min="0"
                     placeholder="選填"><label for="section">段</label>
                 <input id="lane" class="number-input" type="number" inputmode="numeric" min="0" placeholder="選填"><label
@@ -184,12 +197,14 @@
                 <input id="alley" class="number-input" type="number" inputmode="numeric" min="0" placeholder="選填"><label
                     for="alley">弄</label>
                 <input id="number" class="number-input" type="number" inputmode="numeric" min="1"
-                    placeholder="*必填"><label for="number">號</label>
+                    placeholder="*必填"><label for="number">號</label> -->
+                <label for="address">地址</label>
+                <input id="address" class="text-input" type="text" placeholder="輸入地址">
             </div>
         </div>
         <div class="input-rows">
             <button id="searchBtn" type="button">查詢</button>
-            <button id="sampleBtn" type="button">示範資料</button>
+            <!-- <button id="sampleBtn" type="button">示範資料</button> -->
         </div>
         <div id="map"></div>
         <div id="result">查詢結果將顯示於此。</div>
@@ -199,92 +214,103 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
-        const addressData = {
-            "台北市": { "信義區": ["松仁路", "信義路"], "大安區": ["忠孝東路", "和平東路"] },
-            "高雄市": { "苓雅區": ["中山路", "青年一路"], "左營區": ["博愛路", "自由二路"] }
-        };
-        const samples = [
-            { city: "台北市", district: "信義區", road: "松仁路", section: 1, lane: 2, alley: 3, number: 50, lat: 25.0338, lng: 121.5645 },
-            { city: "高雄市", district: "苓雅區", road: "中山路", section: null, lane: 5, alley: null, number: 120, lat: 22.6273, lng: 120.3014 },
-            { city: "台北市", district: "大安區", road: "忠孝東路", section: 3, lane: null, alley: 1, number: 200, lat: 25.0263, lng: 121.5434 }
-        ];
-        const map = L.map('map').setView([23.5, 121], 7);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-        let marker;
-        let cityChoice, districtChoice, roadChoice;
-        document.addEventListener('DOMContentLoaded', () => {
-            cityChoice = new Choices('#city', { searchEnabled: true, placeholder: true, placeholderValue: '請選縣市', itemSelectText: '' });
-            districtChoice = new Choices('#district', { searchEnabled: true, placeholder: true, placeholderValue: '請選鄉鎮區', itemSelectText: '' });
-            roadChoice = new Choices('#road', { searchEnabled: true, placeholder: true, placeholderValue: '請選道路', itemSelectText: '' });
-            cityChoice.setChoices(Object.keys(addressData).map(v => ({ value: v, label: v })), 'value', 'label', true);
-        });
-        document.getElementById('city').addEventListener('change', (e) => {
-            const city = e.target.value;
-            const districts = city ? Object.keys(addressData[city]) : [];
-            districtChoice.clearChoices();
-            districtChoice.setChoices(districts.map(v => ({ value: v, label: v })), 'value', 'label', true);
-            roadChoice.clearChoices();
-        });
-        document.getElementById('district').addEventListener('change', (e) => {
-            const city = cityChoice.getValue(true);
-            const district = e.target.value;
-            const roads = city && district ? addressData[city][district] : [];
-            roadChoice.clearChoices();
-            roadChoice.setChoices(roads.map(v => ({ value: v, label: v })), 'value', 'label', true);
-        });
-        function handleData(data, label) {
-            document.getElementById('result').innerText = JSON.stringify(data, null, 2);
-            if (data.lat && data.lng) {
-                if (marker) map.removeLayer(marker);
-                marker = L.marker([data.lat, data.lng]).addTo(map);
-                marker.bindPopup(`<strong>${label}</strong>`).openPopup();
-                map.setView([data.lat, data.lng], 16);
-            }
-        }
-        function showError(msg) { document.getElementById('result').innerText = '錯誤：' + msg; }
-        document.getElementById('searchBtn').addEventListener('click', () => {
-            const city = cityChoice.getValue(true);
-            const district = districtChoice.getValue(true);
-            const road = roadChoice.getValue(true);
-            const section = document.getElementById('section').value;
-            const lane = document.getElementById('lane').value;
-            const alley = document.getElementById('alley').value;
-            const number = document.getElementById('number').value;
-            if (!city || !district || !road || !number) return alert('請選完整地址並填號碼');
-            let address = city + district + road;
-            if (section) address += section + '段';
-            if (lane) address += lane + '巷';
-            if (alley) address += alley + '弄';
-            address += number + '號';
-            fetch(`/api/data?address=${encodeURIComponent(address)}`)
-                .then(r => {
-                    if (!r.ok) throw new Error(`伺服器 ${r.status}`);
-                    const ct = r.headers.get('content-type') || '';
-                    if (ct.includes('application/json')) return r.json();
-                    return r.text().then(t => { throw new Error(`非 JSON：${t}`); });
-                })
-                .then(data => handleData(data, address))
-                .catch(e => { console.error(e); showError(e.message); });
-        });
-        document.getElementById('sampleBtn').addEventListener('click', () => {
-            const s = samples[Math.floor(Math.random() * samples.length)];
-            cityChoice.setChoiceByValue(s.city);
-            districtChoice.clearChoices();
-            districtChoice.setChoices(Object.keys(addressData[s.city]).map(v => ({ value: v, label: v })), 'value', 'label', true);
-            districtChoice.setChoiceByValue(s.district);
-            roadChoice.clearChoices();
-            roadChoice.setChoices(addressData[s.city][s.district].map(v => ({ value: v, label: v })), 'value', 'label', true);
-            roadChoice.setChoiceByValue(s.road);
-            document.getElementById('section').value = s.section || '';
-            document.getElementById('lane').value = s.lane || '';
-            document.getElementById('alley').value = s.alley || '';
-            document.getElementById('number').value = s.number;
-            let label = `${s.city}${s.district}${s.road}`;
-            if (s.section) label += s.section + '段';
-            if (s.lane) label += s.lane + '巷';
-            if (s.alley) label += s.alley + '弄';
-            label += s.number + '號';
-            handleData(s, label);
+        // const addressData = {
+        //     "台北市": { "信義區": ["松仁路", "信義路"], "大安區": ["忠孝東路", "和平東路"] },
+        //     "高雄市": { "苓雅區": ["中山路", "青年一路"], "左營區": ["博愛路", "自由二路"] }
+        // };
+        // const samples = [
+        //     { city: "台北市", district: "信義區", road: "松仁路", section: 1, lane: 2, alley: 3, number: 50, lat: 25.0338, lng: 121.5645 },
+        //     { city: "高雄市", district: "苓雅區", road: "中山路", section: null, lane: 5, alley: null, number: 120, lat: 22.6273, lng: 120.3014 },
+        //     { city: "台北市", district: "大安區", road: "忠孝東路", section: 3, lane: null, alley: 1, number: 200, lat: 25.0263, lng: 121.5434 }
+        // ];
+        // const map = L.map('map').setView([23.5, 121], 7);
+        // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+        // let marker;
+        // let cityChoice, districtChoice, roadChoice;
+        // document.addEventListener('DOMContentLoaded', () => {
+        //     cityChoice = new Choices('#city', { searchEnabled: true, placeholder: true, placeholderValue: '請選縣市', itemSelectText: '' });
+        //     districtChoice = new Choices('#district', { searchEnabled: true, placeholder: true, placeholderValue: '請選鄉鎮區', itemSelectText: '' });
+        //     roadChoice = new Choices('#road', { searchEnabled: true, placeholder: true, placeholderValue: '請選道路', itemSelectText: '' });
+        //     cityChoice.setChoices(Object.keys(addressData).map(v => ({ value: v, label: v })), 'value', 'label', true);
+        // });
+        // document.getElementById('city').addEventListener('change', (e) => {
+        //     const city = e.target.value;
+        //     const districts = city ? Object.keys(addressData[city]) : [];
+        //     districtChoice.clearChoices();
+        //     districtChoice.setChoices(districts.map(v => ({ value: v, label: v })), 'value', 'label', true);
+        //     roadChoice.clearChoices();
+        // });
+        // document.getElementById('district').addEventListener('change', (e) => {
+        //     const city = cityChoice.getValue(true);
+        //     const district = e.target.value;
+        //     const roads = city && district ? addressData[city][district] : [];
+        //     roadChoice.clearChoices();
+        //     roadChoice.setChoices(roads.map(v => ({ value: v, label: v })), 'value', 'label', true);
+        // });
+        // function handleData(data, label) {
+        //     document.getElementById('result').innerText = JSON.stringify(data, null, 2);
+        //     if (data.lat && data.lng) {
+        //         if (marker) map.removeLayer(marker);
+        //         marker = L.marker([data.lat, data.lng]).addTo(map);
+        //         marker.bindPopup(`<strong>${label}</strong>`).openPopup();
+        //         map.setView([data.lat, data.lng], 16);
+        //     }
+        // }
+        // function showError(msg) { document.getElementById('result').innerText = '錯誤：' + msg; }
+        // document.getElementById('searchBtn').addEventListener('click', () => {
+        //     const city = cityChoice.getValue(true);
+        //     const district = districtChoice.getValue(true);
+        //     const road = roadChoice.getValue(true);
+        //     const section = document.getElementById('section').value;
+        //     const lane = document.getElementById('lane').value;
+        //     const alley = document.getElementById('alley').value;
+        //     const number = document.getElementById('number').value;
+        //     if (!city || !district || !road || !number) return alert('請選完整地址並填號碼');
+        //     let address = city + district + road;
+        //     if (section) address += section + '段';
+        //     if (lane) address += lane + '巷';
+        //     if (alley) address += alley + '弄';
+        //     address += number + '號';
+        //     fetch(`/api/data?address=${encodeURIComponent(address)}`)
+        //         .then(r => {
+        //             if (!r.ok) throw new Error(`伺服器 ${r.status}`);
+        //             const ct = r.headers.get('content-type') || '';
+        //             if (ct.includes('application/json')) return r.json();
+        //             return r.text().then(t => { throw new Error(`非 JSON：${t}`); });
+        //         })
+        //         .then(data => handleData(data, address))
+        //         .catch(e => { console.error(e); showError(e.message); });
+        // });
+        // document.getElementById('sampleBtn').addEventListener('click', () => {
+        //     const s = samples[Math.floor(Math.random() * samples.length)];
+        //     cityChoice.setChoiceByValue(s.city);
+        //     districtChoice.clearChoices();
+        //     districtChoice.setChoices(Object.keys(addressData[s.city]).map(v => ({ value: v, label: v })), 'value', 'label', true);
+        //     districtChoice.setChoiceByValue(s.district);
+        //     roadChoice.clearChoices();
+        //     roadChoice.setChoices(addressData[s.city][s.district].map(v => ({ value: v, label: v })), 'value', 'label', true);
+        //     roadChoice.setChoiceByValue(s.road);
+        //     document.getElementById('section').value = s.section || '';
+        //     document.getElementById('lane').value = s.lane || '';
+        //     document.getElementById('alley').value = s.alley || '';
+        //     document.getElementById('number').value = s.number;
+        //     let label = `${s.city}${s.district}${s.road}`;
+        //     if (s.section) label += s.section + '段';
+        //     if (s.lane) label += s.lane + '巷';
+        //     if (s.alley) label += s.alley + '弄';
+        //     label += s.number + '號';
+        //     handleData(s, label);
+        // });
+
+        const SEARCH_BTN = document.getElementById('searchBtn');
+        const RESULT_DIV = document.getElementById('result');
+        SEARCH_BTN.addEventListener('click', async () => {
+            const address = document.getElementById('address').value;
+            if (!address) return alert('請輸入地址');
+            const res = await fetch(`/api/geocoding/${encodeURIComponent(address)}`)
+            if (!res.ok) return alert(`查詢失敗，伺服器 ${res.status}`);
+            const data = await res.json();
+            RESULT_DIV.innerText = JSON.stringify(data, null, 2);
         });
     </script>
 </body>
