@@ -19,9 +19,9 @@ def _set_api_routes(app: FastAPI) -> None:
             address=address,
             coordinate=coordinates,
         )
-        print(intersect_with_zones(address_point))
-
-        # todo: 要包含zone
+        zoning = intersect_with_zones(address_point)
+        address_point.zoning = zoning
+        print(address_point)
         return address_point
 
     app.include_router(api_router)

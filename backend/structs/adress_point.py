@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from typing import Optional
+from structs.zoing import Zoning
 
 
 @dataclass
@@ -17,3 +19,4 @@ class AddressPoint:
     """
     address: str
     coordinate: Coordinate
+    zoning: Optional[Zoning] = None

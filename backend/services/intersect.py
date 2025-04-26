@@ -2,10 +2,11 @@ import os
 import geopandas as gpd
 from shapely.geometry import Point
 from enum import Enum
-
+import math
 
 from structs.adress_point import AddressPoint
 from structs.zoing import Zoning
+from utils.safe_extract import safe_extract
 
 
 class LandUseData(Enum):
@@ -14,17 +15,16 @@ class LandUseData(Enum):
 
 
 def intersect_with_zones(address_point: AddressPoint) -> Zoning:
-    # todo: 疊圖做交集，最後回傳 HTML 地圖
-    land, land_simp = _load_landuse_data(LandUseData.TAIPEI)
+    _, land_simp = _load_landuse_data(LandUseData.TAIPEI)
     gdf_pts: gpd.GeoDataFrame = _make_geoDataframe(address_point)
     pts_with_zone: gpd.GeoDataFrame = _space_join(gdf_pts, land_simp)
     poly_land = _load_public_land()
     pts_pub = _mark_public_land(pts_with_zone, poly_land)
     return Zoning(
-        zone=pts_pub['zone'][0],
-        far=pts_pub['FAR'][0],
-        bcr=pts_pub['BCR'][0],
-        is_public_land=pts_pub['公有土地'][0],
+        zone=safe_extract(pts_pub['zone'][0]),
+        far=safe_extract(pts_pub['FAR'][0]),
+        bcr=safe_extract(pts_pub['BCR'][0]),
+        is_public_land=safe_extract(pts_pub['公有土地'][0]),
     )
 
 
