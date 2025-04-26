@@ -54,21 +54,6 @@ gdf_pts = gpd.GeoDataFrame(
 geojson_out = "output/geocoded_points.geojson"
 gdf_pts.to_file(geojson_out, driver="GeoJSON")
 
-# ----------------------------------------------------------------------------
-# Step 5. 用 matplotlib 繪圖檢視
-# ----------------------------------------------------------------------------
-# 設定 matplotlib 支持中文的字型
-plt.rcParams["font.sans-serif"] = [
-    "Microsoft JhengHei"
-]  # 或其他支援中文的字型如 'SimHei', 'Noto Sans CJK TC'
-plt.rcParams["axes.unicode_minus"] = False  # 解決負號顯示問題
-
-fig, ax = plt.subplots(figsize=(6, 6))
-gdf_pts.plot(ax=ax, column="id", legend=True, markersize=50)
-ax.set_title("地理編碼結果")
-ax.set_xlabel("經度")
-ax.set_ylabel("緯度")
-plt.show()
 
 # ----------------------------------------------------------------------------
 # Step 6. Leaflet 互動地圖
@@ -84,7 +69,7 @@ for _, row in gdf_pts.iterrows():
         location=[row.latitude, row.longitude],
         popup=f"ID: {row.id}<br>Address: {row.address}",
     ).add_to(m)
-
+ 
 m.save("output/geocoded_map.html")
 
 # ----------------------------------------------------------------------------
@@ -161,44 +146,6 @@ for _, row in pts_pub.iterrows():
         ),
     ).add_to(fg_pts)
 fg_pts.add_to(m2)
-
-# 公有土地多邊形
-fg_public = folium.FeatureGroup(name="公有土地")
-folium.GeoJson(
-    poly_land.to_json(),
-    name="公有土地",
-    style_function=lambda _: {
-        "fillColor": "red",
-        "color": "black",
-        "weight": 1,
-        "fillOpacity": 0.5,
-    },
-    highlight_function=lambda x: {
-        "weight": 5,
-        "color": "#666",
-        "fillOpacity": 0.9,
-    },
-    tooltip=folium.GeoJsonTooltip(
-        fields=["Name", "Area"], aliases=["名稱", "面積"]),
-).add_to(fg_public)
-fg_public.add_to(m2)
-
-# 土地使用分區多邊形
-fg_zone = folium.FeatureGroup(name="土地使用分區")
-folium.GeoJson(
-    full_zone.to_json(),
-    name="土地使用分區",
-    style_function=lambda _: {
-        "fillColor": "black",
-        "color": "black",
-        "weight": 0.5,
-        "fillOpacity": 0.3,
-    },
-    tooltip=folium.GeoJsonTooltip(
-        fields=["計畫_1", "使用分"], aliases=["計畫區名稱", "使用分區"]
-    ),
-).add_to(fg_zone)
-fg_zone.add_to(m2)
 
 # 圖層控制
 folium.LayerControl(collapsed=False).add_to(m2)
