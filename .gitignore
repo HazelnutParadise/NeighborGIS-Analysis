@@ -2,3 +2,4 @@
 /Input
 **/__pycache__/
 /.mypy_cache
+*.tar
