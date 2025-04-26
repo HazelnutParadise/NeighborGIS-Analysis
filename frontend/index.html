@@ -323,14 +323,14 @@
                 const lat = Number(coordinate.lat);
                 const lng = Number(coordinate.lng);
                 const zoning = data.zoning;
-                RESULT_DIV.innerText = `
-地址：${data.address}
-經度：${lng}
-緯度：${lat}
-使用分區：${zoning.zone ? zoning.zone : '無資料'}
-容積率：${zoning.far ? zoning.far : '無資料'}
-建蔽率：${zoning.bcr ? zoning.bcr : '無資料'}
-是否為公有地：${(zoning.zone && zoning.far && zoning.bcr) ? (zoning.is_public === "N" ? '是' : '否') : '無資料'}`;
+                RESULT_DIV.innerText =
+                    `地址：${data.address}\n` +
+                    `經度：${lng}\n` +
+                    `緯度：${lat}\n` +
+                    `使用分區：${zoning.zone ? zoning.zone : '無資料'}\n` +
+                    `容積率：${zoning.far ? zoning.far : '無資料'}\n` +
+                    `建蔽率：${zoning.bcr ? zoning.bcr : '無資料'}\n` +
+                    `是否為公有地：${(zoning.zone && zoning.far && zoning.bcr) ? (zoning.is_public === "N" ? '是' : '否') : '無資料'}`;
 
                 // 標記地圖
                 if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
