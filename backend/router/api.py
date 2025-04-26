@@ -7,8 +7,9 @@ def _set_api_routes(app: FastAPI) -> None:
     """
     api_router = APIRouter(prefix="/api")
 
-    @api_router.get("/hello")
-    async def root():
-        return {"Hello": "World"}
+    @api_router.get("/geocoding/{address}")
+    async def geocoding(address: str):
+        # Placeholder for geocoding logic
+        return {"address": address, "coordinates": [0.0, 0.0]}
 
     app.include_router(api_router)
