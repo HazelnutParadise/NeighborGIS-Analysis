@@ -7,7 +7,7 @@ import asyncio
 from structs.adress_point import AddressPoint
 from structs.zoing import Zoning
 from utils.safe_extract import safe_extract
-from utils.cache import cache
+from utils.cache import smart_cache
 
 
 class LandUseData(Enum):
@@ -32,7 +32,7 @@ async def intersect_with_zones(address_point: AddressPoint) -> Zoning:
     )
 
 
-@cache(expire=5*60)
+@smart_cache()
 async def _load_landuse_data(data: LandUseData) -> tuple[gpd.GeoDataFrame, gpd.GeoDataFrame]:
     land: gpd.GeoDataFrame
     match data:
@@ -104,7 +104,7 @@ def _space_join(gdf_pts: gpd.GeoDataFrame, land_simp: gpd.GeoDataFrame) -> gpd.G
     )
 
 
-@cache(expire=5*60)
+@smart_cache()
 async def _load_public_land() -> gpd.GeoDataFrame:
     public_gpkg = os.path.join("Input", "land_public_fix.gpkg")
 
@@ -121,6 +121,7 @@ async def _load_public_land() -> gpd.GeoDataFrame:
     return await loop.run_in_executor(None, sync_load)
 
 
+@smart_cache()
 def _mark_public_land(pts_with_zone: gpd.GeoDataFrame, poly_land: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     # 先做空間連接，再根據是否有匹配到多邊形來標記
     pts_pub = gpd.sjoin(

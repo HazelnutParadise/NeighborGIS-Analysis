@@ -8,48 +8,106 @@ from functools import wraps
 from threading import Lock
 
 
-class CacheManager:
-    def __init__(self, expire_seconds: int = 300):
-        self.expire_seconds = expire_seconds
-        self.cache: dict[str, Any] = {}
-        self.cache_time: dict[str, float] = {}
+class CacheEntry:
+    def __init__(self, value: Any):
+        self.value = value
+        self.create_time = time.time()
+        self.last_refresh_time = self.create_time
+        self.hit_count = 0
+
+    def hit_rate(self) -> float:
+        elapsed = time.time() - self.last_refresh_time
+        if elapsed == 0:
+            return self.hit_count
+        return self.hit_count / elapsed
+
+
+class SmartCacheManager:
+    def __init__(self, min_lifetime_seconds: int = 0, top_k: int = 3):
+        self.min_lifetime_seconds = min_lifetime_seconds
+        self.top_k = top_k
+        self.cache: dict[str, CacheEntry] = {}
+        self.max_lifetime_per_key: dict[str, float] = {}
         self.lock = Lock()
 
     def _cleanup(self):
         now = time.time()
-        keys_to_delete = [key for key, ts in self.cache_time.items(
-        ) if now - ts >= self.expire_seconds]
-        for key in keys_to_delete:
+        candidates = []
+        force_delete = []
+
+        for key, entry in self.cache.items():
+            # 檢查是否超過各自設定的 max_lifetime
+            max_lifetime = self.max_lifetime_per_key.get(key)
+            if max_lifetime is not None and now - entry.create_time >= max_lifetime:
+                force_delete.append(key)
+                continue
+
+            # 超過 min_lifetime 才進入競爭
+            if now - entry.last_refresh_time >= self.min_lifetime_seconds:
+                candidates.append((key, entry.hit_rate()))
+
+        # 強制刪除超過 max_lifetime 的
+        for key in force_delete:
             del self.cache[key]
-            del self.cache_time[key]
+            self.max_lifetime_per_key.pop(key, None)
+
+        if not candidates:
+            return
+
+        candidates.sort(key=lambda x: (
+            x[1], -self.cache[x[0]].create_time), reverse=True
+        )
+        to_keep = set(k for k, _ in candidates[:self.top_k])
+        to_delete = set(k for k, _ in candidates[self.top_k:])
+
+        for key in to_delete:
+            if key in self.cache:
+                del self.cache[key]
+                self.max_lifetime_per_key.pop(key, None)
+
+        now = time.time()
+        for key in to_keep:
+            if key in self.cache:
+                entry = self.cache[key]
+                entry.hit_count = 0
+                entry.last_refresh_time = now
 
     def get(self, key: str):
         with self.lock:
             self._cleanup()
-            return self.cache.get(key, None)
+            entry = self.cache.get(key)
+            if entry:
+                entry.hit_count += 1
+                return entry.value
+            return None
 
-    def set(self, key: str, value: Any):
+    def set(self, key: str, value: Any, max_lifetime: int = None):
         with self.lock:
             self._cleanup()
-            self.cache[key] = value
-            self.cache_time[key] = time.time()
+            self.cache[key] = CacheEntry(value)
+            if max_lifetime is not None:
+                self.max_lifetime_per_key[key] = max_lifetime
 
     def clear(self):
         with self.lock:
             self.cache.clear()
-            self.cache_time.clear()
+            self.max_lifetime_per_key.clear()
 
 
-def cache(key: str = "", expire: int = 300, verbose: bool = False):
+# 全域統一一個 SmartCacheManager
+_default_manager = SmartCacheManager(min_lifetime_seconds=300, top_k=5)
+
+
+def smart_cache(key: str = "", expire: int = None, verbose: bool = False):
     """
-    快取函式結果，根據「完整參數值」一致性產生key。
-    支援 async / sync 函式。
-    如果 verbose=True，命中快取時會印出訊息。
+    智慧快取裝飾器。
+    - key: 快取key（如果不填則用函式名稱）
+    - expire: 最大保留秒數（None代表無限）
+    - verbose: 是否顯示 cache hit/miss
     """
     def decorator(func: Callable[..., Any]):
-        manager = CacheManager(expire)
         sig = inspect.signature(func)
-        is_async = asyncio.iscoroutinefunction(func)  # 提前檢查
+        is_async = asyncio.iscoroutinefunction(func)
 
         @wraps(func)
         async def async_wrapper(*args, **kwargs):
@@ -62,7 +120,7 @@ def cache(key: str = "", expire: int = 300, verbose: bool = False):
 
             use_key = (key or func.__name__) + ":" + param_hash
 
-            cached = manager.get(use_key)
+            cached = _default_manager.get(use_key)
             if cached is not None:
                 if verbose:
                     print(
@@ -74,7 +132,7 @@ def cache(key: str = "", expire: int = 300, verbose: bool = False):
             if verbose:
                 print(
                     f"[CACHE MISS] {func.__name__} args={args} kwargs={kwargs}")
-            manager.set(use_key, result)
+            _default_manager.set(use_key, result, max_lifetime=expire)
             return result
 
         @wraps(func)
@@ -88,7 +146,7 @@ def cache(key: str = "", expire: int = 300, verbose: bool = False):
 
             use_key = (key or func.__name__) + ":" + param_hash
 
-            cached = manager.get(use_key)
+            cached = _default_manager.get(use_key)
             if cached is not None:
                 if verbose:
                     print(
@@ -100,10 +158,9 @@ def cache(key: str = "", expire: int = 300, verbose: bool = False):
             if verbose:
                 print(
                     f"[CACHE MISS] {func.__name__} args={args} kwargs={kwargs}")
-            manager.set(use_key, result)
+            _default_manager.set(use_key, result, max_lifetime=expire)
             return result
 
-        # 決定要回傳 async 包裝還是 sync 包裝
         return async_wrapper if is_async else sync_wrapper
 
     return decorator
