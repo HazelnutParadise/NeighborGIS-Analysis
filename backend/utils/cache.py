@@ -1,8 +1,11 @@
 import time
-from typing import Any, Callable
-from threading import Lock
-from functools import wraps
+import hashlib
+import pickle
 import asyncio
+import inspect
+from typing import Any, Callable
+from functools import wraps
+from threading import Lock
 
 
 class CacheManager:
@@ -37,35 +40,70 @@ class CacheManager:
             self.cache_time.clear()
 
 
-# 全域統一一個 CacheManager（也可以分門別類開多個）
-default_cache_manager = CacheManager(expire_seconds=300)
-
-
-def cache(key: str = "", expire: int = 300):
+def cache(key: str = "", expire: int = 300, verbose: bool = False):
     """
-    裝飾器，用於緩存函數的返回值。
-    如果沒有指定 key，會自動使用函數名稱作為快取 key。
+    快取函式結果，根據「完整參數值」一致性產生key。
     支援 async / sync 函式。
+    如果 verbose=True，命中快取時會印出訊息。
     """
     def decorator(func: Callable[..., Any]):
         manager = CacheManager(expire)
+        sig = inspect.signature(func)
+        is_async = asyncio.iscoroutinefunction(func)  # 提前檢查
 
         @wraps(func)
-        async def wrapper(*args, **kwargs):
-            use_key = key or func.__name__
+        async def async_wrapper(*args, **kwargs):
+            bound_args = sig.bind(*args, **kwargs)
+            bound_args.apply_defaults()
+
+            sorted_items = tuple(sorted(bound_args.arguments.items()))
+            param_bytes = pickle.dumps(sorted_items)
+            param_hash = hashlib.md5(param_bytes).hexdigest()
+
+            use_key = (key or func.__name__) + ":" + param_hash
 
             cached = manager.get(use_key)
             if cached is not None:
+                if verbose:
+                    print(
+                        f"[CACHE HIT] {func.__name__} args={args} kwargs={kwargs}")
                 return cached
 
-            if asyncio.iscoroutinefunction(func):
-                result = await func(*args, **kwargs)
-            else:
-                result = func(*args, **kwargs)
+            result = await func(*args, **kwargs)
 
+            if verbose:
+                print(
+                    f"[CACHE MISS] {func.__name__} args={args} kwargs={kwargs}")
             manager.set(use_key, result)
             return result
 
-        return wrapper
+        @wraps(func)
+        def sync_wrapper(*args, **kwargs):
+            bound_args = sig.bind(*args, **kwargs)
+            bound_args.apply_defaults()
+
+            sorted_items = tuple(sorted(bound_args.arguments.items()))
+            param_bytes = pickle.dumps(sorted_items)
+            param_hash = hashlib.md5(param_bytes).hexdigest()
+
+            use_key = (key or func.__name__) + ":" + param_hash
+
+            cached = manager.get(use_key)
+            if cached is not None:
+                if verbose:
+                    print(
+                        f"[CACHE HIT] {func.__name__} args={args} kwargs={kwargs}")
+                return cached
+
+            result = func(*args, **kwargs)
+
+            if verbose:
+                print(
+                    f"[CACHE MISS] {func.__name__} args={args} kwargs={kwargs}")
+            manager.set(use_key, result)
+            return result
+
+        # 決定要回傳 async 包裝還是 sync 包裝
+        return async_wrapper if is_async else sync_wrapper
 
     return decorator
