@@ -19,7 +19,30 @@
                 <span>NeighborGIS</span>
                 <span style="font-size: 3.2rem;">納博聚思</span>
             </h1>
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
         </div>
+        <script>
+            const PROGRESS_BAR = document.getElementById('progressBar');
+
+            // 進度條控制函數
+            function showProgress() {
+                PROGRESS_BAR.classList.add('loading');
+            }
+            showProgress();
+
+            function hideProgress() {
+                PROGRESS_BAR.classList.remove('loading');
+            }
+
+            // 頁面載入完成時顯示進度條動畫，在API請求時保持顯示
+            document.addEventListener('DOMContentLoaded', () => {
+                // 初始顯示進度條
+                hideProgress();
+            });
+        </script>
+
     </header>
     <main id="app">
         <div class="left-right-btn" id="prev-btn"></div>
@@ -70,6 +93,7 @@
                 const SEARCH_BTN = document.getElementById('searchBtn');
                 const RESULT_DIV = document.getElementById('result');
 
+
                 // Leaflet 地圖初始化
                 let map = L.map('map').setView([23.5, 121], 7);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
@@ -81,17 +105,22 @@
                     SEARCH_BTN.disabled = true;
                     SEARCH_BTN.innerText = '查詢中...';
                     RESULT_DIV.innerHTML = SPINNER_HTML;
+                    // 顯示進度條
+                    showProgress();
+
                     const address = document.getElementById('address').value;
                     if (!address) {
                         SEARCH_BTN.disabled = false;
                         SEARCH_BTN.innerText = original_btn_text;
                         RESULT_DIV.innerText = original_result_text;
+                        hideProgress();
                         return alert('請輸入地址');
                     }
                     try {
                         const res = await fetch(`/api/intersect/${encodeURIComponent(address)}`)
                         if (!res.ok) {
                             RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
+                            hideProgress();
                             return alert(`查詢失敗，伺服器 ${res.status}`);
                         }
                         const data = await res.json();
@@ -128,6 +157,8 @@
                     } finally {
                         SEARCH_BTN.innerText = original_btn_text;
                         SEARCH_BTN.disabled = false;
+                        // 隱藏進度條
+                        hideProgress();
                     }
                 });
             </script>

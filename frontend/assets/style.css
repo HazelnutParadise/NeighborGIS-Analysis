@@ -3,11 +3,12 @@
   --interactive-color-hover: #00b3b8;
   --disabled-color: #dddcdc;
   --output-text-box-color: #f0f4f8;
+  --background-color: #f5f7fa;
 }
 
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #f5f7fa;
+  background-color: var(--background-color);
   color: #333;
   margin: 0;
   padding: 0;
@@ -19,8 +20,11 @@ body {
   gap: 10px;
   overflow-x: auto;
   padding: 10px max(10px, 2%);
-  margin-top: 0;
+  padding-bottom: 24px;
   scroll-behavior: smooth; /* 增加平滑滾動效果 */
+  scrollbar-width: thin;
+  scrollbar-color: #00c4cc var(--background-color); /* 滾動條顏色 */
+  scrollbar-gutter: stable both-edges; /* 滾動條樣式 */
 }
 
 .container {
@@ -79,6 +83,64 @@ header > .fixed-header {
   transition: all 0.3s ease;
 }
 
+/* 進度條容器 */
+.progress-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* 進度條 */
+.progress-bar.loading {
+  height: 100%;
+  position: absolute;
+  width: 0%; /* 初始寬度為0 */
+  background: linear-gradient(
+    to right,
+    var(--interactive-color),
+    var(--interactive-color-hover)
+  );
+  box-shadow: 0 0 10px rgba(0, 196, 204, 0.5);
+  left: 0;
+  transform-origin: left; /* 設置變形原點在左側 */
+  will-change: width, transform; /* 優化動畫效能 */
+  animation: progressExtendAndShrink 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite; /* 使用新的動畫 */
+}
+
+/* 移除之前的::after元素 */
+.progress-bar::after {
+  content: none;
+}
+
+/* 進度條延伸與收縮動畫 */
+@keyframes progressExtendAndShrink {
+  0% {
+    width: 0%;
+    left: 0;
+  }
+  50% {
+    width: 100%; /* 延伸到最右側 */
+    left: 0;
+  }
+  50.1% {
+    width: 100%;
+    left: 0;
+  }
+  100% {
+    width: 0%; /* 收縮回去 */
+    left: 100%; /* 位置移到最右側 */
+  }
+}
+
+/* 進度條載入中狀態 - 保留兼容性 */
+.progress-bar.loading {
+  animation-play-state: running;
+}
+
 .fixed-header.scrolled {
   padding: 8px 24px;
   background-color: rgba(255, 255, 255, 0.9);
@@ -111,7 +173,6 @@ header > .fixed-header {
   }
 }
 footer {
-  margin-top: 24px;
   padding: 24px 16px;
   text-align: center;
   font-size: 13px;
@@ -149,7 +210,7 @@ h2 {
   text-align: center;
 }
 
-.description {
+description {
   font-size: 1rem;
   font-weight: 400;
   margin: 0;
@@ -316,7 +377,7 @@ button:disabled {
 }
 
 #result {
-  height: min(270px, 240px);
+  height: min(270px, 218px);
   background: var(--output-text-box-color);
   padding: 16px;
   border-radius: 8px;
