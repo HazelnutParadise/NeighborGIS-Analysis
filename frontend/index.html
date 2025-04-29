@@ -47,8 +47,12 @@
                 hideProgress();
             });
         </script>
-
     </header>
+
+    <!-- Leaflet 與 Choices.js -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
     <main id="app">
         <div class="left-right-btn" id="prev-btn"></div>
         <div class="page-container">
@@ -70,6 +74,96 @@
                         </div>
                         <div id="map"></div>
                         <div id="result">查詢結果將顯示於此。</div>
+                        <script>
+                            const SPINNER_HTML = `<div class="spinner-wrapper" style="width: 50px; margin: auto;">
+                                <div class="spinner">
+                                    <svg viewBox="22 22 44 44">
+                                        <circle class="bg" cx="44" cy="44" r="20.2" />
+                                        <circle class="fg" cx="44" cy="44" r="20.2" />
+                                    </svg>
+                                </div>
+                            </div>`;
+                            const SEARCH_BTN = document.getElementById('searchBtn');
+                            const RESULT_DIV = document.getElementById('result');
+
+
+                            // Leaflet 地圖初始化
+                            let map = L.map('map').setView([23.5, 121], 7);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+                            let marker;
+
+                            SEARCH_BTN.addEventListener('click', async () => {
+                                const original_btn_text = SEARCH_BTN.innerText;
+                                const original_result_text = RESULT_DIV.innerText;
+                                SEARCH_BTN.disabled = true;
+                                SEARCH_BTN.innerText = '查詢中...';
+                                RESULT_DIV.innerHTML = SPINNER_HTML;
+                                // 顯示進度條
+                                showProgress();
+
+                                const address = document.getElementById('address').value;
+                                if (!address) {
+                                    SEARCH_BTN.disabled = false;
+                                    SEARCH_BTN.innerText = original_btn_text;
+                                    RESULT_DIV.innerText = original_result_text;
+                                    hideProgress();
+                                    return alert('請輸入地址');
+                                }
+                                try {
+                                    const res = await fetch(`/api/intersect/${encodeURIComponent(address)}`)
+                                    if (!res.ok) {
+                                        RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
+                                        hideProgress();
+                                        return alert(`查詢失敗，伺服器 ${res.status}`);
+                                    }
+                                    const data = await res.json();
+                                    const coordinate = data.coordinate;
+                                    const lat = Number(coordinate.lat);
+                                    const lng = Number(coordinate.lng);
+                                    const zoning = data.zoning;
+                                    RESULT_DIV.innerText =
+                                        `地址：${data.address}\n` +
+                                        `經度：${lng}\n` +
+                                        `緯度：${lat}\n` +
+                                        `使用分區：${zoning.zone ? zoning.zone : '無資料'}\n` +
+                                        `容積率：${zoning.far ? `${zoning.far}%` : '無資料'}\n` +
+                                        `建蔽率：${zoning.bcr ? `${zoning.bcr}%` : '無資料'}\n` +
+                                        // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
+                                        `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
+
+                                    // 更新土地資訊區塊
+                                    document.getElementById('zoning-details').innerHTML = `
+                                        <h3>土地使用分區</h3>
+                                        <p>使用分區：${zoning.zone ? zoning.zone : '無資料'}</p>
+                                        <p>容積率：${zoning.far ? `${zoning.far}%` : '無資料'}</p>
+                                        <p>建蔽率：${zoning.bcr ? `${zoning.bcr}%` : '無資料'}</p>
+                                        <p>是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}</p>
+                                    `;
+
+                                    // 標記地圖
+                                    if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                                        if (marker) map.removeLayer(marker);
+                                        marker = L.marker([lat, lng]).addTo(map);
+                                        marker.bindPopup(address).openPopup();
+                                        map.setView([lat, lng], 16);
+                                    } else {
+                                        if (marker) {
+                                            map.removeLayer(marker);
+                                            marker = null;
+                                        }
+                                    }
+                                }
+                                catch (error) {
+                                    RESULT_DIV.innerHTML = `查詢失敗，請稍後再試`;
+                                    console.error('Error:', error);
+                                } finally {
+                                    SEARCH_BTN.innerText = original_btn_text;
+                                    SEARCH_BTN.disabled = false;
+                                    // 隱藏進度條
+                                    hideProgress();
+                                }
+                            });
+                        </script>
                     </div>
 
                     <div class="container">
@@ -156,165 +250,11 @@
             </div>
         </div>
         <div class="left-right-btn" id="next-btn"></div>
+        <script src="assets/left_right_btn.js"></script>
     </main>
 
-    <!-- Leaflet 與 Choices.js -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script>
-        const SPINNER_HTML = `<div class="spinner-wrapper" style="width: 50px; margin: auto;">
-            <div class="spinner">
-                <svg viewBox="22 22 44 44">
-                    <circle class="bg" cx="44" cy="44" r="20.2" />
-                    <circle class="fg" cx="44" cy="44" r="20.2" />
-                </svg>
-            </div>
-        </div>`;
-        const SEARCH_BTN = document.getElementById('searchBtn');
-        const RESULT_DIV = document.getElementById('result');
+    <script src="assets/switch_page.js"></script>
 
-
-        // Leaflet 地圖初始化
-        let map = L.map('map').setView([23.5, 121], 7);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-        let marker;
-
-        SEARCH_BTN.addEventListener('click', async () => {
-            const original_btn_text = SEARCH_BTN.innerText;
-            const original_result_text = RESULT_DIV.innerText;
-            SEARCH_BTN.disabled = true;
-            SEARCH_BTN.innerText = '查詢中...';
-            RESULT_DIV.innerHTML = SPINNER_HTML;
-            // 顯示進度條
-            showProgress();
-
-            const address = document.getElementById('address').value;
-            if (!address) {
-                SEARCH_BTN.disabled = false;
-                SEARCH_BTN.innerText = original_btn_text;
-                RESULT_DIV.innerText = original_result_text;
-                hideProgress();
-                return alert('請輸入地址');
-            }
-            try {
-                const res = await fetch(`/api/intersect/${encodeURIComponent(address)}`)
-                if (!res.ok) {
-                    RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
-                    hideProgress();
-                    return alert(`查詢失敗，伺服器 ${res.status}`);
-                }
-                const data = await res.json();
-                const coordinate = data.coordinate;
-                const lat = Number(coordinate.lat);
-                const lng = Number(coordinate.lng);
-                const zoning = data.zoning;
-                RESULT_DIV.innerText =
-                    `地址：${data.address}\n` +
-                    `經度：${lng}\n` +
-                    `緯度：${lat}\n` +
-                    `使用分區：${zoning.zone ? zoning.zone : '無資料'}\n` +
-                    `容積率：${zoning.far ? `${zoning.far}%` : '無資料'}\n` +
-                    `建蔽率：${zoning.bcr ? `${zoning.bcr}%` : '無資料'}\n` +
-                    // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
-                    `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
-
-                // 更新土地資訊區塊
-                document.getElementById('zoning-details').innerHTML = `
-                    <h3>土地使用分區</h3>
-                    <p>使用分區：${zoning.zone ? zoning.zone : '無資料'}</p>
-                    <p>容積率：${zoning.far ? `${zoning.far}%` : '無資料'}</p>
-                    <p>建蔽率：${zoning.bcr ? `${zoning.bcr}%` : '無資料'}</p>
-                    <p>是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}</p>
-                `;
-
-                // 標記地圖
-                if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-                    if (marker) map.removeLayer(marker);
-                    marker = L.marker([lat, lng]).addTo(map);
-                    marker.bindPopup(address).openPopup();
-                    map.setView([lat, lng], 16);
-                } else {
-                    if (marker) {
-                        map.removeLayer(marker);
-                        marker = null;
-                    }
-                }
-            }
-            catch (error) {
-                RESULT_DIV.innerHTML = `查詢失敗，請稍後再試`;
-                console.error('Error:', error);
-            } finally {
-                SEARCH_BTN.innerText = original_btn_text;
-                SEARCH_BTN.disabled = false;
-                // 隱藏進度條
-                hideProgress();
-            }
-        });
-    </script>
-
-    <script src="assets/left_right_btn.js"></script>
-
-    <!-- 分頁切換功能 -->
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const pages = document.querySelectorAll('.page');
-
-            // 點擊分頁按鈕時切換頁面
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    // 移除所有按鈕的active狀態
-                    tabBtns.forEach(b => b.classList.remove('active'));
-                    // 為當前點擊的按鈕添加active狀態
-                    btn.classList.add('active');
-
-                    // 獲取要顯示的頁面id
-                    const pageId = btn.dataset.page;
-
-                    // 隱藏所有頁面
-                    pages.forEach(page => {
-                        page.classList.remove('active');
-                    });
-
-                    // 顯示對應的頁面
-                    const activePage = document.getElementById(pageId);
-                    activePage.classList.add('active');
-
-                    // 初始化當前頁面的滑動功能
-                    initPageSlider(activePage);
-
-                    // 更新地圖大小，防止地圖顯示異常
-                    if (pageId === 'page1' && typeof map !== 'undefined') {
-                        setTimeout(() => {
-                            map.invalidateSize();
-                        }, 100);
-                    }
-                });
-            });
-
-            // 初始化頁面滑動功能
-            function initPageSlider(page) {
-                // 重新綁定左右按鈕到當前頁面的容器
-                const pageContent = page.querySelector('.page-content');
-                const containers = pageContent.querySelectorAll('.container');
-
-                // 重新初始化頁面的滑動狀態
-                setTimeout(() => {
-                    // 觸發自定義事件，通知left_right_btn.js重新初始化
-                    const event = new CustomEvent('pageChanged', {
-                        detail: {
-                            pageContent: pageContent,
-                            containers: containers
-                        }
-                    });
-                    document.dispatchEvent(event);
-                }, 100);
-            }
-
-            // 初始顯示第一個分頁
-            tabBtns[0].click();
-        });
-    </script>
     <footer>
         <p>© 2023 NeighborGIS. All rights reserved.</p>
         <p>Powered by <a class="link" href="https://hazelnut-paradise.com/">榛果繽紛樂</a></p>
