@@ -41,17 +41,22 @@
                 PROGRESS_BAR.classList.remove('loading');
             }
 
-            // 頁面載入完成時顯示進度條動畫，在API請求時保持顯示
-            document.addEventListener('DOMContentLoaded', () => {
-                // 初始顯示進度條
-                hideProgress();
-            });
         </script>
     </header>
+
+    <script src="assets/anti_cache.js"></script>
 
     <!-- Leaflet 與 Choices.js -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                hideProgress()
+            }, 1000); // 延遲1秒後隱藏進度條
+        });
+    </script>
 
     <main id="app">
         <div class="left-right-btn" id="prev-btn"></div>
