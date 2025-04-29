@@ -273,11 +273,11 @@ button:disabled {
 
 /* 左右切換按鈕樣式 */
 .left-right-btn {
-  position: fixed;
-  top: 60%;
+  position: absolute; /* 改為absolute讓按鈕相對於app容器定位 */
+  top: 70%;
+  transform: translateY(-50%);
   width: 40px;
   min-width: 40px;
-  align-self: center;
   height: 40px;
   border-radius: 50%;
   background-color: var(--interactive-color);
@@ -288,16 +288,15 @@ button:disabled {
   cursor: pointer;
   transition: background-color 0.3s;
   z-index: 99999;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* 增加陰影效果強調漂浮感 */
 }
 
 #prev-btn {
-  left: 20px;
-  transform: translateY(-50%);
+  left: 10px; /* 距離容器左側的距離 */
 }
 
 #next-btn {
-  right: 20px;
-  transform: translateY(-50%);
+  right: 10px; /* 距離容器右側的距離 */
 }
 
 .left-right-btn:hover {
