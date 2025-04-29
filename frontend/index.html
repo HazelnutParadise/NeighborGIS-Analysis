@@ -256,8 +256,12 @@
     <script src="assets/switch_page.js"></script>
 
     <footer>
-        <p>© 2023 NeighborGIS. All rights reserved.</p>
+        <p>© <span id="copyright-year"></span> NeighborGIS. All rights reserved.</p>
         <p>Powered by <a class="link" href="https://hazelnut-paradise.com/">榛果繽紛樂</a></p>
+        <script>
+            const currentYear = new Date().getFullYear();
+            document.getElementById('copyright-year').textContent = currentYear;
+        </script>
     </footer>
 </body>
 
