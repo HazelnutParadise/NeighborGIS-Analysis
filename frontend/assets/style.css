@@ -17,7 +17,7 @@ body {
   display: flex;
   gap: 10px;
   overflow-x: auto;
-  padding: 10px 10px;
+  padding: 10px max(10px, 2%);
   margin-top: 0;
   scroll-behavior: smooth; /* 增加平滑滾動效果 */
 }
@@ -288,15 +288,15 @@ button:disabled {
   cursor: pointer;
   transition: background-color 0.3s;
   z-index: 99999;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15); /* 增加陰影效果強調漂浮感 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2); /* 增加陰影效果強調漂浮感 */
 }
 
 #prev-btn {
-  left: 10px; /* 距離容器左側的距離 */
+  left: 5px; /* 距離容器左側的距離 */
 }
 
 #next-btn {
-  right: 10px; /* 距離容器右側的距離 */
+  right: 5px; /* 距離容器右側的距離 */
 }
 
 .left-right-btn:hover {
