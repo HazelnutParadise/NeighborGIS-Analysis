@@ -24,8 +24,9 @@ body {
 }
 
 .container {
-  min-width: min(500px, 70dvw);
-  height: 950px;
+  min-width: min(500px, 70dvw, 70vw);
+  height: 970px;
+  max-height: 970px;
   /* max-width: 800px; */
   background: #fff;
   border-radius: 12px;
@@ -33,6 +34,82 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
+header {
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 16px;
+  margin-bottom: 24px;
+}
+
+header > .fixed-header {
+  top: 0;
+  left: 0;
+  right: 0;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  margin-bottom: 24px;
+  z-index: 999999;
+
+  /* 增強的毛玻璃效果 - 極度透明 */
+  background-color: rgba(248, 249, 250, 0.45);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+
+  /* 淡淡的顏色疊加 */
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: 1px solid rgba(234, 234, 234, 0.7);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+
+  /* 添加更鮮明的色彩漸層 */
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.6),
+    rgba(248, 249, 250, 0.55),
+    rgba(232, 246, 252, 0.5)
+  );
+
+  /* 平滑過渡 */
+  transition: all 0.3s ease;
+}
+
+.fixed-header.scrolled {
+  padding: 8px 24px;
+  background-color: rgba(255, 255, 255, 0.9);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 針對 Safari 的特定修復 */
+@supports (-webkit-backdrop-filter: none) or (backdrop-filter: none) {
+  header > .fixed-header {
+    background-color: rgba(248, 249, 250, 0.75);
+  }
+
+  .fixed-header.scrolled {
+    background-color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+/* 針對舊版瀏覽器的降級處理 */
+@supports not (
+  (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))
+) {
+  header > .fixed-header {
+    background-color: rgba(248, 249, 250, 0.95);
+  }
+
+  .fixed-header.scrolled {
+    background-color: rgba(255, 255, 255, 0.98);
+  }
+}
 footer {
   margin-top: 24px;
   padding: 24px 16px;
@@ -59,7 +136,7 @@ h1 {
   padding: 0;
   margin: 0;
   padding-top: 1rem;
-  font-size: 2rem;
+  font-size: 1.9rem;
   font-weight: 600;
   text-align: center;
 }
@@ -78,6 +155,29 @@ h2 {
   margin: 0;
   padding: 0;
   text-align: center;
+}
+
+.notice {
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 12px 0;
+  padding: 16px 20px;
+  text-align: center;
+  color: #3a3a3a;
+  border-left: 4px solid var(--interactive-color);
+  background: linear-gradient(
+    to right,
+    rgba(0, 196, 204, 0.08),
+    rgba(247, 247, 247, 0.9)
+  );
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  line-height: 1.6;
+  transition: box-shadow 0.2s ease;
+}
+
+.notice:hover {
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.08);
 }
 
 .input-row {
@@ -216,7 +316,7 @@ button:disabled {
 }
 
 #result {
-  height: 270px;
+  height: min(270px, 240px);
   background: var(--output-text-box-color);
   padding: 16px;
   border-radius: 8px;
@@ -292,8 +392,8 @@ button:disabled {
 
 /* 左右切換按鈕樣式 */
 .left-right-btn {
-  position: absolute; /* 改為absolute讓按鈕相對於app容器定位 */
-  top: 70%;
+  position: fixed; /* 改為absolute讓按鈕相對於app容器定位 */
+  top: 60%;
   transform: translateY(-50%);
   width: 40px;
   min-width: 40px;
@@ -311,11 +411,11 @@ button:disabled {
 }
 
 #prev-btn {
-  left: 5px; /* 距離容器左側的距離 */
+  left: 1%; /* 距離容器左側的距離 */
 }
 
 #next-btn {
-  right: 5px; /* 距離容器右側的距離 */
+  right: 1%; /* 距離容器右側的距離 */
 }
 
 .left-right-btn:hover {
