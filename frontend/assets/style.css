@@ -269,3 +269,70 @@ button:disabled {
     stroke-dashoffset: -124;
   }
 }
+
+/* 左右切換按鈕樣式 */
+.left-right-btn {
+  position: fixed;
+  width: 40px;
+  min-width: 40px;
+  align-self: center;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--interactive-color);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 99999;
+}
+
+#prev-btn {
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+#next-btn {
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.left-right-btn:hover {
+  background-color: var(--interactive-color-hover);
+}
+
+.left-right-btn:disabled {
+  background-color: var(--disabled-color);
+  cursor: not-allowed;
+}
+
+.left-right-btn::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid white;
+  border-left: 2px solid white;
+  transform-origin: center;
+}
+
+#prev-btn::before {
+  transform: rotate(-45deg);
+}
+
+#next-btn::before {
+  transform: rotate(135deg);
+}
+
+/* 隱藏的容器樣式 */
+.container.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #app {
+    overflow-x: hidden;
+  }
+}
