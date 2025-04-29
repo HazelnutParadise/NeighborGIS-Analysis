@@ -14,18 +14,19 @@
 
 <body>
     <h1>NeighborGIS<br><span style="font-size: 3.2rem;">納博聚思</span></h1>
-    <div class="container">
-        <h2>地址查詢</h2>
-        <p>目前只有台北市的資料</p>
-        <div class="input-rows">
-            <!-- 第一列：縣市、區、路 -->
-            <div class="input-row">
-                <!-- <select id="city"></select>
+    <main id="app">
+        <div class="container">
+            <h2>地址查詢</h2>
+            <p>目前只有台北市的資料</p>
+            <div class="input-rows">
+                <!-- 第一列：縣市、區、路 -->
+                <div class="input-row">
+                    <!-- <select id="city"></select>
                 <select id="district"></select>
                 <select id="road"></select>
             </div> -->
-                <!-- 第二列：段、巷、弄、號 與按鈕 -->
-                <!-- <div class="input-row">
+                    <!-- 第二列：段、巷、弄、號 與按鈕 -->
+                    <!-- <div class="input-row">
                 <input id="section" class="number-input" type="number" inputmode="numeric" min="0"
                     placeholder="選填"><label for="section">段</label>
                 <input id="lane" class="number-input" type="number" inputmode="numeric" min="0" placeholder="選填"><label
@@ -34,23 +35,22 @@
                     for="alley">弄</label>
                 <input id="number" class="number-input" type="number" inputmode="numeric" min="1"
                     placeholder="*必填"><label for="number">號</label> -->
-                <label for="address">地址</label>
-                <input id="address" class="text-input" type="text" placeholder="輸入地址">
+                    <label for="address">地址</label>
+                    <input id="address" class="text-input" type="text" placeholder="輸入地址">
+                </div>
             </div>
-        </div>
-        <div class="input-rows">
-            <button id="searchBtn" type="button">查詢</button>
-            <!-- <button id="sampleBtn" type="button">示範資料</button> -->
-        </div>
-        <div id="map"></div>
-        <div id="result">查詢結果將顯示於此。</div>
-    </div>
+            <div class="input-rows">
+                <button id="searchBtn" type="button">查詢</button>
+                <!-- <button id="sampleBtn" type="button">示範資料</button> -->
+            </div>
+            <div id="map"></div>
+            <div id="result">查詢結果將顯示於此。</div>
 
-    <!-- 載入 Leaflet 與 Choices.js -->
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-    <script>
-        const SPINNER_HTML = `<div class="spinner-wrapper" style="display: block;width: min(50px, 100%);justify-self: center;margin: 0 auto;padding: 0;">
+            <!-- 載入 Leaflet 與 Choices.js -->
+            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+            <script>
+                const SPINNER_HTML = `<div class="spinner-wrapper" style="display: block;width: min(50px, 100%);justify-self: center;margin: 0 auto;padding: 0;">
             <div class="spinner">
                 <svg viewBox="22 22 44 44">
                     <circle class="bg" cx="44" cy="44" r="20.2" />
@@ -58,70 +58,84 @@
                 </svg>
             </div>
         </div>`;
-        const SEARCH_BTN = document.getElementById('searchBtn');
-        const RESULT_DIV = document.getElementById('result');
+                const SEARCH_BTN = document.getElementById('searchBtn');
+                const RESULT_DIV = document.getElementById('result');
 
-        // Leaflet 地圖初始化
-        let map = L.map('map').setView([23.5, 121], 7);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-        let marker;
+                // Leaflet 地圖初始化
+                let map = L.map('map').setView([23.5, 121], 7);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+                let marker;
 
-        SEARCH_BTN.addEventListener('click', async () => {
-            const original_btn_text = SEARCH_BTN.innerText;
-            const original_result_text = RESULT_DIV.innerText;
-            SEARCH_BTN.disabled = true;
-            SEARCH_BTN.innerText = '查詢中...';
-            RESULT_DIV.innerHTML = SPINNER_HTML;
-            const address = document.getElementById('address').value;
-            if (!address) {
-                SEARCH_BTN.disabled = false;
-                SEARCH_BTN.innerText = original_btn_text;
-                RESULT_DIV.innerText = original_result_text;
-                return alert('請輸入地址');
-            }
-            try {
-                const res = await fetch(`/api/intersect/${encodeURIComponent(address)}`)
-                if (!res.ok) {
-                    RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
-                    return alert(`查詢失敗，伺服器 ${res.status}`);
-                }
-                const data = await res.json();
-                const coordinate = data.coordinate;
-                const lat = Number(coordinate.lat);
-                const lng = Number(coordinate.lng);
-                const zoning = data.zoning;
-                RESULT_DIV.innerText =
-                    `地址：${data.address}\n` +
-                    `經度：${lng}\n` +
-                    `緯度：${lat}\n` +
-                    `使用分區：${zoning.zone ? zoning.zone : '無資料'}\n` +
-                    `容積率：${zoning.far ? zoning.far : '無資料'}\n` +
-                    `建蔽率：${zoning.bcr ? zoning.bcr : '無資料'}\n` +
-                    // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
-                    `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
-
-                // 標記地圖
-                if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-                    if (marker) map.removeLayer(marker);
-                    marker = L.marker([lat, lng]).addTo(map);
-                    marker.bindPopup(address).openPopup();
-                    map.setView([lat, lng], 16);
-                } else {
-                    if (marker) {
-                        map.removeLayer(marker);
-                        marker = null;
+                SEARCH_BTN.addEventListener('click', async () => {
+                    const original_btn_text = SEARCH_BTN.innerText;
+                    const original_result_text = RESULT_DIV.innerText;
+                    SEARCH_BTN.disabled = true;
+                    SEARCH_BTN.innerText = '查詢中...';
+                    RESULT_DIV.innerHTML = SPINNER_HTML;
+                    const address = document.getElementById('address').value;
+                    if (!address) {
+                        SEARCH_BTN.disabled = false;
+                        SEARCH_BTN.innerText = original_btn_text;
+                        RESULT_DIV.innerText = original_result_text;
+                        return alert('請輸入地址');
                     }
-                }
-            }
-            catch (error) {
-                RESULT_DIV.innerHTML = `查詢失敗，請稍後再試`;
-                console.error('Error:', error);
-            } finally {
-                SEARCH_BTN.innerText = original_btn_text;
-                SEARCH_BTN.disabled = false;
-            }
-        });
-    </script>
+                    try {
+                        const res = await fetch(`/api/intersect/${encodeURIComponent(address)}`)
+                        if (!res.ok) {
+                            RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
+                            return alert(`查詢失敗，伺服器 ${res.status}`);
+                        }
+                        const data = await res.json();
+                        const coordinate = data.coordinate;
+                        const lat = Number(coordinate.lat);
+                        const lng = Number(coordinate.lng);
+                        const zoning = data.zoning;
+                        RESULT_DIV.innerText =
+                            `地址：${data.address}\n` +
+                            `經度：${lng}\n` +
+                            `緯度：${lat}\n` +
+                            `使用分區：${zoning.zone ? zoning.zone : '無資料'}\n` +
+                            `容積率：${zoning.far ? zoning.far : '無資料'}\n` +
+                            `建蔽率：${zoning.bcr ? zoning.bcr : '無資料'}\n` +
+                            // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
+                            `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
+
+                        // 標記地圖
+                        if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                            if (marker) map.removeLayer(marker);
+                            marker = L.marker([lat, lng]).addTo(map);
+                            marker.bindPopup(address).openPopup();
+                            map.setView([lat, lng], 16);
+                        } else {
+                            if (marker) {
+                                map.removeLayer(marker);
+                                marker = null;
+                            }
+                        }
+                    }
+                    catch (error) {
+                        RESULT_DIV.innerHTML = `查詢失敗，請稍後再試`;
+                        console.error('Error:', error);
+                    } finally {
+                        SEARCH_BTN.innerText = original_btn_text;
+                        SEARCH_BTN.disabled = false;
+                    }
+                });
+            </script>
+        </div>
+        <div class="container">
+            <h2>使用說明</h2>
+            <p>1. 輸入地址，點擊查詢按鈕。</p>
+            <p>2. 地圖上會顯示該地址的經緯度、使用分區、容積率、建蔽率等資訊。</p>
+            <p>3. 若查詢失敗，請檢查地址是否正確。</p>
+            <p>4. 目前僅支援台北市的資料。</p>
+        </div>
+
+    </main>
+    <footer>
+        <p>© 2023 NeighborGIS. All rights reserved.</p>
+        <p>Powered by <a class="link" href="https://hazelnut-paradise.com/">榛果繽紛樂</a></p>
+    </footer>
 </body>
 
 </html>
