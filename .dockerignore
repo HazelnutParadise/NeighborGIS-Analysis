@@ -1,0 +1,8 @@
+scripts/
+.venv/
+__pycache__/
+*.tar
+*.md
+.gitignore
+docker-compose.yml
+LICENSE
