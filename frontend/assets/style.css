@@ -23,8 +23,8 @@ body {
 }
 
 .container {
-  min-width: 300px;
-  width: 100%;
+  min-width: min(500px, 70dvw);
+  height: 950px;
   /* max-width: 800px; */
   background: #fff;
   border-radius: 12px;
@@ -56,9 +56,26 @@ footer {
 
 h1 {
   padding: 0;
+  margin: 0;
   padding-top: 1rem;
   font-size: 2rem;
   font-weight: 600;
+  text-align: center;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+}
+
+.description {
+  font-size: 1rem;
+  font-weight: 400;
+  margin: 0;
+  padding: 0;
   text-align: center;
 }
 
@@ -198,10 +215,11 @@ button:disabled {
 }
 
 #result {
+  height: 270px;
   background: #f0f4f8;
   padding: 16px;
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 1.1rem;
   line-height: 1.5;
   white-space: pre-wrap;
 }

@@ -15,21 +15,52 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 初始化按鈕狀態
     function updateButtonStatus() {
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex === containers.length - 1;
+        // 檢查是否所有容器都能完整顯示
+        const allContainersVisible = checkAllContainersVisible();
         
-        // 視覺上的禁用效果
-        if (prevBtn.disabled) {
+        if (allContainersVisible) {
+            // 如果所有容器都可見，則禁用兩個按鈕
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
             prevBtn.style.opacity = '0.5';
-        } else {
-            prevBtn.style.opacity = '1';
-        }
-        
-        if (nextBtn.disabled) {
             nextBtn.style.opacity = '0.5';
         } else {
-            nextBtn.style.opacity = '1';
+            // 否則，根據當前索引啟用或禁用
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === containers.length - 1;
+            
+            // 視覺上的禁用效果
+            if (prevBtn.disabled) {
+                prevBtn.style.opacity = '0.5';
+            } else {
+                prevBtn.style.opacity = '1';
+            }
+            
+            if (nextBtn.disabled) {
+                nextBtn.style.opacity = '0.5';
+            } else {
+                nextBtn.style.opacity = '1';
+            }
         }
+    }
+    
+    // 檢查是否所有容器都能完整顯示
+    function checkAllContainersVisible() {
+        if (containers.length === 0) return true;
+        
+        // 計算所有容器的總寬度，包含間隙
+        let totalWidth = 0;
+        const gap = 10; // 容器之間的間隙，與CSS中的gap值保持一致
+        
+        containers.forEach((container) => {
+            totalWidth += container.offsetWidth;
+        });
+        
+        // 加上容器之間的間隙
+        totalWidth += (containers.length - 1) * gap;
+        
+        // 檢查app的可視寬度是否大於或等於所有容器的總寬度
+        return app.clientWidth >= totalWidth;
     }
     
     // 滾動到指定容器
@@ -101,6 +132,11 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 設置新的計時器，延遲執行避免頻繁運算
         isScrolling = setTimeout(handleScroll, 50);
+    });
+    
+    // 監聽窗口大小變化，更新按鈕狀態
+    window.addEventListener('resize', function() {
+        updateButtonStatus();
     });
     
     // 初始化按鈕狀態

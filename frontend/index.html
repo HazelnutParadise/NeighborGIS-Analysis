@@ -13,12 +13,16 @@
 </head>
 
 <body>
-    <h1>NeighborGIS<br><span style="font-size: 3.2rem;">納博聚思</span></h1>
+    <h1 style="display: flex;flex-direction: column;justify-content: center;align-items: center;">
+        <span>NeighborGIS</span>
+        <span style="font-size: 3.2rem;">納博聚思</span>
+    </h1>
     <main id="app">
         <div class="left-right-btn" id="prev-btn"></div>
         <div class="container">
-            <h2>地址查詢</h2>
-            <p>目前只有台北市的資料</p>
+            <h2>鄰里DNA</h2>
+            <p class="description">輸入您的地址來查尋鄰里相關資訊</p>
+            <p class="description">目前只有台北市的資料</p>
             <div class="input-rows">
                 <!-- 第一列：縣市、區、路 -->
                 <div class="input-row">
@@ -96,8 +100,8 @@
                             `經度：${lng}\n` +
                             `緯度：${lat}\n` +
                             `使用分區：${zoning.zone ? zoning.zone : '無資料'}\n` +
-                            `容積率：${zoning.far ? zoning.far : '無資料'}\n` +
-                            `建蔽率：${zoning.bcr ? zoning.bcr : '無資料'}\n` +
+                            `容積率：${zoning.far ? `${zoning.far}%` : '無資料'}\n` +
+                            `建蔽率：${zoning.bcr ? `${zoning.bcr}%` : '無資料'}\n` +
                             // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
                             `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
 
@@ -123,6 +127,20 @@
                     }
                 });
             </script>
+        </div>
+        <div class="container">
+            <h2>使用說明</h2>
+            <p>1. 輸入地址，點擊查詢按鈕。</p>
+            <p>2. 地圖上會顯示該地址的經緯度、使用分區、容積率、建蔽率等資訊。</p>
+            <p>3. 若查詢失敗，請檢查地址是否正確。</p>
+            <p>4. 目前僅支援台北市的資料。</p>
+        </div>
+        <div class="container">
+            <h2>使用說明</h2>
+            <p>1. 輸入地址，點擊查詢按鈕。</p>
+            <p>2. 地圖上會顯示該地址的經緯度、使用分區、容積率、建蔽率等資訊。</p>
+            <p>3. 若查詢失敗，請檢查地址是否正確。</p>
+            <p>4. 目前僅支援台北市的資料。</p>
         </div>
         <div class="container">
             <h2>使用說明</h2>
