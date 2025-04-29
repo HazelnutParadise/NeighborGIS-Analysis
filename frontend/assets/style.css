@@ -2,6 +2,7 @@
   --interactive-color: #00c4cc;
   --interactive-color-hover: #00b3b8;
   --disabled-color: #dddcdc;
+  --output-text-box-color: #f0f4f8;
 }
 
 body {
@@ -216,7 +217,7 @@ button:disabled {
 
 #result {
   height: 270px;
-  background: #f0f4f8;
+  background: var(--output-text-box-color);
   padding: 16px;
   border-radius: 8px;
   font-size: 1.1rem;
