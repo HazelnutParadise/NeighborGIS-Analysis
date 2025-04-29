@@ -1,29 +1,19 @@
 /**
  * 左右切換按鈕功能
  * 讓使用者可以切換不同的容器，將當前容器置中顯示
+ * 同時保留完整的水平滾動功能，不限制用戶的滾動範圍
  */
 document.addEventListener('DOMContentLoaded', function() {
     // 獲取所有容器與按鈕元素
     const containers = document.querySelectorAll('.container');
+    const app = document.getElementById('app');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     
-    // 目前顯示的容器索引
+    // 目前最接近中心的容器索引
     let currentIndex = 0;
     
-    // 初始化：只顯示第一個容器
-    function initContainers() {
-        containers.forEach((container, index) => {
-            if (index !== currentIndex) {
-                container.classList.add('hidden');
-            } else {
-                container.classList.remove('hidden');
-            }
-        });
-        updateButtonStatus();
-    }
-    
-    // 更新按鈕狀態（第一個容器時禁用上一步，最後一個容器時禁用下一步）
+    // 初始化按鈕狀態
     function updateButtonStatus() {
         prevBtn.disabled = currentIndex === 0;
         nextBtn.disabled = currentIndex === containers.length - 1;
@@ -42,22 +32,59 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // 滾動到指定容器
+    function scrollToContainer(index) {
+        if (index >= 0 && index < containers.length) {
+            currentIndex = index;
+            const container = containers[index];
+            
+            // 計算需要滾動的位置 (考慮到容器左側的間距和將容器置中)
+            const scrollLeft = container.offsetLeft - (app.clientWidth - container.offsetWidth) / 2;
+            
+            // 使用平滑滾動效果
+            app.scrollTo({
+                left: scrollLeft,
+                behavior: 'smooth'
+            });
+            
+            updateButtonStatus();
+        }
+    }
+    
     // 顯示上一個容器
     function showPrevContainer() {
         if (currentIndex > 0) {
-            containers[currentIndex].classList.add('hidden');
-            currentIndex--;
-            containers[currentIndex].classList.remove('hidden');
-            updateButtonStatus();
+            scrollToContainer(currentIndex - 1);
         }
     }
     
     // 顯示下一個容器
     function showNextContainer() {
         if (currentIndex < containers.length - 1) {
-            containers[currentIndex].classList.add('hidden');
-            currentIndex++;
-            containers[currentIndex].classList.remove('hidden');
+            scrollToContainer(currentIndex + 1);
+        }
+    }
+    
+    // 監聽滾動事件，更新當前索引
+    function handleScroll() {
+        // 計算當前滾動位置最接近哪個容器的中心
+        const scrollPosition = app.scrollLeft + app.clientWidth / 2;
+        
+        let closestIndex = 0;
+        let closestDistance = Number.MAX_VALUE;
+        
+        containers.forEach((container, index) => {
+            const containerCenter = container.offsetLeft + container.offsetWidth / 2;
+            const distance = Math.abs(containerCenter - scrollPosition);
+            
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIndex = index;
+            }
+        });
+        
+        if (closestIndex !== currentIndex) {
+            currentIndex = closestIndex;
             updateButtonStatus();
         }
     }
@@ -66,8 +93,18 @@ document.addEventListener('DOMContentLoaded', function() {
     prevBtn.addEventListener('click', showPrevContainer);
     nextBtn.addEventListener('click', showNextContainer);
     
-    // 初始化容器顯示狀態
-    initContainers();
+    // 綁定滾動事件，使用節流來優化性能
+    let isScrolling;
+    app.addEventListener('scroll', function() {
+        // 清除先前的計時器
+        window.clearTimeout(isScrolling);
+        
+        // 設置新的計時器，延遲執行避免頻繁運算
+        isScrolling = setTimeout(handleScroll, 50);
+    });
+    
+    // 初始化按鈕狀態
+    updateButtonStatus();
     
     // 若只有一個容器，隱藏按鈕
     if (containers.length <= 1) {

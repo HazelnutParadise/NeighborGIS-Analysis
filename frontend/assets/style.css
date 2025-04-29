@@ -19,6 +19,7 @@ body {
   overflow-x: auto;
   padding: 10px 10px;
   margin-top: 0;
+  scroll-behavior: smooth; /* 增加平滑滾動效果 */
 }
 
 .container {
@@ -273,6 +274,7 @@ button:disabled {
 /* 左右切換按鈕樣式 */
 .left-right-btn {
   position: fixed;
+  top: 60%;
   width: 40px;
   min-width: 40px;
   align-self: center;
@@ -290,13 +292,11 @@ button:disabled {
 
 #prev-btn {
   left: 20px;
-  top: 50%;
   transform: translateY(-50%);
 }
 
 #next-btn {
   right: 20px;
-  top: 50%;
   transform: translateY(-50%);
 }
 
@@ -326,13 +326,8 @@ button:disabled {
   transform: rotate(135deg);
 }
 
-/* 隱藏的容器樣式 */
-.container.hidden {
-  display: none;
-}
-
 @media (max-width: 768px) {
   #app {
-    overflow-x: hidden;
+    overflow-x: auto; /* 確保在手機上也能橫向滾動 */
   }
 }
