@@ -396,12 +396,18 @@ button:disabled {
   border-radius: 8px;
   font-size: 1.1rem;
   line-height: 1.5;
-  white-space: pre-wrap;
+  white-space: normal;
   overflow: auto;
 }
 
 #result {
   height: min(270px, 218px);
+}
+
+.result-box svg {
+  display: block; /* 消除 inline SVG 造成的空白 */
+  width: 100%;
+  height: 100%;
 }
 
 .leaflet-container {
