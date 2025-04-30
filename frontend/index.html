@@ -296,10 +296,11 @@
                                 try {
                                     // 檢查required欄位是否填寫
                                     for (const key in reqData) {
+                                        const el = document.getElementById(key)
                                         // 如果標為required
-                                        if (document.getElementById(key).hasAttribute('required') && reqData[key] === '') {
+                                        if (el.hasAttribute('required') && reqData[key] === '') {
                                             // 如果欄位為空，則顯示提示訊息
-                                            return alert(`${key} 欄位必填`);
+                                            throw new Error(`${document.querySelector(`label[for="${el.id}"]`).innerText.slice(0, -2)} 欄位必填`);
                                         }
                                     }
 
@@ -310,10 +311,16 @@
                                         },
                                         body: JSON.stringify(reqData)
                                     });
-                                    const resJson = await res.json();
+                                    let resJson = '';
+                                    try {
+                                        resJson = await res.json();
+                                    } catch (error) {
+                                        console.error('Error parsing JSON:', error);
+                                    }
+
 
                                     if (!res.ok) {
-                                        const message = `查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '';
+                                        const message = `查詢失敗，伺服器 ${res.status}` + (resJson ? `\n${resJson.message}` : '');
                                         FLOOR_PLAN.innerText = message;
                                         throw new Error(message);
                                     }

@@ -68,8 +68,8 @@ header > .fixed-header {
 
   /* 增強的毛玻璃效果 - 極度透明 */
   background-color: rgba(248, 249, 250, 0.45);
-  -webkit-backdrop-filter: blur(10px);
-  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(7.5px);
+  backdrop-filter: blur(7.5px);
 
   /* 淡淡的顏色疊加 */
   border-left: none;

@@ -66,7 +66,19 @@ def _set_api_routes(app: FastAPI) -> None:
                 arrangement_type = floor_generate.ArrangementType.BOTH_TOP_AND_BOTTOM
             case _:
                 raise ValueError("Invalid arrangement type")
-        # todo
+        total_units = int(req_json.get("total_units"))
+        if total_units <= 0 or (
+                arrangement_type in (
+                    floor_generate.ArrangementType.BOTH_LEFT_AND_RIGHT,
+                    floor_generate.ArrangementType.BOTH_TOP_AND_BOTTOM
+                ) and total_units == 1):
+            return JSONResponse(
+                status_code=400,
+                content=asdict(APIResponse(
+                    message="Invalid total units."
+                ))
+            )
+
         svg = await floor_generate.generate_floor(
             building_area_m2=float(req_json.get("building_area_m2")),
             total_units=int(req_json.get("total_units")),
