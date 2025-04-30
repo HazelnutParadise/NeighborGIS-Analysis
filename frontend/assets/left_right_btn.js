@@ -150,10 +150,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        if (closestIndex !== currentIndex) {
-            currentIndex = closestIndex;
-            updateButtonStatus();
-        }
+        // 即使當前索引未變，也強制更新按鈕狀態
+        currentIndex = closestIndex;
+        updateButtonStatus();
     }
     
     // 綁定按鈕點擊事件
@@ -206,20 +205,28 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 移除所有頁面容器的滾動事件
         document.querySelectorAll('.page-content').forEach(content => {
+            content.removeEventListener('scroll', scrollHandler);
             content.onscroll = null;
         });
         
-        // 為當前頁面容器添加滾動事件
-        let isScrolling;
-        container.onscroll = function(e) {
-            // 清除先前的計時器
-            window.clearTimeout(isScrolling);
-            
-            // 設置新的計時器，延遲執行避免頻繁運算
-            isScrolling = setTimeout(function() {
+        // 定義滾動處理函數
+        function scrollHandler(e) {
+            // 使用 requestAnimationFrame 優化性能，但保證較高頻率執行
+            window.requestAnimationFrame(() => {
+                // 更新當前索引
                 handleScroll(e);
-            }, 50);
-        };
+                
+                // 立即更新按鈕狀態
+                updateButtonStatus();
+            });
+        }
+        
+        // 使用 addEventListener 替代 onscroll，並在捕獲階段處理
+        container.addEventListener('scroll', scrollHandler, { passive: true });
+        
+        // 初始執行一次，確保初始狀態正確
+        handleScroll();
+        updateButtonStatus();
     }
     
     // 監聽窗口大小變化，更新按鈕狀態
