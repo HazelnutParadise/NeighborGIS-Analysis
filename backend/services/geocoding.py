@@ -1,5 +1,4 @@
 from geopy.geocoders import ArcGIS
-import pandas as pd
 
 from structs.adress_point import Coordinate
 

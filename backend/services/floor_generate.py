@@ -161,7 +161,8 @@ def _create_plot(
         arrangement_type: ArrangementType
 ) -> str:
     """建立圖表並輸出為SVG字串"""
-    fig, ax = plt.subplots(figsize=(8, 8), constrained_layout=True)
+    fig, ax = plt.subplots(figsize=(10, 8))  # 增加寬度以容納外部圖例
+    plt.subplots_adjust(right=0.8)  # 縮小右邊界為圖例預留空間
 
     # 建物輪廓
     ax.add_patch(Rectangle(
@@ -202,6 +203,30 @@ def _create_plot(
             facecolor='lightgreen', edgecolor='black'
         ))
 
+    # 新增圖例
+    legend_elements = [
+        Rectangle(
+            (0, 0), 1, 1, facecolor='lightcoral',
+            edgecolor='black', label='核心筒'
+        ),
+        Rectangle(
+            (0, 0), 1, 1, facecolor='lightblue',
+            edgecolor='black', label='住戶單元'
+        ),
+        Rectangle(
+            (0, 0), 1, 1, facecolor='lightgreen',
+            edgecolor='black', label='陽台'
+        )
+    ]
+    ax.legend(
+        handles=legend_elements,
+        loc='center left',
+        bbox_to_anchor=(1.05, 0.5),  # 將圖例放在圖表右側
+        frameon=True,
+        fancybox=True,
+        shadow=True
+    )
+
     # 明確設定顯示範圍
     ax.set_xlim(xmin_b, xmax_b)
     ax.set_ylim(ymin_b, ymax_b)
@@ -222,12 +247,12 @@ def _create_plot(
 
 
 def _calculate_core_dimensions(
-        arr: ArrangementType,
-        u_w: float,
-        u_h: float,
-        n: int,
-        pub_area: float,
-        sp: float
+    arr: ArrangementType,
+    u_w: float,
+    u_h: float,
+    n: int,
+    pub_area: float,
+    sp: float
 ) -> tuple[float, float]:
     """
     --- 計算核心筒尺寸 ---
@@ -256,14 +281,14 @@ def _calculate_core_dimensions(
 
 
 def _calculate_building_dimensions(
-        arr: ArrangementType,
-        cw: float,
-        cl: float,
-        uw: float,
-        uh: float,
-        bd: float,
-        n: int,
-        sp: float
+    arr: ArrangementType,
+    cw: float,
+    cl: float,
+    uw: float,
+    uh: float,
+    bd: float,
+    n: int,
+    sp: float
 ) -> tuple[float, float]:
     """
     --- 計算建物外框尺寸 ---
@@ -291,12 +316,12 @@ def _calculate_building_dimensions(
 
 
 def _calculate_core_position(
-        arr: ArrangementType,
-        bw: float,
-        bl: float,
-        cw: float,
-        cl: float,
-        sp: float
+    arr: ArrangementType,
+    bw: float,
+    bl: float,
+    cw: float,
+    cl: float,
+    sp: float
 ) -> tuple[float, float]:
     """
     --- 計算核心筒位置 ---
@@ -314,7 +339,7 @@ def _calculate_core_position(
                 arr == ArrangementType.TOP
             ) else sp if (
                 arr == ArrangementType.BOTTOM
-            )else (bl - cl) / 2
+            ) else (bl - cl) / 2
 
     return x0, y0
 
@@ -344,14 +369,14 @@ def _get_side(
 
 
 def _calc_coords(
-        row: pd.Series,
-        core_x0: float,
-        core_y0: float,
-        core_x1: float,
-        core_y1: float,
-        arrangement_type: ArrangementType,
-        unit_spacing: float,
-        total_units: int
+    row: pd.Series,
+    core_x0: float,
+    core_y0: float,
+    core_x1: float,
+    core_y1: float,
+    arrangement_type: ArrangementType,
+    unit_spacing: float,
+    total_units: int
 ) -> pd.Series:
     i, sp, uw, uh = row.unit_number, unit_spacing, row.uw, row.uh
     x0 = y0 = 0
@@ -424,4 +449,5 @@ if __name__ == "__main__":
         )
         with open("floor_plan.svg", "w", encoding="utf-8") as f:
             f.write(svg)
+
     asyncio.run(test_generate_floor())
