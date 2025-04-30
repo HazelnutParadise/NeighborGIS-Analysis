@@ -34,6 +34,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // 重設當前索引
             currentIndex = 0;
             
+            // 如果只有一個容器，則置中顯示
+            centerSingleContainer();
+            
             // 更新按鈕狀態
             updateButtonStatus();
             
@@ -167,8 +170,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // 重設當前索引
             currentIndex = 0;
             
-            // 直接滾動到第一個容器位置
-            if (currentContainers.length > 0) {
+            // 如果只有一個容器，則置中顯示
+            if (currentContainers.length === 1) {
+                // 使用延遲確保 DOM 已完全更新
+                setTimeout(() => {
+                    centerSingleContainer();
+                }, 100);
+            } else if (currentContainers.length > 0) {
+                // 否則滾動到第一個容器位置
                 currentScrollContainer.scrollLeft = 0;
             }
             
@@ -216,5 +225,36 @@ document.addEventListener('DOMContentLoaded', function() {
     // 監聽窗口大小變化，更新按鈕狀態
     window.addEventListener('resize', function() {
         updateButtonStatus();
+        // 當視窗大小變化時，如果只有一個容器，重新置中
+        centerSingleContainer();
     });
+    
+    // 將單一容器置中顯示
+    function centerSingleContainer() {
+        if (!currentScrollContainer || currentContainers.length !== 1) return;
+        
+        const container = currentContainers[0];
+        const containerWidth = container.offsetWidth;
+        const pageContentWidth = currentScrollContainer.clientWidth;
+        
+        // 計算需要的左側空間，使容器置中
+        const marginLeft = (pageContentWidth - containerWidth) / 2;
+        
+        // 如果容器寬度小於視窗寬度，則置中顯示
+        if (containerWidth < pageContentWidth) {
+            // 直接設置容器的 margin 而非使用 scrollLeft
+            container.style.marginLeft = `${marginLeft}px`;
+            container.style.marginRight = `${marginLeft}px`;
+            
+            // 確保重置滾動位置
+            currentScrollContainer.scrollLeft = 0;
+        } else {
+            // 如果容器寬度大於視窗寬度，則使用原來的滾動方式
+            const scrollLeft = container.offsetLeft - (pageContentWidth - containerWidth) / 2;
+            currentScrollContainer.scrollTo({
+                left: Math.max(0, scrollLeft),
+                behavior: 'smooth'
+            });
+        }
+    }
 });
