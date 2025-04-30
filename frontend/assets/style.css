@@ -224,12 +224,12 @@ h2 {
   text-align: center;
 }
 
-description {
+.description {
   font-size: 1rem;
   font-weight: 400;
   margin: 0;
   padding: 0;
-  text-align: center;
+  text-align: center !important;
 }
 
 .notice {
@@ -390,14 +390,18 @@ button:disabled {
   margin-bottom: 16px;
 }
 
-#result {
-  height: min(270px, 218px);
+.result-box {
   background: var(--output-text-box-color);
   padding: 16px;
   border-radius: 8px;
   font-size: 1.1rem;
   line-height: 1.5;
   white-space: pre-wrap;
+  overflow: auto;
+}
+
+#result {
+  height: min(270px, 218px);
 }
 
 .leaflet-container {

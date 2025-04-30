@@ -49,6 +49,8 @@ def _set_api_routes(app: FastAPI) -> None:
     async def api_generate_floor(request: Request):
         req_json = await request.json()
         arrangement_type = req_json.get("arrangement_type")
+        m2_to_ping = float(req_json.get("m2_to_ping")) if req_json.get(
+            "m2_to_ping") else 0.3025
         match arrangement_type:
             case "L":
                 arrangement_type = floor_generate.ArrangementType.LEFT
@@ -66,13 +68,13 @@ def _set_api_routes(app: FastAPI) -> None:
                 raise ValueError("Invalid arrangement type")
         # todo
         svg = await floor_generate.generate_floor(
-            building_area_m2=req_json.get("building_area_m2"),
-            total_units=req_json.get("total_units"),
-            public_ratio=req_json.get("public_ratio"),
-            balcony_depth=req_json.get("balcony_depth"),
+            building_area_m2=float(req_json.get("building_area_m2")),
+            total_units=int(req_json.get("total_units")),
+            public_ratio=float(req_json.get("public_ratio")),
+            balcony_depth=float(req_json.get("balcony_depth")),
             arrangement_type=arrangement_type,
-            unit_spacing=req_json.get("unit_spacing"),
-            m2_to_ping=req_json.get("m2_to_ping"),
+            unit_spacing=float(req_json.get("unit_spacing")),
+            m2_to_ping=m2_to_ping,
         )
         if not svg:
             return JSONResponse(
