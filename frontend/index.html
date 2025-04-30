@@ -19,6 +19,9 @@
                 <span>NeighborGIS</span>
                 <span class="bigger-h1">納博聚思</span>
             </h1>
+            <div class="user-location">
+                <span id="user-coordinates">正在取得位置...</span>
+            </div>
             <div class="progress-container">
                 <div class="progress-bar" id="progressBar"></div>
             </div>
@@ -30,6 +33,7 @@
         </div>
         <script>
             const PROGRESS_BAR = document.getElementById('progressBar');
+            const USER_COORDINATES = document.getElementById('user-coordinates');
 
             // 進度條控制函數
             function showProgress() {
@@ -41,6 +45,27 @@
                 PROGRESS_BAR.classList.remove('loading');
             }
 
+            // 獲取用戶位置
+            function getUserLocation() {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            const lat = position.coords.latitude.toFixed(6);
+                            const lng = position.coords.longitude.toFixed(6);
+                            USER_COORDINATES.innerHTML = `目前座標: ${lat}, ${lng}`;
+                        },
+                        (error) => {
+                            console.error("無法取得位置", error);
+                            USER_COORDINATES.innerHTML = "無法取得位置";
+                        }
+                    );
+                } else {
+                    USER_COORDINATES.innerHTML = "瀏覽器不支援定位服務";
+                }
+            }
+
+            // 頁面載入後獲取位置
+            document.addEventListener('DOMContentLoaded', getUserLocation);
         </script>
     </header>
 

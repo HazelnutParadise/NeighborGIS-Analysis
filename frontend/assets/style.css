@@ -60,6 +60,7 @@ header > .fixed-header {
   position: fixed;
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   justify-content: space-between;
   padding: 12px 35px;
   margin-bottom: 24px;
@@ -87,6 +88,42 @@ header > .fixed-header {
 
   /* 平滑過渡 */
   transition: all 0.3s ease;
+}
+
+/* 使用者座標樣式 */
+.user-location {
+  position: absolute;
+  top: 60px;
+  right: 35px;
+  font-size: 14px;
+  color: #333;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 6px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0, 150, 255, 0.2);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid var(--interactive-color-2);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  /* 添加微妙的漸變效果 */
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.95),
+    rgba(240, 248, 255, 0.95)
+  );
+}
+
+.user-location:hover {
+  background-color: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 3px 8px rgba(0, 150, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+#user-coordinates {
+  display: inline-block;
+  font-weight: 600;
+  color: var(--interactive-color-2);
 }
 
 /* 進度條容器 */
@@ -163,6 +200,11 @@ header > .fixed-header {
 
   .fixed-header.scrolled {
     background-color: rgba(255, 255, 255, 0.9);
+  }
+
+  .user-location {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
 }
 
@@ -618,12 +660,25 @@ button:disabled {
     overflow-x: auto; /* 確保在手機上也能橫向滾動 */
   }
 
+  .fixed-header {
+    row-gap: 1px;
+    height: 180px; /* 增加header高度以適應更多元素 */
+    padding-top: 35px; /* 增加頂部間距 */
+  }
+
+  .user-location {
+    top: 20px;
+    right: 20px;
+    font-size: 12px;
+    padding: 4px 10px;
+  }
+
   h1 {
     flex-direction: row;
     gap: 10px;
     font-size: 1.9rem;
     padding-top: 0;
-    padding-bottom: 10px;
+    padding-bottom: 0px;
   }
 
   .bigger-h1 {
@@ -635,6 +690,9 @@ button:disabled {
     justify-content: center;
     margin-right: 0;
     margin-top: 10px;
+    bottom: 8px; /* 增加底部距離 */
+    right: 0;
+    left: 0; /* 讓標籤在小螢幕上置中 */
   }
 
   .tab-btn {
