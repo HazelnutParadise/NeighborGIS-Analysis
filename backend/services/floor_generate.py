@@ -97,10 +97,10 @@ async def generate_floor(
     # 因繪圖操作可能耗時，使用異步執行
     return await _render_plot(
         df, core_x0, core_y0, core_w, core_l,
-        min(df.xmin.min(), df.bx0.min()) - 1,
-        max(df.xmax.max(), df.bx1.max()) + 1,
-        min(df.ymin.min(), df.by0.min()) - 1,
-        max(df.ymax.max(), df.by1.max()) + 1,
+        min(min(df.xmin.min(), df.bx0.min()), core_x0) - 1,  # 確保包含核心區域
+        max(max(df.xmax.max(), df.bx1.max()), core_x0 + core_w) + 1,  # 確保包含核心區域
+        min(min(df.ymin.min(), df.by0.min()), core_y0) - 1,  # 確保包含核心區域
+        max(max(df.ymax.max(), df.by1.max()), core_y0 + core_l) + 1,  # 確保包含核心區域
         arrangement_type
     )
 
@@ -309,11 +309,11 @@ def _calculate_building_dimensions(
             bw = cw + 2*sp
             bl = cl + uh + bd + 2*sp
         case ArrangementType.BOTH_LEFT_AND_RIGHT:
-            bw = cw + 2*(uw + bd + 2)
+            bw = cw + 2*(uw + bd + sp)
             bl = cl + 2*sp
         case ArrangementType.BOTH_TOP_AND_BOTTOM:
             bw = cw + 2*sp
-            bl = cl + 2*(uh + bd + 2)
+            bl = cl + 2*(uh + bd + sp)
         case _:
             bw = cw + 10
             bl = cl + 10
@@ -336,16 +336,26 @@ def _calculate_core_position(
     y0: float = 0
     match (arr):
         case ArrangementType.LEFT:
-            x0 = sp
+            x0 = bw - cw - sp  # 放在右側
+            y0 = (bl - cl) / 2
         case ArrangementType.RIGHT:
-            x0 = bw - cw - sp
+            x0 = sp  # 放在左側
+            y0 = (bl - cl) / 2
+        case ArrangementType.TOP:
+            x0 = (bw - cw) / 2
+            y0 = sp  # 放在下側
+        case ArrangementType.BOTTOM:
+            x0 = (bw - cw) / 2
+            y0 = bl - cl - sp  # 放在上側
+        case ArrangementType.BOTH_LEFT_AND_RIGHT:
+            x0 = (bw - cw) / 2
+            y0 = (bl - cl) / 2
+        case ArrangementType.BOTH_TOP_AND_BOTTOM:
+            x0 = (bw - cw) / 2
+            y0 = (bl - cl) / 2
         case _:
             x0 = (bw - cw) / 2
-            y0 = (bl - cl - sp) if (
-                arr == ArrangementType.TOP
-            ) else sp if (
-                arr == ArrangementType.BOTTOM
-            ) else (bl - cl) / 2
+            y0 = (bl - cl) / 2
 
     return x0, y0
 
