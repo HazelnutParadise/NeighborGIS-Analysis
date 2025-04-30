@@ -268,10 +268,16 @@ def _calculate_core_dimensions(
             width = (u_w + sp) * n + sp
             length = max(u_h * 0.3, core_area/width)
         case ArrangementType.BOTH_LEFT_AND_RIGHT:
-            length = (u_h + sp) * (n/2) + sp
+            # 處理單數戶數情況
+            left_count = (n + 1) // 2  # 左側單位數（單數時左側多1）
+            # 使用左側單位數來計算長度，確保足夠空間
+            length = (u_h + sp) * left_count + sp
             width = max(u_w * 0.8, core_area/length)
         case ArrangementType.BOTH_TOP_AND_BOTTOM:
-            width = (u_w + sp) * (n/2) + sp
+            # 處理單數戶數情況
+            bottom_count = (n + 1) // 2  # 底部單位數（單數時底部多1）
+            # 使用底部單位數來計算寬度，確保足夠空間
+            width = (u_w + sp) * bottom_count + sp
             length = max(u_h * 0.8, core_area/width)
         case _:
             width = math.sqrt(core_area)
@@ -350,12 +356,14 @@ def _get_side(
         total_units: int
 ) -> str:
     i = row.unit_number
-    half = total_units // 2
+    # 修改為考慮單數的情況下計算左右或上下兩側的界線
+    # 對於奇數個單位，第一側會多一個單位
+    left_count = (total_units + 1) // 2  # 使用整除，確保左側(或下側)優先多一個單位
     match (arrangement_type):
         case ArrangementType.BOTH_LEFT_AND_RIGHT:
-            return "left" if i <= half else "right"
+            return "left" if i <= left_count else "right"
         case ArrangementType.BOTH_TOP_AND_BOTTOM:
-            return "bottom" if i <= half else "top"
+            return "bottom" if i <= left_count else "top"
         case ArrangementType.LEFT:
             return "left"
         case ArrangementType.RIGHT:
@@ -381,23 +389,38 @@ def _calc_coords(
     i, sp, uw, uh = row.unit_number, unit_spacing, row.uw, row.uh
     x0 = y0 = 0
 
+    # 計算每側應該有多少單位（處理奇數情況）
+    left_count = (total_units + 1) // 2  # 第一側的單位數（奇數時多1）
+    right_count = total_units - left_count  # 第二側的單位數
+
     if arrangement_type == ArrangementType.BOTH_TOP_AND_BOTTOM:
-        idx = (i-1) if i <= total_units/2 else (i-1-total_units/2)
-        x0 = core_x0 + sp + idx*(uw+sp)
-        y0 = core_y0 - uh - sp if i <= total_units/2 else core_y1 + sp
+        if i <= left_count:
+            # 底部單位（可能會比頂部多一個單位）
+            idx = i - 1
+            x0 = core_x0 + sp + idx*(uw+sp)
+            y0 = core_y0 - uh - sp
+        else:
+            # 頂部單位
+            idx = i - left_count - 1
+            x0 = core_x0 + sp + idx*(uw+sp)
+            y0 = core_y1 + sp
 
     elif row.side == "left":
         x0 = core_x0 - uw - sp
-        idx = (i-1) if arrangement_type == ArrangementType.LEFT else (
-            (i-1) % (total_units//2)
-        )
+        if arrangement_type == ArrangementType.LEFT:
+            idx = i - 1
+        else:
+            # 在BOTH_LEFT_AND_RIGHT情況下，計算左側索引
+            idx = i - 1
         y0 = core_y0 + idx*(uh+sp) + sp
 
     elif row.side == "right":
         x0 = core_x1 + sp
-        idx = (i-1) if arrangement_type == ArrangementType.RIGHT else (
-            (i-1) % (total_units//2)
-        )
+        if arrangement_type == ArrangementType.RIGHT:
+            idx = i - 1
+        else:
+            # 在BOTH_LEFT_AND_RIGHT情況下，計算右側索引
+            idx = i - left_count - 1
         y0 = core_y0 + idx*(uh+sp) + sp
 
     elif row.side == "top":
