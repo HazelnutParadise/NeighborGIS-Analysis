@@ -201,34 +201,34 @@
                             <div style="width: 300px;">
                                 <div class="input-rows">
                                     <div class="input-row">
-                                        <label for="building_area_m2">building_area_m2</label>
+                                        <label for="building_area_m2">建築面積</label>
                                         <input id="building_area_m2" class="text-input" type="number"
-                                            placeholder="building_area_m2 (平方公尺)" required>
+                                            placeholder="建築面積 (平方公尺)" required>
                                     </div>
                                     <div class="input-row">
-                                        <label for="total_units">total_units</label>
-                                        <input id="total_units" class="text-input" type="number"
-                                            placeholder="total_units (戶數)" required>
+                                        <label for="total_units">總戶數</label>
+                                        <input id="total_units" class="text-input" type="number" placeholder="總戶數"
+                                            required>
                                     </div>
                                     <div class="input-row">
-                                        <label for="public_ratio">public_ratio</label>
+                                        <label for="public_ratio">公共區域比例</label>
                                         <input id="public_ratio" class="text-input" type="number"
-                                            placeholder="public_ratio（比值）" required>
+                                            placeholder="公共區域比例（比值）" required>
                                     </div>
                                     <div class="input-row">
-                                        <label for="balcony_depth">balcony_depth</label>
+                                        <label for="balcony_depth">陽台深度</label>
                                         <input id="balcony_depth" class="text-input" type="number"
-                                            placeholder="balcony_depth（公尺）" required>
+                                            placeholder="陽台深度（公尺）" required>
                                     </div>
                                     <div class="input-row">
-                                        <label for="unit_spacing">unit_spacing</label>
-                                        <input id="unit_spacing" class="text-input" type="number"
-                                            placeholder="unit_spacing" required>
+                                        <label for="unit_spacing">單位間距</label>
+                                        <input id="unit_spacing" class="text-input" type="number" placeholder="單位間距"
+                                            required>
                                     </div>
                                     <div class="input-row">
-                                        <label for="arrangement_type">arrangement_type</label>
+                                        <label for="arrangement_type">排列方式</label>
                                         <select id="arrangement_type" class="text-input" type="number" required
-                                            placeholder="arrangement_type">
+                                            placeholder="排列方式">
                                             <option value="L">僅左側</option>
                                             <option value="R">僅右側</option>
                                             <option value="T">僅上側</option>
@@ -237,11 +237,10 @@
                                             <option value="TB">上下兩側</option>
                                         </select>
                                     </div>
-                                    <div class="input-row">
-                                        <label for="m2_to_ping">m2_to_ping</label>
-                                        <input id="m2_to_ping" class="text-input" type="number"
-                                            placeholder="m2_to_ping">
-                                    </div>
+                                    <!-- <div class="input-row">
+                                        <label for="m2_to_ping">坪數換算</label>
+                                        <input id="m2_to_ping" class="text-input" type="number" placeholder="平方公尺轉換為坪數">
+                                    </div> -->
                                 </div>
                                 <div class="input-rows">
                                     <button id="floorGenerateBtn" type="button" onclick="generateFloor()"
@@ -267,7 +266,7 @@
                                     balcony_depth: document.getElementById('balcony_depth').value,
                                     arrangement_type: document.getElementById('arrangement_type').value,
                                     unit_spacing: document.getElementById('unit_spacing').value,
-                                    m2_to_ping: document.getElementById('m2_to_ping').value ? document.getElementById('m2_to_ping').value : null,
+                                    // m2_to_ping: document.getElementById('m2_to_ping').value ? document.getElementById('m2_to_ping').value : null,
                                 }
                                 try {
                                     // 檢查required欄位是否填寫
