@@ -1,6 +1,8 @@
 :root {
   --interactive-color: #00c4cc;
   --interactive-color-hover: #00b3b8;
+  --interactive-color-2: #0096ff;
+  --interactive-color-2-hover: #0077e6;
   --disabled-color: #dddcdc;
   --output-text-box-color: #f0f4f8;
   --background-color: #f5f7fa;
@@ -434,7 +436,7 @@ button:disabled {
 }
 
 .spinner .fg {
-  stroke: #0096ff;
+  stroke: var(--interactive-color-2);
   stroke-dasharray: 60;
   stroke-dashoffset: 0;
   animation: dash 1.5s ease-in-out infinite;
@@ -472,7 +474,7 @@ button:disabled {
   min-width: 40px;
   height: 40px;
   border-radius: 50%;
-  background-color: var(--interactive-color);
+  background-color: var(--interactive-color-2);
   color: white;
   display: flex;
   justify-content: center;
@@ -492,7 +494,7 @@ button:disabled {
 }
 
 .left-right-btn:hover {
-  background-color: var(--interactive-color-hover);
+  background-color: var(--interactive-color-2-hover);
 }
 
 .left-right-btn:disabled {
