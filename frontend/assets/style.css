@@ -145,7 +145,10 @@ header > .fixed-header {
   background: linear-gradient(
     to right,
     var(--interactive-color),
-    var(--interactive-color-hover)
+    var(--interactive-color),
+    var(--interactive-color),
+    var(--interactive-color-hover),
+    var(--interactive-color-2)
   );
   box-shadow: 0 0 10px rgba(0, 196, 204, 0.5);
   left: 0;
@@ -574,7 +577,7 @@ button:disabled {
 /* 分頁控制器樣式 */
 .page-tabs {
   display: flex;
-  gap: 0; /* 移除間隙使標籤連接在一起 */
+  gap: 6px; /* 添加間隙讓標籤有呼吸空間 */
   margin-right: 20px;
   position: absolute; /* 改為絕對定位 */
   bottom: 4px; /* 配合header的底部邊框 */
@@ -583,43 +586,66 @@ button:disabled {
 }
 
 .tab-btn {
-  background: #f5f5f5;
-  color: #666;
-  border: 1px solid #e0e0e0;
-  border-bottom: none;
-  padding: 8px 20px;
+  background: linear-gradient(to bottom, #ffffff, #f8f9fa); /* 漸變背景 */
+  color: #555;
+  border: none; /* 移除邊框 */
+  padding: 10px 22px;
   font-size: 14px;
   font-weight: 500;
-  border-radius: 8px 8px 0 0; /* 只在頂部有圓角 */
-  transition: all 0.2s ease;
+  border-radius: 10px 10px 0 0; /* 增大頂部圓角 */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 平滑過渡 */
   position: relative;
-  margin-right: -1px; /* 負邊距使標籤邊框重疊 */
   z-index: 1;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* 頂部陰影 */
+  overflow: hidden; /* 確保偽元素不會溢出 */
+}
+
+.tab-btn::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    to right,
+    var(--interactive-color),
+    var(--interactive-color-2)
+  );
+  transform: scaleX(0); /* 初始狀態不顯示 */
+  transform-origin: bottom center;
+  transition: transform 0.3s ease;
+  opacity: 0;
 }
 
 .tab-btn.active {
-  background: white;
-  color: var(--interactive-color);
-  border-color: #e0e0e0;
+  background: #ffffff;
+  color: var(--interactive-color-2);
   font-weight: 600;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 12px rgba(0, 150, 255, 0.1); /* 更明顯的陰影 */
   z-index: 2; /* 活動標籤置於頂層 */
-  position: relative;
+  transform: translateY(-2px) scale(1.03); /* 輕微放大和上移效果 */
 }
 
-.tab-btn.active::after {
-  content: "";
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: white; /* 白色底部邊緣覆蓋底部邊框 */
+.tab-btn.active::before {
+  transform: scaleX(1); /* 顯示底部條紋 */
+  opacity: 1;
 }
 
 .tab-btn:hover:not(.active) {
-  background: #f0f0f0;
-  color: #333;
+  background: linear-gradient(to bottom, #ffffff, #f2f7fd);
+  color: var(--interactive-color-2-hover);
+  transform: translateY(-1px); /* 懸停時輕微上移 */
+}
+
+.tab-btn:hover:not(.active)::before {
+  transform: scaleX(0.6); /* 懸停時顯示部分底部條紋 */
+  opacity: 0.6;
+}
+
+/* 移除舊的底部白色線條 */
+.tab-btn.active::after {
+  content: none;
 }
 
 /* 分頁內容區域樣式 */
