@@ -18,7 +18,7 @@ class ArrangementType(Enum):
     TOP = "僅上側"
     BOTTOM = "僅下側"
     BOTH_LEFT_AND_RIGHT = "左右兩側"
-    BOTH_UP_AND_DOWN = "上下兩側"
+    BOTH_TOP_AND_BOTTOM = "上下兩側"
 
 
 UNIT_ASPECT_RATIO: float = 1.3
@@ -34,8 +34,7 @@ async def generate_floor(
         m2_to_ping: float = 0.3025
 ) -> str:
     """
-    產生建物平面圖並回傳
-    todo
+    產生建物平面圖並回傳 SVG 格式的字串。
     """
 
     await _init()
@@ -246,7 +245,7 @@ def _calculate_core_dimensions(
         case ArrangementType.BOTH_LEFT_AND_RIGHT:
             length = (u_h + sp) * (n/2) + sp
             width = max(u_w * 0.8, core_area/length)
-        case ArrangementType.BOTH_UP_AND_DOWN:
+        case ArrangementType.BOTH_TOP_AND_BOTTOM:
             width = (u_w + sp) * (n/2) + sp
             length = max(u_h * 0.8, core_area/width)
         case _:
@@ -281,7 +280,7 @@ def _calculate_building_dimensions(
         case ArrangementType.BOTH_LEFT_AND_RIGHT:
             bw = cw + 2*(uw + bd + 2)
             bl = cl + 2*sp
-        case ArrangementType.BOTH_UP_AND_DOWN:
+        case ArrangementType.BOTH_TOP_AND_BOTTOM:
             bw = cw + 2*sp
             bl = cl + 2*(uh + bd + 2)
         case _:
@@ -330,7 +329,7 @@ def _get_side(
     match (arrangement_type):
         case ArrangementType.BOTH_LEFT_AND_RIGHT:
             return "left" if i <= half else "right"
-        case ArrangementType.BOTH_UP_AND_DOWN:
+        case ArrangementType.BOTH_TOP_AND_BOTTOM:
             return "bottom" if i <= half else "top"
         case ArrangementType.LEFT:
             return "left"
@@ -357,7 +356,7 @@ def _calc_coords(
     i, sp, uw, uh = row.unit_number, unit_spacing, row.uw, row.uh
     x0 = y0 = 0
 
-    if arrangement_type == ArrangementType.BOTH_UP_AND_DOWN:
+    if arrangement_type == ArrangementType.BOTH_TOP_AND_BOTTOM:
         idx = (i-1) if i <= total_units/2 else (i-1-total_units/2)
         x0 = core_x0 + sp + idx*(uw+sp)
         y0 = core_y0 - uh - sp if i <= total_units/2 else core_y1 + sp
@@ -420,7 +419,7 @@ if __name__ == "__main__":
             total_units=10,
             public_ratio=0.2,
             balcony_depth=1.5,
-            arrangement_type=ArrangementType.BOTH_LEFT_AND_RIGHT,
+            arrangement_type=ArrangementType.BOTH_TOP_AND_BOTTOM,
             unit_spacing=0.5
         )
         with open("floor_plan.svg", "w", encoding="utf-8") as f:

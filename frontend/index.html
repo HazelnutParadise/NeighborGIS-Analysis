@@ -23,7 +23,7 @@
                 <div class="progress-bar" id="progressBar"></div>
             </div>
             <div class="page-tabs">
-                <button class="tab-btn active" data-page="page1">地址查詢</button>
+                <button class="tab-btn active" data-page="page1">鄰里DNA</button>
                 <button class="tab-btn" data-page="page2">使用說明</button>
                 <button class="tab-btn" data-page="page3">關於我們</button>
             </div>
@@ -65,7 +65,7 @@
             <div class="page" id="page1">
                 <div class="page-content">
                     <div class="container">
-                        <h2>鄰里DNA</h2>
+                        <h2>地址查詢</h2>
                         <p class="description">輸入您的地址來查尋鄰里相關資訊</p>
                         <p class="notice">目前台北市以外地區的資料可能不完整</p>
                         <div class="input-rows">
@@ -116,12 +116,13 @@
                                 }
                                 try {
                                     const res = await fetch(`/api/intersect/${encodeURIComponent(address)}`)
+                                    const resJson = await res.json();
                                     if (!res.ok) {
                                         RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
                                         hideProgress();
-                                        return alert(`查詢失敗，伺服器 ${res.status}`);
+                                        return alert(`查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '');
                                     }
-                                    const data = await res.json();
+                                    const data = resJson.data;
                                     const coordinate = data.coordinate;
                                     const lat = Number(coordinate.lat);
                                     const lng = Number(coordinate.lng);
