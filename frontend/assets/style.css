@@ -396,12 +396,12 @@ button:disabled {
   border-radius: 8px;
   font-size: 1.1rem;
   line-height: 1.5;
-  white-space: normal;
   overflow: auto;
+  display: flex;
 }
 
 #result {
-  height: min(270px, 218px);
+  height: 218px;
 }
 
 .result-box svg {
