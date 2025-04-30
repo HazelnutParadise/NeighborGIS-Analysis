@@ -61,7 +61,7 @@
     <main id="app">
         <div class="left-right-btn" id="prev-btn"></div>
         <div class="page-container">
-            <!-- 第一頁：地址查詢 -->
+            <!-- 第一頁：鄰里DNA -->
             <div class="page" id="page1">
                 <div class="page-content">
                     <div class="container">
@@ -195,34 +195,50 @@
             <div class="page" id="page2">
                 <div class="page-content">
                     <div class="container">
-                        <h2>使用說明</h2>
-                        <p>1. 輸入地址，點擊查詢按鈕。</p>
-                        <p>2. 地圖上會顯示該地址的經緯度、使用分區、容積率、建蔽率等資訊。</p>
-                        <p>3. 若查詢失敗，請檢查地址是否正確。</p>
-                        <p>4. 目前僅支援台北市的資料。</p>
-                        <p>5. 可以透過頁面上方的分頁切換不同功能。</p>
-                        <p>6. 在每個分頁中可以左右滑動查看更多內容。</p>
-                    </div>
-
-                    <div class="container">
-                        <h2>功能介紹</h2>
-                        <p class="description">地址查詢功能說明</p>
-                        <ul>
-                            <li>輸入完整地址，包含縣市、區、路名、號碼等資訊</li>
-                            <li>系統會自動定位到該地址，並在地圖上標記</li>
-                            <li>顯示該地址的使用分區、容積率、建蔽率等資訊</li>
-                            <li>可以透過滑動查看更多資訊</li>
-                        </ul>
-                    </div>
-
-                    <div class="container">
-                        <h2>常見問題</h2>
-                        <p class="description">使用過程中的常見問題解答</p>
-                        <div class="faq">
-                            <p><strong>Q: 為什麼我的地址查不到？</strong></p>
-                            <p>A: 目前系統以台北市的資料最為完整，其他地區的資料可能不全。</p>
-                            <p><strong>Q: 顯示的資訊準確嗎？</strong></p>
-                            <p>A: 系統資料來源為政府開放資料，但仍建議以實際政府公告為準。</p>
+                        <h2>室內規劃</h2>
+                        <p class="description">輸入數值來產生平面圖</p>
+                        <div class="input-rows">
+                            <div class="input-row">
+                                <label for="building_area_m2">building_area_m2</label>
+                                <input id="building_area_m2" class="text-input" type="number"
+                                    placeholder="building_area_m2 (平方公尺)">
+                            </div>
+                            <div class="input-row">
+                                <label for="total_units">total_units</label>
+                                <input id="total_units" class="text-input" type="number" placeholder="total_units (戶數)">
+                            </div>
+                            <div class="input-row">
+                                <label for="public_ratio">public_ratio</label>
+                                <input id="public_ratio" class="text-input" type="number" placeholder="public_ratio（%）">
+                            </div>
+                            <div class="input-row">
+                                <label for="balcony_depth">balcony_depth</label>
+                                <input id="balcony_depth" class="text-input" type="number"
+                                    placeholder="balcony_depth（公尺）">
+                            </div>
+                            <div class="input-row">
+                                <label for="arrangement_type">arrangement_type</label>
+                                <input id="arrangement_type" class="text-input" type="number"
+                                    placeholder="arrangement_type">
+                            </div>
+                            <div class="input-row">
+                                <label for="unit_spacing">unit_spacing</label>
+                                <select id="unit_spacing" class="text-input" type="number" placeholder="unit_spacing">
+                                    <option value="L">僅左側</option>
+                                    <option value="R">僅右側</option>
+                                    <option value="T">僅上側</option>
+                                    <option value="B">僅下側</option>
+                                    <option value="LR">左右兩側</option>
+                                    <option value="TB">上下兩側</option>
+                                </select>
+                            </div>
+                            <div class="input-row">
+                                <label for="m2_to_ping">m2_to_ping</label>
+                                <input id="m2_to_ping" class="text-input" type="number" placeholder="m2_to_ping">
+                            </div>
+                        </div>
+                        <div class="input-rows">
+                            <button id="floorGenerateBtn" type="button" style="width: 100%;">生成</button>
                         </div>
                     </div>
                 </div>

@@ -61,7 +61,7 @@ def _set_api_routes(app: FastAPI) -> None:
             case "LR":
                 arrangement_type = floor_generate.ArrangementType.BOTH_LEFT_AND_RIGHT
             case "TB":
-                arrangement_type = floor_generate.ArrangementType.BOTH_UP_AND_DOWN
+                arrangement_type = floor_generate.ArrangementType.BOTH_TOP_AND_BOTTOM
             case _:
                 raise ValueError("Invalid arrangement type")
         # todo
