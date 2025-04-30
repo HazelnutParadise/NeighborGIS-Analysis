@@ -172,18 +172,15 @@ def _create_plot(
         fill=False, edgecolor='black', linewidth=1
     ))
 
-    # 只有當核心區域尺寸大於零時才繪製核心區域
-    has_core = core_w > 0 and core_l > 0
-    if has_core:
-        # 核心區域
-        ax.add_patch(Rectangle(
-            (core_x0, core_y0), core_w, core_l,
-            facecolor='lightcoral', edgecolor='black'
-        ))
-        ax.text(
-            core_x0+core_w/2, core_y0+core_l/2, "核心區域",
-            ha='center', va='center'
-        )
+    # 核心區域
+    ax.add_patch(Rectangle(
+        (core_x0, core_y0), core_w, core_l,
+        facecolor='lightcoral', edgecolor='black'
+    ))
+    ax.text(
+        core_x0+core_w/2, core_y0+core_l/2, "核心區域",
+        ha='center', va='center'
+    )
 
     # 住戶單元與標籤
     for _, row in df.iterrows():
@@ -207,17 +204,11 @@ def _create_plot(
         ))
 
     # 新增圖例
-    legend_elements = []
-
-    # 只有當核心區域存在時，才加入核心區域圖例
-    if has_core:
-        legend_elements.append(Rectangle(
+    legend_elements = [
+        Rectangle(
             (0, 0), 1, 1, facecolor='lightcoral',
             edgecolor='black', label='核心區域'
-        ))
-
-    # 其他圖例項目保持不變
-    legend_elements.extend([
+        ),
         Rectangle(
             (0, 0), 1, 1, facecolor='lightblue',
             edgecolor='black', label='住戶單元'
@@ -226,8 +217,7 @@ def _create_plot(
             (0, 0), 1, 1, facecolor='lightgreen',
             edgecolor='black', label='陽台'
         )
-    ])
-
+    ]
     ax.legend(
         handles=legend_elements,
         loc='center left',
@@ -267,10 +257,6 @@ def _calculate_core_dimensions(
     """
     --- 計算核心區域尺寸 ---
     """
-    # 如果公共區域為零，則核心區域大小也為零
-    if pub_area <= 0:
-        return 0, 0
-
     core_area = pub_area
     width: float = 0
     length: float = 0
@@ -405,25 +391,8 @@ def _calc_coords(
 
     # 計算每側應該有多少單位（處理奇數情況）
     left_count = (total_units + 1) // 2  # 第一側的單位數（奇數時多1）
+    right_count = total_units - left_count  # 第二側的單位數
 
-    # 檢查是否沒有核心區域（public_ratio 為零）
-    has_core = core_x1 > core_x0 and core_y1 > core_y0
-
-    # 當沒有核心區域時，使用單一列或單一行排列
-    if not has_core:
-        if arrangement_type in [ArrangementType.LEFT, ArrangementType.RIGHT, ArrangementType.BOTH_LEFT_AND_RIGHT]:
-            # 水平排列（單一行）
-            idx = i - 1
-            x0 = sp + idx * (uw + sp)
-            y0 = sp
-        else:
-            # 垂直排列（單一列）
-            idx = i - 1
-            x0 = sp
-            y0 = sp + idx * (uh + sp)
-        return pd.Series([x0, x0+uw, y0, y0+uh])
-
-    # 有核心區域的正常處理
     if arrangement_type == ArrangementType.BOTH_TOP_AND_BOTTOM:
         if i <= left_count:
             # 底部單位（可能會比頂部多一個單位）
