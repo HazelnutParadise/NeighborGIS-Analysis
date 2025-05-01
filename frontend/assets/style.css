@@ -779,19 +779,32 @@ button:disabled {
 
 /* 空記錄提示樣式 */
 .empty-record-notice {
-  padding: 15px;
-  color: #888;
+  padding: 20px 15px;
+  color: #6c757d;
   text-align: center;
-  font-style: italic;
-  border-radius: 5px;
-  background-color: #f8f8f8;
-  margin: 10px 0;
+  font-size: 0.95rem;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  margin: 15px 0;
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 0 0 1px rgba(0, 150, 255, 0.1);
+  border: 1px dashed rgba(0, 150, 255, 0.2);
 }
 
-.empty-record-notice i {
-  margin-right: 5px;
-  color: #0096ff;
+.empty-record-notice:hover {
+  background-color: #eef5ff;
+  color: var(--interactive-color-2);
+}
+
+.empty-record-notice svg {
+  transition: transform 0.3s ease;
+}
+
+.empty-record-notice:hover svg {
+  transform: scale(1.1);
 }
 
 .record-actions {
