@@ -726,3 +726,308 @@ button:disabled {
     padding: 4px 12px;
   }
 }
+
+/* 記錄列表容器樣式 */
+.record-list-container {
+  /* max-height: 250px; */
+  height: 750px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.record-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.record-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.record-item:last-child {
+  border-bottom: none;
+}
+
+.record-checkbox {
+  margin-right: 10px;
+}
+
+.record-address {
+  flex-grow: 1;
+  margin-right: 10px;
+}
+
+.record-delete {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 3px 6px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.record-delete:hover {
+  background-color: #ff3333;
+}
+
+/* 空記錄提示樣式 */
+.empty-record-notice {
+  padding: 15px;
+  color: #888;
+  text-align: center;
+  font-style: italic;
+  border-radius: 5px;
+  background-color: #f8f8f8;
+  margin: 10px 0;
+  transition: all 0.3s ease;
+}
+
+.empty-record-notice i {
+  margin-right: 5px;
+  color: #0096ff;
+}
+
+.record-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.bottom-actions {
+  margin-top: 10px;
+  justify-content: center;
+}
+
+.small-btn {
+  padding: 5px 10px;
+  background-color: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.small-btn:hover {
+  background-color: #e0e0e0;
+}
+
+.action-btn {
+  padding: 8px 16px;
+  background-color: #4c8bf5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.action-btn:hover {
+  background-color: #3b7ae4;
+}
+
+.action-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* 清空紀錄按鈕樣式 */
+#clearAllBtn {
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+#clearAllBtn:hover {
+  background-color: #c0392b;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+/* 比較表格樣式 */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+.comparison-table th,
+.comparison-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.comparison-table th {
+  background-color: #f2f8ff;
+  font-weight: bold;
+}
+
+.comparison-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+/* 比較模態框 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.modal.show {
+  opacity: 1;
+}
+
+.compare-modal {
+  background-color: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  animation: modalAppear 0.3s ease;
+}
+
+@keyframes modalAppear {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.compare-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.compare-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0;
+  height: auto;
+  width: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s;
+}
+
+.close-btn:hover {
+  color: #333;
+  background: none;
+}
+
+.compare-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+}
+
+.compare-table th,
+.compare-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.compare-table th {
+  background-color: #f9fafb;
+  font-weight: 600;
+  color: #444;
+}
+
+.compare-table tr:last-child td {
+  border-bottom: none;
+}
+
+.compare-table tr:hover td {
+  background-color: #f5f8ff;
+}
+
+/* 記錄項目樣式優化 */
+.record-info {
+  flex: 1;
+  cursor: pointer;
+  padding: 0 8px;
+  transition: background-color 0.2s;
+}
+
+.record-info:hover {
+  background-color: #f5f8ff;
+}
+
+.record-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #333;
+}
+
+.record-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.record-details span {
+  background-color: #f0f4f8;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.delete-btn {
+  background: none;
+  color: #ff5252;
+  border: none;
+  font-size: 1.2rem;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.delete-btn:hover {
+  background-color: #ffebee;
+}

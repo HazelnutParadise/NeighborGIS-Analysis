@@ -81,7 +81,75 @@
                 hideProgress()
             }, 1000); // 延遲1秒後隱藏進度條
         });
+
+        // 變數宣告
+        const addressPointList = [{
+            address: '無紀錄',
+            lat: 0,
+            lng: 0,
+            zoning: '無資料',
+            far: '無資料',
+            bcr: '無資料',
+            is_public_land: '無資料'
+        }, {
+            address: '無紀錄',
+            lat: 0,
+            lng: 0,
+            zoning: '無資料',
+            far: '無資料',
+            bcr: '無資料',
+            is_public_land: '無資料'
+        }, {
+            address: '無紀錄',
+            lat: 0,
+            lng: 0,
+            zoning: '無資料',
+            far: '無資料',
+            bcr: '無資料',
+            is_public_land: '無資料'
+        }, {
+            address: '無紀錄',
+            lat: 0,
+            lng: 0,
+            zoning: '無資料',
+            far: '無資料',
+            bcr: '無資料',
+            is_public_land: '無資料'
+        }, {
+            address: '無紀錄',
+            lat: 0,
+            lng: 0,
+            zoning: '無資料',
+            far: '無資料',
+            bcr: '無資料',
+            is_public_land: '無資料'
+        }, {
+            address: '無紀錄',
+            lat: 0,
+            lng: 0,
+            zoning: '無資料',
+            far: '無資料',
+            bcr: '無資料',
+            is_public_land: '無資料'
+        }, {
+            address: '無紀錄',
+            lat: 0,
+            lng: 0,
+            zoning: '無資料',
+            far: '無資料',
+            bcr: '無資料',
+            is_public_land: '無資料'
+        }, {
+            address: '無紀錄',
+            lat: 0,
+            lng: 0,
+            zoning: '無資料',
+            far: '無資料',
+            bcr: '無資料',
+            is_public_land: '無資料'
+        }]
     </script>
+
 
     <main id="app">
         <div class="left-right-btn" id="prev-btn"></div>
@@ -162,15 +230,6 @@
                                         // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
                                         `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
 
-                                    // 更新土地資訊區塊
-                                    document.getElementById('zoning-details').innerHTML = `
-                                        <h3>土地使用分區</h3>
-                                        <p>使用分區：${zoning.zone ? zoning.zone : '無資料'}</p>
-                                        <p>容積率：${zoning.far ? `${zoning.far}%` : '無資料'}</p>
-                                        <p>建蔽率：${zoning.bcr ? `${zoning.bcr}%` : '無資料'}</p>
-                                        <p>是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}</p>
-                                    `;
-
                                     // 標記地圖
                                     if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
                                         if (marker) map.removeLayer(marker);
@@ -183,6 +242,15 @@
                                             marker = null;
                                         }
                                     }
+                                    addressPointList.push({
+                                        address: data.address,
+                                        lat: lat,
+                                        lng: lng,
+                                        zoning: zoning.zone ? zoning.zone : '無資料',
+                                        far: zoning.far ? `${zoning.far}%` : '無資料',
+                                        bcr: zoning.bcr ? `${zoning.bcr}%` : '無資料',
+                                        is_public_land: zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'
+                                    });
                                 }
                                 catch (error) {
                                     RESULT_DIV.innerHTML = `查詢失敗，請稍後再試`;
@@ -197,13 +265,22 @@
                         </script>
                     </div>
 
-                    <div class="container">
-                        <h2>土地資訊</h2>
+                    <div class="container" style="min-width: 0;max-width: 300px;">
+                        <h2>地點查詢紀錄</h2>
                         <p class="description">瞭解您關心的地點周邊土地使用分區及環境資訊</p>
-                        <div id="zoning-details">
-                            <p>請先在左側輸入地址進行查詢，查詢結果將顯示於此處。</p>
-                            <div class="notice">土地使用分區資訊將自動顯示在這個區塊</div>
+                        <div class="record-actions">
+                            <button id="clearAllBtn" class="small-btn">清除全部</button>
                         </div>
+                        <div class="record-list-container">
+                            <ul id="addressRecordList" class="record-list">
+                                <!-- 查詢記錄將動態添加在這裡 -->
+                                無紀錄
+                            </ul>
+                        </div>
+                        <div class="record-actions bottom-actions">
+                            <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
+                        </div>
+                        <script src="assets/record_list.js"></script>
                     </div>
 
                     <div class="container">
