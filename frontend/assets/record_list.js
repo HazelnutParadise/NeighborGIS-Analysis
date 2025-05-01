@@ -4,7 +4,7 @@
  */
 
 // DOM元素
-const records = () => {
+const AddressPointRecords = () => {
     /**
      * 更新記錄列表顯示
      */
@@ -224,7 +224,7 @@ const records = () => {
             // 初始化記錄列表
             updateRecordList();
         },
-        addAddressPoint: (address) => {
+        add: (address) => {
             addressPointList.push(address);
             updateRecordList();
         },

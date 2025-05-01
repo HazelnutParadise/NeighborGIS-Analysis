@@ -173,7 +173,7 @@
                                             marker = null;
                                         }
                                     }
-                                    records().addAddressPoint({
+                                    AddressPointRecords().add({
                                         address: data.address,
                                         lat: lat,
                                         lng: lng,
@@ -201,7 +201,8 @@
                         <p class="description">以下是您查詢過的地點</p>
                         <p class="notice">選擇多個地點後可進行比較</p>
                         <div class="record-actions">
-                            <button id="clearAllBtn" class="small-btn" onclick="records().clearAll()">清除全部</button>
+                            <button id="clearAllBtn" class="small-btn"
+                                onclick="AddressPointRecords().clearAll()">清除全部</button>
                         </div>
                         <div class="record-list-container">
                             <ul id="addressRecordList" class="record-list">
@@ -212,7 +213,7 @@
                             <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
                         </div>
                         <script src="assets/record_list.js"></script>
-                        <script>records().init()</script>
+                        <script>AddressPointRecords().init()</script>
                     </div>
 
                     <div class="container">
