@@ -6,7 +6,6 @@
  */
 document.addEventListener('DOMContentLoaded', function() {
     // 獲取所有容器與按鈕元素
-    const app = document.getElementById('app');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
     
