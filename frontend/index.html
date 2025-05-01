@@ -31,41 +31,10 @@
                 <button class="tab-btn" data-page="page3">關於我們</button>
             </div>
         </div>
+        <script src="assets/progress_bar.js"></script>
         <script>
-            const PROGRESS_BAR = document.getElementById('progressBar');
             const USER_COORDINATES = document.getElementById('user-coordinates');
-
-            // 進度條控制函數
-            function showProgress() {
-                PROGRESS_BAR.classList.add('loading');
-            }
-            showProgress();
-
-            function hideProgress() {
-                PROGRESS_BAR.classList.remove('loading');
-            }
-
-            // 獲取用戶位置
-            function getUserLocation() {
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(
-                        (position) => {
-                            const lat = position.coords.latitude.toFixed(6);
-                            const lng = position.coords.longitude.toFixed(6);
-                            USER_COORDINATES.innerHTML = `目前座標: ${lat}, ${lng}`;
-                        },
-                        (error) => {
-                            console.error("無法取得位置", error);
-                            USER_COORDINATES.innerHTML = "無法取得位置";
-                        }
-                    );
-                } else {
-                    USER_COORDINATES.innerHTML = "瀏覽器不支援定位服務";
-                }
-            }
-
-            // 頁面載入後獲取位置
-            document.addEventListener('DOMContentLoaded', getUserLocation);
+            ProgressBar().show();
         </script>
     </header>
 
@@ -76,16 +45,40 @@
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                hideProgress()
-            }, 1000); // 延遲1秒後隱藏進度條
-        });
-
         // 變數宣告
         const addressPointList = []
         // 已選擇的地址記錄（用於比較功能）
         let selectedAddressesIdx = [];
+        const userLoc = { lat: undefined, lng: undefined };
+
+        // 獲取用戶位置
+        function getUserLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lng = position.coords.longitude.toFixed(6);
+                        USER_COORDINATES.innerHTML = `目前座標: ${lat}, ${lng}`;
+                        userLoc.lat = lat;
+                        userLoc.lng = lng;
+                        ProgressBar().hide()
+                    },
+                    (error) => {
+                        console.error("無法取得位置", error);
+                        USER_COORDINATES.innerHTML = "無法取得位置";
+                        ProgressBar().hide()
+                    }
+                );
+            } else {
+                USER_COORDINATES.innerHTML = "瀏覽器不支援定位服務";
+                ProgressBar().hide()
+            }
+        }
+
+        // 頁面載入後獲取位置
+        document.addEventListener('DOMContentLoaded', async () => {
+            getUserLocation()
+        });
     </script>
 
 
@@ -135,14 +128,14 @@
                                 SEARCH_BTN.innerText = '查詢中...';
                                 RESULT_DIV.innerHTML = SPINNER_HTML;
                                 // 顯示進度條
-                                showProgress();
+                                ProgressBar().show();
 
                                 const address = document.getElementById('address').value;
                                 if (!address) {
                                     SEARCH_BTN.disabled = false;
                                     SEARCH_BTN.innerText = original_btn_text;
                                     RESULT_DIV.innerText = original_result_text;
-                                    hideProgress();
+                                    ProgressBar().hide();
                                     return alert('請輸入地址');
                                 }
                                 try {
@@ -150,7 +143,7 @@
                                     const resJson = await res.json();
                                     if (!res.ok) {
                                         RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
-                                        hideProgress();
+                                        ProgressBar().hide();
                                         return alert(`查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '');
                                     }
                                     const data = resJson.data;
@@ -197,7 +190,7 @@
                                     SEARCH_BTN.innerText = original_btn_text;
                                     SEARCH_BTN.disabled = false;
                                     // 隱藏進度條
-                                    hideProgress();
+                                    ProgressBar().hide();
                                 }
                             });
                         </script>
@@ -299,7 +292,7 @@
                                 FLOOR_GENERATE_BTN.innerText = '生成中...';
                                 FLOOR_GENERATE_BTN.disabled = true;
                                 FLOOR_PLAN.innerHTML = SPINNER_HTML;
-                                showProgress();
+                                ProgressBar().show();
                                 const reqData = {
                                     building_area_m2: document.getElementById('building_area_m2').value,
                                     total_units: document.getElementById('total_units').value,
@@ -350,7 +343,7 @@
                                     FLOOR_GENERATE_BTN.innerText = '生成';
                                     FLOOR_GENERATE_BTN.disabled = false;
                                     // 隱藏進度條
-                                    hideProgress();
+                                    ProgressBar().hide();
                                 }
                             }
 
