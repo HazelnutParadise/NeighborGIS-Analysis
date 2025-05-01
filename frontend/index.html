@@ -85,7 +85,7 @@
         // 變數宣告
         const addressPointList = []
         // 已選擇的地址記錄（用於比較功能）
-        let selectedAddresses = [];
+        let selectedAddressesIdx = [];
     </script>
 
 
@@ -180,7 +180,7 @@
                                             marker = null;
                                         }
                                     }
-                                    addressPointList.push({
+                                    records().addAddressPoint({
                                         address: data.address,
                                         lat: lat,
                                         lng: lng,
@@ -203,12 +203,12 @@
                         </script>
                     </div>
 
-                    <div class="container" style="min-width: 0;max-width: 300px;">
+                    <div class="container" style="min-width:  300px;max-width: 300px;">
                         <h2>地點查詢紀錄</h2>
                         <p class="description">以下是您查詢過的地點</p>
                         <p class="notice">選擇多個地點後可進行比較</p>
                         <div class="record-actions">
-                            <button id="clearAllBtn" class="small-btn">清除全部</button>
+                            <button id="clearAllBtn" class="small-btn" onclick="records().clearAll()">清除全部</button>
                         </div>
                         <div class="record-list-container">
                             <ul id="addressRecordList" class="record-list">
@@ -219,6 +219,7 @@
                             <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
                         </div>
                         <script src="assets/record_list.js"></script>
+                        <script>records().init()</script>
                     </div>
 
                     <div class="container">
