@@ -730,7 +730,7 @@ button:disabled {
 /* 記錄列表容器樣式 */
 .record-list-container {
   /* max-height: 250px; */
-  height: 750px;
+  height: 700px;
   overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 5px;
