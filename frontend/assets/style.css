@@ -730,7 +730,7 @@ button:disabled {
 /* 記錄列表容器樣式 */
 .record-list-container {
   /* max-height: 250px; */
-  height: 700px;
+  height: 710px;
   overflow-y: auto;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -822,7 +822,6 @@ button:disabled {
   padding: 5px 10px;
   background-color: #f0f0f0;
   border: 1px solid #ddd;
-  border-radius: 3px;
   font-size: 0.8rem;
   cursor: pointer;
 }
@@ -836,7 +835,6 @@ button:disabled {
   background-color: #4c8bf5;
   color: white;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
 }
@@ -846,7 +844,7 @@ button:disabled {
 }
 
 .action-btn:disabled {
-  background-color: #cccccc;
+  background-color: var(--disabled-color);
   cursor: not-allowed;
 }
 
@@ -854,17 +852,10 @@ button:disabled {
 #clearAllBtn {
   background-color: #e74c3c;
   color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 5px 12px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  transition: all 0.2s ease;
 }
 
 #clearAllBtn:hover {
   background-color: #c0392b;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 /* 比較表格樣式 */
