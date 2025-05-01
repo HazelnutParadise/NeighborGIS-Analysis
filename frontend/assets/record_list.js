@@ -4,12 +4,10 @@
  */
 
 // DOM元素
-const addressRecordList = document.getElementById('addressRecordList');
-const clearAllBtn = document.getElementById('clearAllBtn');
+const clearAllRecordsBtn = document.getElementById('clearAllBtn');
 const compareBtn = document.getElementById('compareBtn');
 
-// 已選擇的地址記錄（用於比較功能）
-let selectedAddresses = [];
+
 
 /**
  * 更新記錄列表顯示
@@ -224,7 +222,7 @@ function closeCompareModal() {
 }
 
 // 綁定清除全部按鈕事件
-clearAllBtn.addEventListener('click', () => {
+clearAllRecordsBtn.addEventListener('click', () => {
     if (addressPointList.length === 0) return;
     
     if (confirm('確定要清除全部記錄嗎？')) {
