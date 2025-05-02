@@ -162,7 +162,7 @@ const AddressPointRecords = () => {
 
         // 創建比較表格
         let compareContent = `
-            <div class="compare-modal" style="z-index: 9999999;">
+            <div class="compare-modal modal show">
                 <div class="compare-header">
                     <h3>地址比較</h3>
                     <button class="close-btn" onclick="AddressPointRecords().closeCompareModal()">×</button>
