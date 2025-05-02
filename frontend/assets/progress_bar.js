@@ -4,10 +4,11 @@ const ProgressBar=()=> {
     const PROGRESS_BAR = document.querySelector('.progress-bar');
     // 進度條控制函數
     function show() {
+        if (PROGRESS_BAR.classList.contains('loading')) return;
         PROGRESS_BAR.classList.add('loading');
         timeCounter = setInterval(() => {
-            timeCount += 10; // 以 1 毫秒為單位計時
-        }, 10);
+            timeCount += 1; // 以 1 毫秒為單位計時
+        }, 1);
     }
     function hide() {
         clearInterval(timeCounter);

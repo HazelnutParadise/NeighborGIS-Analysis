@@ -34,7 +34,8 @@
         <script src="assets/progress_bar.js"></script>
         <script>
             const USER_COORDINATES = document.getElementById('user-coordinates');
-            ProgressBar().show();
+            const progress_bar = ProgressBar();
+            progress_bar.show();
         </script>
     </header>
 
@@ -61,17 +62,17 @@
                         USER_COORDINATES.innerHTML = `目前座標: ${lat}, ${lng}`;
                         userLoc.lat = lat;
                         userLoc.lng = lng;
-                        ProgressBar().hide()
+                        progress_bar.hide()
                     },
                     (error) => {
                         console.error("無法取得位置", error);
                         USER_COORDINATES.innerHTML = "無法取得位置";
-                        ProgressBar().hide()
+                        progress_bar.hide()
                     }
                 );
             } else {
                 USER_COORDINATES.innerHTML = "瀏覽器不支援定位服務";
-                ProgressBar().hide()
+                progress_bar.hide()
             }
         }
 
@@ -128,14 +129,14 @@
                                 SEARCH_BTN.innerText = '查詢中...';
                                 RESULT_DIV.innerHTML = SPINNER_HTML;
                                 // 顯示進度條
-                                ProgressBar().show();
+                                progress_bar.show();
 
                                 const address = document.getElementById('address').value;
                                 if (!address) {
                                     SEARCH_BTN.disabled = false;
                                     SEARCH_BTN.innerText = original_btn_text;
                                     RESULT_DIV.innerText = original_result_text;
-                                    ProgressBar().hide();
+                                    progress_bar.hide();
                                     return alert('請輸入地址');
                                 }
                                 try {
@@ -143,7 +144,7 @@
                                     const resJson = await res.json();
                                     if (!res.ok) {
                                         RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
-                                        ProgressBar().hide();
+                                        progress_bar.hide();
                                         return alert(`查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '');
                                     }
                                     const data = resJson.data;
@@ -190,7 +191,7 @@
                                     SEARCH_BTN.innerText = original_btn_text;
                                     SEARCH_BTN.disabled = false;
                                     // 隱藏進度條
-                                    ProgressBar().hide();
+                                    progress_bar.hide();
                                 }
                             });
                         </script>
@@ -293,7 +294,7 @@
                                 FLOOR_GENERATE_BTN.innerText = '生成中...';
                                 FLOOR_GENERATE_BTN.disabled = true;
                                 FLOOR_PLAN.innerHTML = SPINNER_HTML;
-                                ProgressBar().show();
+                                progress_bar.show();
                                 const reqData = {
                                     building_area_m2: document.getElementById('building_area_m2').value,
                                     total_units: document.getElementById('total_units').value,
@@ -344,7 +345,7 @@
                                     FLOOR_GENERATE_BTN.innerText = '生成';
                                     FLOOR_GENERATE_BTN.disabled = false;
                                     // 隱藏進度條
-                                    ProgressBar().hide();
+                                    progress_bar.hide();
                                 }
                             }
 

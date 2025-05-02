@@ -158,7 +158,7 @@ const AddressPointRecords = () => {
             <div class="compare-modal">
                 <div class="compare-header">
                     <h3>地址比較</h3>
-                    <button class="close-btn" onclick="records().closeCompareModal()">×</button>
+                    <button class="close-btn" onclick="AddressPointRecords().closeCompareModal()">×</button>
                 </div>
                 <table class="compare-table">
                     <thead>
