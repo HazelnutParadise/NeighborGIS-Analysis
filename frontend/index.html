@@ -202,6 +202,10 @@
                         <p class="description">以下是您查詢過的地點</p>
                         <p class="notice">選擇多個地點後可進行比較</p>
                         <div class="record-actions">
+                            <button id="selectAllBtn" class="small-btn"
+                                onclick="AddressPointRecords().selectAll()">全選</button>
+                            <button id="deselectAllBtn" class="small-btn"
+                                onclick="AddressPointRecords().deselectAll()">全不選</button>
                             <button id="clearAllBtn" class="small-btn"
                                 onclick="AddressPointRecords().clearAll()">清除全部</button>
                         </div>

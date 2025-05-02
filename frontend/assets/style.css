@@ -810,6 +810,7 @@ button:disabled {
 .record-actions {
   display: flex;
   justify-content: flex-end;
+  gap: 10px;
   margin-top: 5px;
 }
 
@@ -819,15 +820,14 @@ button:disabled {
 }
 
 .small-btn {
-  padding: 5px 10px;
-  background-color: #f0f0f0;
-  border: 1px solid #ddd;
+  padding: 0 12px;
+  background-color: var(--interactive-color);
   font-size: 0.8rem;
   cursor: pointer;
 }
 
 .small-btn:hover {
-  background-color: #e0e0e0;
+  background-color: var(--interactive-color-hover);
 }
 
 .action-btn {

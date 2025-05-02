@@ -37,6 +37,11 @@ const AddressPointRecords = () => {
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.className = 'record-checkbox';
+
+            // 檢查該記錄是否已經在選擇列表中，如果是，則自動勾選
+            let isSelected = selectedAddressesIdx.includes(index);
+            checkbox.checked = isSelected;
+
             checkbox.onchange = function () {
                 handleRecordSelection(index, this.checked);
             };
@@ -84,16 +89,14 @@ const AddressPointRecords = () => {
     function handleRecordSelection(index, isSelected) {
         if (isSelected) {
             // 添加到選擇列表
-            selectedAddressesIdx.push(addressPointList[index]);
+            if (!selectedAddressesIdx.includes(index)) {
+                selectedAddressesIdx.push(index);
+            }
         } else {
-            // 從選擇列表中移除
-            const selectedIndex = selectedAddressesIdx.findIndex(addr =>
-                addr.address === addressPointList[index].address &&
-                addr.lat === addressPointList[index].lat &&
-                addr.lng === addressPointList[index].lng
-            );
-            if (selectedIndex !== -1) {
-                selectedAddressesIdx.splice(selectedIndex, 1);
+            // 從選擇列表中移除索引
+            const indexPosition = selectedAddressesIdx.indexOf(index);
+            if (indexPosition !== -1) {
+                selectedAddressesIdx.splice(indexPosition, 1);
             }
         }
 
@@ -114,15 +117,16 @@ const AddressPointRecords = () => {
      */
     function deleteRecord(index) {
         // 如果該記錄已被選中，也從選擇列表中移除
-        const point = addressPointList[index];
-        const selectedIndex = selectedAddressesIdx.findIndex(addr =>
-            addr.address === point.address &&
-            addr.lat === point.lat &&
-            addr.lng === point.lng
-        );
+        const indexPosition = selectedAddressesIdx.indexOf(index);
+        if (indexPosition !== -1) {
+            selectedAddressesIdx.splice(indexPosition, 1);
+        }
 
-        if (selectedIndex !== -1) {
-            selectedAddressesIdx.splice(selectedIndex, 1);
+        // 更新選擇列表中其他記錄的索引（刪除一項後，後面的記錄索引會減1）
+        for (let i = 0; i < selectedAddressesIdx.length; i++) {
+            if (selectedAddressesIdx[i] > index) {
+                selectedAddressesIdx[i]--;
+            }
         }
 
         // 從記錄列表中移除
@@ -153,9 +157,12 @@ const AddressPointRecords = () => {
             return;
         }
 
+        // 獲取選中地址的詳細信息
+        const selectedAddresses = selectedAddressesIdx.map(idx => addressPointList[idx]);
+
         // 創建比較表格
         let compareContent = `
-            <div class="compare-modal">
+            <div class="compare-modal" style="z-index: 9999999;">
                 <div class="compare-header">
                     <h3>地址比較</h3>
                     <button class="close-btn" onclick="AddressPointRecords().closeCompareModal()">×</button>
@@ -164,25 +171,25 @@ const AddressPointRecords = () => {
                     <thead>
                         <tr>
                             <th>比較項目</th>
-                            ${selectedAddressesIdx.map(addr => `<th>${addr.address}</th>`).join('')}
+                            ${selectedAddresses.map(addr => `<th>${addr.address}</th>`).join('')}
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>使用分區</td>
-                            ${selectedAddressesIdx.map(addr => `<td>${addr.zoning}</td>`).join('')}
+                            ${selectedAddresses.map(addr => `<td>${addr.zoning}</td>`).join('')}
                         </tr>
                         <tr>
                             <td>容積率</td>
-                            ${selectedAddressesIdx.map(addr => `<td>${addr.far}</td>`).join('')}
+                            ${selectedAddresses.map(addr => `<td>${addr.far}</td>`).join('')}
                         </tr>
                         <tr>
                             <td>建蔽率</td>
-                            ${selectedAddressesIdx.map(addr => `<td>${addr.bcr}</td>`).join('')}
+                            ${selectedAddresses.map(addr => `<td>${addr.bcr}</td>`).join('')}
                         </tr>
                         <tr>
                             <td>公有地</td>
-                            ${selectedAddressesIdx.map(addr => `<td>${addr.is_public_land}</td>`).join('')}
+                            ${selectedAddresses.map(addr => `<td>${addr.is_public_land}</td>`).join('')}
                         </tr>
                     </tbody>
                 </table>
@@ -237,13 +244,19 @@ const AddressPointRecords = () => {
                 updateRecordList();
             }
         },
+        selectAll: () => {
+            // 全選
+            selectedAddressesIdx = addressPointList.map((_, index) => index);
+            updateRecordList();
+        },
+        deselectAll: () => {
+            // 全不選
+            selectedAddressesIdx.length = 0;
+            updateRecordList();
+        },
         getSelected: () => {
             // 返回選中的地址列表，包含所有地址的詳細信息
-            let selectedDetails = selectedAddressesIdx.map(idx => {
-                const point = addressPointList[idx];
-                return point ? { ...point } : undefined;
-            });
-            return selectedDetails.filter(point => point !== undefined);
+            return selectedAddressesIdx.map(idx => addressPointList[idx]);
         },
         closeCompareModal,
     }
