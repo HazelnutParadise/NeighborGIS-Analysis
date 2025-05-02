@@ -889,37 +889,51 @@ button:disabled {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999999999;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  transform: translateY(0);
+  animation: modalSlideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .modal.show {
   opacity: 1;
+  visibility: visible;
 }
 
 .compare-modal {
   display: block;
   background-color: white;
-  border-radius: 12px;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  animation: modalAppear 0.3s ease;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 150, 255, 0.05);
 }
 
 @keyframes modalAppear {
   from {
-    transform: scale(0.8);
+    transform: scale(0.9);
     opacity: 0;
   }
   to {
     transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
     opacity: 1;
   }
 }
