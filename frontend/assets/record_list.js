@@ -75,7 +75,7 @@ const AddressPointRecords = () => {
 
             // 點擊整個區域時在地圖上顯示該點
             infoDiv.onclick = function () {
-                showPointOnMap(point);
+                showPointOnMapAndResultBox(point);
             };
 
             addressRecordList.appendChild(listItem);
@@ -139,13 +139,22 @@ const AddressPointRecords = () => {
     /**
      * 在地圖上顯示選中的點
      */
-    function showPointOnMap(point) {
+    function showPointOnMapAndResultBox(point) {
         if (point.lat && point.lng && !isNaN(point.lat) && !isNaN(point.lng)) {
             if (marker) map.removeLayer(marker);
             marker = L.marker([point.lat, point.lng]).addTo(map);
             marker.bindPopup(point.address).openPopup();
             map.setView([point.lat, point.lng], 16);
         }
+        const RESULT_DIV = document.getElementById('result');
+        RESULT_DIV.innerText =
+            `地址：${point.address}\n` +
+            `經度：${point.lng}\n` +
+            `緯度：${point.lat}\n` +
+            `使用分區：${point.zoning}\n` +
+            `容積率：${point.far}\n` +
+            `建蔽率：${point.bcr}\n` +
+            `是否為公有地：${point.is_public_land}`;
     }
 
     /**
@@ -162,7 +171,7 @@ const AddressPointRecords = () => {
 
         // 創建比較表格
         let compareContent = `
-            <div class="compare-modal modal show">
+            < div class="compare-modal modal show" >
                 <div class="compare-header">
                     <h3>地址比較</h3>
                     <button class="close-btn" onclick="AddressPointRecords().closeCompareModal()">×</button>
@@ -193,8 +202,8 @@ const AddressPointRecords = () => {
                         </tr>
                     </tbody>
                 </table>
-            </div>
-        `;
+            </ >
+    `;
 
         // 創建模態框
         const modal = document.createElement('div');
