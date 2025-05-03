@@ -4,7 +4,7 @@ import asyncio
 from dataclasses import dataclass, asdict
 
 
-from structs.adress_point import Coordinate, AddressPoint
+from structs.adress_point import Coordinates, AddressPoint
 from services import geocoding, intersect, floor_generate
 
 
@@ -22,24 +22,24 @@ def set_api_routes(app: FastAPI) -> None:
 
     @api_router.get("/intersect/{x}")
     async def api_intersect(x: str, request: Request):
-        use_coordinate = request.query_params.get("use_coordinate")
+        use_coordinates = request.query_params.get("use_coordinates")
         address: str = None
-        coordinates: Coordinate = None
-        if str(use_coordinate).lower() != "true":
-            coordinates: Coordinate = await asyncio.to_thread(geocoding.arcgis_geocode, x)
+        coordinates: Coordinates = None
+        if str(use_coordinates).lower() != "true":
+            coordinates: Coordinates = await asyncio.to_thread(geocoding.arcgis_geocode, x)
             address = x
         else:
             lat = float(x.split(",")[0])
             lng = float(x.split(",")[1])
-            coordinates = Coordinate(
+            coordinates = Coordinates(
                 lat=lat,
                 lng=lng
             )
-            address = f'({lat}, {lng})'
+            address = f'目前位置({lat}, {lng})'
             print(address)
         address_point = AddressPoint(
             address=address,
-            coordinate=coordinates,
+            coordinates=coordinates,
         )
         zoning = await intersect.intersect_with_zones(address_point)
         address_point.zoning = zoning

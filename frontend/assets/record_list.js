@@ -77,7 +77,7 @@ const AddressPointRecords = () => {
             infoDiv.onclick = function () {
                 const data = {
                     address: point.address,
-                    coordinate: {
+                    coordinates: {
                         lat: point.lat,
                         lng: point.lng,
                     },

@@ -129,12 +129,12 @@
                             });
 
                             function showAddressPointResult(data) {
-                                const coordinate = data.coordinate;
-                                const lat = Number(coordinate.lat);
-                                const lng = Number(coordinate.lng);
+                                const coordinates = data.coordinates;
+                                const lat = Number(coordinates.lat);
+                                const lng = Number(coordinates.lng);
                                 const zoning = data.zoning;
                                 RESULT_DIV.innerText =
-                                    `地址：${data.address}\n` +
+                                    `${data.address}\n` +
                                     `經度：${lng}\n` +
                                     `緯度：${lat}\n` +
                                     `使用分區：${zoning.zone && zoning.zone !== '無資料' ? zoning.zone : '無資料'}\n` +
@@ -157,29 +157,27 @@
                                 }
                             }
 
-                            async function fetchAddressPointInfo(coordinates) {
+                            async function fetchAddressPointInfo(userCoordinates) {
                                 const original_btn_text = SEARCH_BTN.innerText;
                                 const original_result_text = RESULT_DIV.innerText;
                                 SEARCH_BTN.disabled = true;
                                 SEARCH_BTN.innerText = '查詢中...';
                                 RESULT_DIV.innerHTML = SPINNER_HTML;
                                 const address = document.getElementById('address').value;
-                                if (!coordinates) {
+                                let url;
+                                if (!userCoordinates) {
                                     if (!address) {
                                         SEARCH_BTN.disabled = false;
                                         SEARCH_BTN.innerText = original_btn_text;
                                         RESULT_DIV.innerText = original_result_text;
                                         return alert('請輸入地址');
                                     }
+                                    url = `/api/intersect/${encodeURIComponent(address)}`;
+                                } else {
+                                    url = `/api/intersect/${encodeURIComponent(userCoordinates.lat)},${encodeURIComponent(userCoordinates.lng)}?use_coordinates=true`;
                                 }
                                 progress_bar.show();
-                                let url;
                                 try {
-                                    if (!coordinates) {
-                                        url = `/api/intersect/${encodeURIComponent(address)}`;
-                                    } else {
-                                        url = `/api/intersect/${encodeURIComponent(coordinates.lat)},${encodeURIComponent(coordinates.lng)}?use_coordinate=true`;
-                                    }
                                     const res = await fetch(url)
                                     const resJson = await res.json();
                                     if (!res.ok) {
@@ -188,13 +186,13 @@
                                         return alert(`查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '');
                                     }
                                     const data = resJson.data;
-                                    const coordinate = data.coordinate;
+                                    const coordinates = data.coordinates;
                                     const zoning = data.zoning;
                                     showAddressPointResult(data);
                                     AddressPointRecords().add({
                                         address: data.address,
-                                        lat: Number(coordinate.lat),
-                                        lng: Number(coordinate.lng),
+                                        lat: Number(coordinates.lat),
+                                        lng: Number(coordinates.lng),
                                         zoning: zoning.zone ? zoning.zone : '無資料',
                                         far: zoning.far ? `${zoning.far}` : '無資料',
                                         bcr: zoning.bcr ? `${zoning.bcr}` : '無資料',

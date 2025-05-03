@@ -4,7 +4,7 @@ from structs.zoing import Zoning
 
 
 @dataclass
-class Coordinate:
+class Coordinates:
     """
     Class representing coordinates with latitude and longitude.
     """
@@ -18,5 +18,5 @@ class AddressPoint:
     Class representing an address point with latitude and longitude.
     """
     address: str
-    coordinate: Coordinate
+    coordinates: Coordinates
     zoning: Optional[Zoning] = None

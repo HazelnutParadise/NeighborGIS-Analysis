@@ -92,11 +92,11 @@ def _make_geoDataframe(address_point: AddressPoint) -> gpd.GeoDataFrame:
     return gpd.GeoDataFrame(
         {
             "address": [address_point.address],
-            "latitude": [address_point.coordinate.lat],
-            "longitude": [address_point.coordinate.lng],
+            "latitude": [address_point.coordinates.lat],
+            "longitude": [address_point.coordinates.lng],
         },
         geometry=[
-            Point(address_point.coordinate.lng, address_point.coordinate.lat)
+            Point(address_point.coordinates.lng, address_point.coordinates.lat)
         ],
         crs="EPSG:4326",
     )
