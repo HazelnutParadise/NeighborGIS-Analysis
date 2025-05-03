@@ -23,7 +23,7 @@ class CacheEntry:
 
 
 class SmartCacheManager:
-    def __init__(self, min_lifetime_seconds: int = 0, top_k: int = 3):
+    def __init__(self, min_lifetime_seconds: int, top_k: int):
         self.min_lifetime_seconds = min_lifetime_seconds
         self.top_k = top_k
         self.cache: dict[str, CacheEntry] = {}
@@ -95,7 +95,7 @@ class SmartCacheManager:
 
 
 # 全域統一一個 SmartCacheManager
-_default_manager = SmartCacheManager(min_lifetime_seconds=300, top_k=5)
+_default_manager = SmartCacheManager(min_lifetime_seconds=300, top_k=10)
 
 
 def smart_cache(key: str = "", expire: int = None, verbose: bool = False):

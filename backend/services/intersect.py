@@ -16,14 +16,18 @@ class LandUseData(Enum):
 
 
 async def intersect_with_zones(address_point: AddressPoint) -> Zoning:
-    (_, land_simp),  poly_land = await asyncio.gather(
-        _load_landuse_data(LandUseData.TAIPEI),
-        _load_public_land()
-    )
-    gdf_pts = _make_geoDataframe(address_point)
-    pts_with_zone = _space_join(gdf_pts, land_simp)
+    for landuse_data in LandUseData:
+        print(f"Loading land use data: {landuse_data.name}")
+        (_, land_simp),  poly_land = await asyncio.gather(
+            _load_landuse_data(landuse_data),
+            _load_public_land()
+        )
+        gdf_pts = _make_geoDataframe(address_point)
+        pts_with_zone = _space_join(gdf_pts, land_simp)
 
-    pts_pub = _mark_public_land(pts_with_zone, poly_land)
+        pts_pub = _mark_public_land(pts_with_zone, poly_land)
+        if safe_extract(pts_pub['zone'][0]) is not None:
+            break
     return Zoning(
         zone=safe_extract(pts_pub['zone'][0]),
         far=safe_extract(pts_pub['FAR'][0]),
