@@ -6,3 +6,5 @@ matplotlib
 folium
 fastapi
 uvicorn
+langchain-ollama
+pydotenv
