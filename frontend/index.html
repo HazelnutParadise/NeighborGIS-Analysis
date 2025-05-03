@@ -57,13 +57,14 @@
         function getUserLocation() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    (position) => {
+                    async (position) => {
                         const lat = position.coords.latitude.toFixed(6);
                         const lng = position.coords.longitude.toFixed(6);
                         USER_COORDINATES.innerHTML = `目前座標: ${lat}, ${lng}`;
                         userLoc.lat = lat;
                         userLoc.lng = lng;
                         progress_bar.hide()
+                        await fetchAddressPointInfo(userLoc);
                     },
                     (error) => {
                         console.error("無法取得位置", error);
@@ -117,31 +118,40 @@
                             const SEARCH_BTN = document.getElementById('searchBtn');
                             const RESULT_DIV = document.getElementById('result');
 
-
                             // Leaflet 地圖初始化
                             let map = L.map('map').setView([23.5, 121], 7);
                             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
                             let marker;
 
                             SEARCH_BTN.addEventListener('click', async () => {
+                                // 顯示進度條
+                                await fetchAddressPointInfo();
+                            });
+
+                            async function fetchAddressPointInfo(coordinates) {
                                 const original_btn_text = SEARCH_BTN.innerText;
                                 const original_result_text = RESULT_DIV.innerText;
                                 SEARCH_BTN.disabled = true;
                                 SEARCH_BTN.innerText = '查詢中...';
                                 RESULT_DIV.innerHTML = SPINNER_HTML;
-                                // 顯示進度條
-                                progress_bar.show();
-
                                 const address = document.getElementById('address').value;
-                                if (!address) {
-                                    SEARCH_BTN.disabled = false;
-                                    SEARCH_BTN.innerText = original_btn_text;
-                                    RESULT_DIV.innerText = original_result_text;
-                                    progress_bar.hide();
-                                    return alert('請輸入地址');
+                                if (!coordinates) {
+                                    if (!address) {
+                                        SEARCH_BTN.disabled = false;
+                                        SEARCH_BTN.innerText = original_btn_text;
+                                        RESULT_DIV.innerText = original_result_text;
+                                        return alert('請輸入地址');
+                                    }
                                 }
+                                progress_bar.show();
+                                let url;
                                 try {
-                                    const res = await fetch(`/api/intersect/${encodeURIComponent(address)}`)
+                                    if (!coordinates) {
+                                        url = `/api/intersect/${encodeURIComponent(address)}`;
+                                    } else {
+                                        url = `/api/intersect/${encodeURIComponent(coordinates.lat)},${encodeURIComponent(coordinates.lng)}?use_coordinate=true`;
+                                    }
+                                    const res = await fetch(url)
                                     const resJson = await res.json();
                                     if (!res.ok) {
                                         RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
@@ -194,7 +204,7 @@
                                     // 隱藏進度條
                                     progress_bar.hide();
                                 }
-                            });
+                            }
                         </script>
                     </div>
 

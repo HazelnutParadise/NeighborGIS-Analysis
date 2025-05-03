@@ -14,15 +14,29 @@ class APIResponse:
     data: any = None
 
 
-def _set_api_routes(app: FastAPI) -> None:
+def set_api_routes(app: FastAPI) -> None:
     """
     Set up the api routes for the FastAPI application.
     """
     api_router = APIRouter(prefix="/api")
 
-    @api_router.get("/intersect/{address}")
-    async def api_intersect(address: str):
-        coordinates: Coordinate = await asyncio.to_thread(geocoding.arcgis_geocode, address)
+    @api_router.get("/intersect/{x}")
+    async def api_intersect(x: str, request: Request):
+        use_coordinate = request.query_params.get("use_coordinate")
+        address: str = None
+        coordinates: Coordinate = None
+        if str(use_coordinate).lower() != "true":
+            coordinates: Coordinate = await asyncio.to_thread(geocoding.arcgis_geocode, x)
+            address = x
+        else:
+            lat = float(x.split(",")[0])
+            lng = float(x.split(",")[1])
+            coordinates = Coordinate(
+                lat=lat,
+                lng=lng
+            )
+            address = f'({lat}, {lng})'
+            print(address)
         address_point = AddressPoint(
             address=address,
             coordinate=coordinates,

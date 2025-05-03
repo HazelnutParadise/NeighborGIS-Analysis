@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 from os import path
 
 
-def _set_page_routes(app: FastAPI) -> None:
+def set_page_routes(app: FastAPI) -> None:
     """
     定義前端頁面路由
     """
