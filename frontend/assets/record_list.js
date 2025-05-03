@@ -53,8 +53,8 @@ const AddressPointRecords = () => {
                 <div class="record-title">${point.address}</div>
                 <div class="record-details">
                     <span>使用分區: ${point.zoning}</span>
-                    <span>容積率: ${point.far}</span>
-                    <span>建蔽率: ${point.bcr}</span>
+                    <span>容積率: ${point.far + (point.far !== '無資料' ? '%' : '')}</span>
+                    <span>建蔽率: ${point.bcr + (point.bcr !== '無資料' ? '%' : '')}</span>
                     <span>公有地: ${point.is_public_land}</span>
                 </div>
             `;
@@ -75,7 +75,20 @@ const AddressPointRecords = () => {
 
             // 點擊整個區域時在地圖上顯示該點
             infoDiv.onclick = function () {
-                showPointOnMapAndResultBox(point);
+                const data = {
+                    address: point.address,
+                    coordinate: {
+                        lat: point.lat,
+                        lng: point.lng,
+                    },
+                    zoning: {
+                        zone: point.zoning,
+                        far: point.far,
+                        bcr: point.bcr,
+                    },
+                    is_public_land: point.is_public_land,
+                }
+                showAddressPointResult(data)
             };
 
             addressRecordList.appendChild(listItem);
@@ -134,27 +147,6 @@ const AddressPointRecords = () => {
 
         // 更新顯示
         updateRecordList();
-    }
-
-    /**
-     * 在地圖上顯示選中的點
-     */
-    function showPointOnMapAndResultBox(point) {
-        if (point.lat && point.lng && !isNaN(point.lat) && !isNaN(point.lng)) {
-            if (marker) map.removeLayer(marker);
-            marker = L.marker([point.lat, point.lng]).addTo(map);
-            marker.bindPopup(point.address).openPopup();
-            map.setView([point.lat, point.lng], 16);
-        }
-        const RESULT_DIV = document.getElementById('result');
-        RESULT_DIV.innerText =
-            `地址：${point.address}\n` +
-            `經度：${point.lng}\n` +
-            `緯度：${point.lat}\n` +
-            `使用分區：${point.zoning}\n` +
-            `容積率：${point.far}\n` +
-            `建蔽率：${point.bcr}\n` +
-            `是否為公有地：${point.is_public_land}`;
     }
 
     /**

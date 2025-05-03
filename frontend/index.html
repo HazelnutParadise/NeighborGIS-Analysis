@@ -128,6 +128,35 @@
                                 await fetchAddressPointInfo();
                             });
 
+                            function showAddressPointResult(data) {
+                                const coordinate = data.coordinate;
+                                const lat = Number(coordinate.lat);
+                                const lng = Number(coordinate.lng);
+                                const zoning = data.zoning;
+                                RESULT_DIV.innerText =
+                                    `地址：${data.address}\n` +
+                                    `經度：${lng}\n` +
+                                    `緯度：${lat}\n` +
+                                    `使用分區：${zoning.zone && zoning.zone !== '無資料' ? zoning.zone : '無資料'}\n` +
+                                    `容積率：${zoning.far && zoning.far !== '無資料' ? `${zoning.far}%` : '無資料'}\n` +
+                                    `建蔽率：${zoning.bcr && zoning.bcr !== '無資料' ? `${zoning.bcr}%` : '無資料'}\n` +
+                                    // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
+                                    `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
+
+                                // 標記地圖
+                                if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
+                                    if (marker) map.removeLayer(marker);
+                                    marker = L.marker([lat, lng]).addTo(map);
+                                    marker.bindPopup(data.address).openPopup();
+                                    map.setView([lat, lng], 16);
+                                } else {
+                                    if (marker) {
+                                        map.removeLayer(marker);
+                                        marker = null;
+                                    }
+                                }
+                            }
+
                             async function fetchAddressPointInfo(coordinates) {
                                 const original_btn_text = SEARCH_BTN.innerText;
                                 const original_result_text = RESULT_DIV.innerText;
@@ -160,38 +189,15 @@
                                     }
                                     const data = resJson.data;
                                     const coordinate = data.coordinate;
-                                    const lat = Number(coordinate.lat);
-                                    const lng = Number(coordinate.lng);
                                     const zoning = data.zoning;
-                                    RESULT_DIV.innerText =
-                                        `地址：${data.address}\n` +
-                                        `經度：${lng}\n` +
-                                        `緯度：${lat}\n` +
-                                        `使用分區：${zoning.zone ? zoning.zone : '無資料'}\n` +
-                                        `容積率：${zoning.far ? `${zoning.far}%` : '無資料'}\n` +
-                                        `建蔽率：${zoning.bcr ? `${zoning.bcr}%` : '無資料'}\n` +
-                                        // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
-                                        `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
-
-                                    // 標記地圖
-                                    if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-                                        if (marker) map.removeLayer(marker);
-                                        marker = L.marker([lat, lng]).addTo(map);
-                                        marker.bindPopup(address).openPopup();
-                                        map.setView([lat, lng], 16);
-                                    } else {
-                                        if (marker) {
-                                            map.removeLayer(marker);
-                                            marker = null;
-                                        }
-                                    }
+                                    showAddressPointResult(data);
                                     AddressPointRecords().add({
                                         address: data.address,
-                                        lat: lat,
-                                        lng: lng,
+                                        lat: Number(coordinate.lat),
+                                        lng: Number(coordinate.lng),
                                         zoning: zoning.zone ? zoning.zone : '無資料',
-                                        far: zoning.far ? `${zoning.far}%` : '無資料',
-                                        bcr: zoning.bcr ? `${zoning.bcr}%` : '無資料',
+                                        far: zoning.far ? `${zoning.far}` : '無資料',
+                                        bcr: zoning.bcr ? `${zoning.bcr}` : '無資料',
                                         is_public_land: zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'
                                     });
                                 }
