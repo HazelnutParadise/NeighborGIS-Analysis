@@ -83,7 +83,7 @@ async def _fetch_all_poi_types(polygon_ll) -> gpd.GeoDataFrame:
     )
 
 
-async def _fetch_poi_by_type(polygon_ll, category: str, amenities: list) -> gpd.GeoDataFrame:
+async def _fetch_poi_by_type(polygon_ll, category: str, amenities: list) -> (gpd.GeoDataFrame | None):
     """
     查詢特定類型的POI
     :param polygon_ll: 緩衝區多邊形
