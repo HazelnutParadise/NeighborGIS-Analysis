@@ -54,6 +54,7 @@ async function fetchAddressPointInfo(userCoordinates) {
     }
     progress_bar.show();
     let lat, lng;
+    let data, zoning = null;
     try {
         const res = await fetch(url)
         const resJson = await res.json();
@@ -61,11 +62,11 @@ async function fetchAddressPointInfo(userCoordinates) {
             RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
             throw new Error(`查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '');
         }
-        const data = resJson.data;
+        data = resJson.data;
         const coordinates = data.coordinates;
         lat = Number(coordinates.lat);
         lng = Number(coordinates.lng);
-        const zoning = data.zoning;
+        zoning = data.zoning;
         showAddressPointResult(data);
     }
     catch (error) {
@@ -114,7 +115,7 @@ async function fetchAddressPointNearbyPOI(lat, lng, original_btn_text) {
         const colorMap = {
             food: 'blue',
             health: 'green',
-            public: 'orange'
+            public: 'orange',
         };
 
         // 加入 GeoJSON Layer
@@ -124,11 +125,11 @@ async function fetchAddressPointNearbyPOI(lat, lng, original_btn_text) {
                 const name = feature.properties.name || '未命名';
                 const addr = feature.properties["addr:full"] || '無地址';
                 return L.circleMarker(latlng, {
-                    radius: 6,
+                    radius: 3.5,
                     fillColor: color,
                     color: color,
-                    weight: 1,
-                    fillOpacity: 0.7
+                    weight: 0.5,
+                    fillOpacity: 0.8
                 }).bindPopup(`<b>${name}</b><br>${addr}`);
             }
         }).addTo(map);
