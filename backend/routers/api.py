@@ -19,8 +19,8 @@ def set_api_routes(app: FastAPI) -> None:
     async def api_generate_floor(request: Request):
         return await post_generate_floor_handler(request)
 
-    @api_router.get("/nearby-poi/{address}")
-    async def api_nearby_poi(address: str):
-        return await get_nearby_poi_handler(address)
+    @api_router.get("/nearby-poi/{coordinates}")
+    async def api_nearby_poi(coordinates: str):
+        return await get_nearby_poi_handler(coordinates)
 
     app.include_router(api_router)

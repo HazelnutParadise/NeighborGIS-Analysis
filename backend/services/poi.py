@@ -3,48 +3,39 @@ import geopandas as gpd
 from osmnx.features import features_from_polygon
 from osmnx._errors import InsufficientResponseError
 
-from services.geocoding import arcgis_geocode
+from structs.adress_point import Coordinates
 
 
-async def get_nearby_poi(address: str, distance: int = 500) -> gpd.GeoDataFrame:
+async def get_nearby_poi(coordinates: Coordinates, distance: int = 500) -> gpd.GeoDataFrame:
     """
-    根據地址獲取附近的 POI (500 公尺內)
-    :param address: 地址
+    根據經緯度獲取附近的 POI (500 公尺內)
+    :param lat: 緯度
+    :param lng: 經度
     :param distance: 距離 (公尺)
     :return: POI GeoDataFrame
     """
-    # 1. 建立地址 DataFrame
-    addresses = pd.DataFrame({
-        'address': [address],
-    })
-
-    # 2. 地理編碼 (ArcGIS)
-    coords = addresses['address'].apply(arcgis_geocode)
-    addresses[['latitude', 'longitude']] = pd.DataFrame(
-        coords.tolist(), index=addresses.index)
-
-    # 3. 轉為 GeoDataFrame (WGS84)
+    # 1. 建立 GeoDataFrame (WGS84)
     gdf = gpd.GeoDataFrame(
-        addresses,
-        geometry=gpd.points_from_xy(addresses.longitude, addresses.latitude),
+        [{'latitude': coordinates.lat, 'longitude': coordinates.lng}],
+        geometry=gpd.points_from_xy([coordinates.lng], [coordinates.lat]),
         crs='EPSG:4326'
     )
 
-    # 4. 投影至公尺座標系 (Web Mercator)
+    # 2. 投影至公尺座標系 (Web Mercator)
     gdf_proj = gdf.to_crs(epsg=3857)
 
-    # 5. 建立 500 公尺緩衝區（投影狀態下計算）
+    # 3. 建立 500 公尺緩衝區（投影狀態下計算）
     buffer_proj = gdf_proj.buffer(distance)
     buffer_gdf_proj = gpd.GeoDataFrame(geometry=buffer_proj, crs=gdf_proj.crs)
 
-    # 6. 定義 POI 類型
+    # 4. 定義 POI 類型
     poi_types = {
         'food': ['restaurant', 'cafe', 'fast_food'],
         'health': ['hospital', 'clinic', 'pharmacy'],
         'public': ['park', 'library', 'community_centre']
     }
 
-    # 7. 查詢並合併 POI
+    # 5. 查詢並合併 POI
     poi_frames = []
     # 將緩衝區轉回經緯度，OSMnx 要求傳入 EPSG:4326
     buffer_gdf = buffer_gdf_proj.to_crs(epsg=4326)
@@ -86,5 +77,5 @@ async def get_nearby_poi(address: str, distance: int = 500) -> gpd.GeoDataFrame:
             crs='EPSG:4326'
         )
 
-    # 8. 回傳 POI GeoDataFrame
+    # 6. 回傳 POI GeoDataFrame
     return all_poi

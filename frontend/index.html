@@ -91,8 +91,9 @@
             <!-- 第一頁：鄰里DNA -->
             <div class="page" id="page1">
                 <div class="page-content">
+                    <!-- 地點查詢 -->
                     <div class="container">
-                        <h2>地址查詢</h2>
+                        <h2>地點查詢</h2>
                         <p class="description">輸入您的地址來查尋鄰里相關資訊</p>
                         <p class="notice">目前台北市以外地區的資料可能不完整</p>
                         <div class="input-rows">
@@ -106,112 +107,8 @@
                         </div>
                         <div id="map"></div>
                         <div id="result" class="result-box">查詢結果將顯示於此。</div>
-                        <script>
-                            const SPINNER_HTML = `<div class="spinner-wrapper" style="width: 50px; margin: auto;align-self: center;">
-                                <div class="spinner">
-                                    <svg viewBox="22 22 44 44">
-                                        <circle class="bg" cx="44" cy="44" r="20.2" />
-                                        <circle class="fg" cx="44" cy="44" r="20.2" />
-                                    </svg>
-                                </div>
-                            </div>`;
-                            const SEARCH_BTN = document.getElementById('searchBtn');
-                            const RESULT_DIV = document.getElementById('result');
-
-                            // Leaflet 地圖初始化
-                            let map = L.map('map').setView([23.5, 121], 7);
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-                            let marker;
-
-                            SEARCH_BTN.addEventListener('click', async () => {
-                                // 顯示進度條
-                                await fetchAddressPointInfo();
-                            });
-
-                            function showAddressPointResult(data) {
-                                const coordinates = data.coordinates;
-                                const lat = Number(coordinates.lat);
-                                const lng = Number(coordinates.lng);
-                                const zoning = data.zoning;
-                                RESULT_DIV.innerText =
-                                    `${data.address}\n` +
-                                    `經度：${lng}\n` +
-                                    `緯度：${lat}\n` +
-                                    `使用分區：${zoning.zone && zoning.zone !== '無資料' ? zoning.zone : '無資料'}\n` +
-                                    `容積率：${zoning.far && zoning.far !== '無資料' ? `${zoning.far}%` : '無資料'}\n` +
-                                    `建蔽率：${zoning.bcr && zoning.bcr !== '無資料' ? `${zoning.bcr}%` : '無資料'}\n` +
-                                    // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
-                                    `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
-
-                                // 標記地圖
-                                if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-                                    if (marker) map.removeLayer(marker);
-                                    marker = L.marker([lat, lng]).addTo(map);
-                                    marker.bindPopup(data.address).openPopup();
-                                    map.setView([lat, lng], 16);
-                                } else {
-                                    if (marker) {
-                                        map.removeLayer(marker);
-                                        marker = null;
-                                    }
-                                }
-                            }
-
-                            async function fetchAddressPointInfo(userCoordinates) {
-                                const original_btn_text = SEARCH_BTN.innerText;
-                                const original_result_text = RESULT_DIV.innerText;
-                                SEARCH_BTN.disabled = true;
-                                SEARCH_BTN.innerText = '查詢中...';
-                                RESULT_DIV.innerHTML = SPINNER_HTML;
-                                const address = document.getElementById('address').value;
-                                let url;
-                                if (!userCoordinates) {
-                                    if (!address) {
-                                        SEARCH_BTN.disabled = false;
-                                        SEARCH_BTN.innerText = original_btn_text;
-                                        RESULT_DIV.innerText = original_result_text;
-                                        return alert('請輸入地址');
-                                    }
-                                    url = `/api/intersect/${encodeURIComponent(address)}`;
-                                } else {
-                                    url = `/api/intersect/${encodeURIComponent(userCoordinates.lat)},${encodeURIComponent(userCoordinates.lng)}?use_coordinates=true`;
-                                }
-                                progress_bar.show();
-                                try {
-                                    const res = await fetch(url)
-                                    const resJson = await res.json();
-                                    if (!res.ok) {
-                                        RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
-                                        progress_bar.hide();
-                                        return alert(`查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '');
-                                    }
-                                    const data = resJson.data;
-                                    const coordinates = data.coordinates;
-                                    const zoning = data.zoning;
-                                    showAddressPointResult(data);
-                                    AddressPointRecords().add({
-                                        address: data.address,
-                                        lat: Number(coordinates.lat),
-                                        lng: Number(coordinates.lng),
-                                        zoning: zoning.zone ? zoning.zone : '無資料',
-                                        far: zoning.far ? `${zoning.far}` : '無資料',
-                                        bcr: zoning.bcr ? `${zoning.bcr}` : '無資料',
-                                        is_public_land: zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'
-                                    });
-                                }
-                                catch (error) {
-                                    RESULT_DIV.innerHTML = `查詢失敗，請稍後再試`;
-                                    console.error('Error:', error);
-                                } finally {
-                                    SEARCH_BTN.innerText = original_btn_text;
-                                    SEARCH_BTN.disabled = false;
-                                    // 隱藏進度條
-                                    progress_bar.hide();
-                                }
-                            }
-                        </script>
                     </div>
-
+                    <!-- 查詢紀錄 -->
                     <div class="container" style="min-width:  300px;max-width: 300px;">
                         <h2>地點查詢紀錄</h2>
                         <p class="description">以下是您查詢過的地點</p>
@@ -235,7 +132,7 @@
                         <script src="assets/record_list.js"></script>
                         <script>AddressPointRecords().init()</script>
                     </div>
-
+                    <!-- todo: (待改) -->
                     <div class="container">
                         <h2>地價資訊</h2>
                         <p class="description">了解當前地址的公告地價與公告現值</p>
@@ -243,6 +140,24 @@
                             <p>請先在左側輸入地址進行查詢，查詢結果將顯示於此處。</p>
                         </div>
                     </div>
+                    <script>
+                        const SPINNER_HTML = `<div class="spinner-wrapper" style="width: 50px; margin: auto;align-self: center;">
+                            <div class="spinner">
+                                <svg viewBox="22 22 44 44">
+                                    <circle class="bg" cx="44" cy="44" r="20.2" />
+                                    <circle class="fg" cx="44" cy="44" r="20.2" />
+                                </svg>
+                            </div>
+                        </div>`;
+                        const SEARCH_BTN = document.getElementById('searchBtn');
+                        const RESULT_DIV = document.getElementById('result');
+
+                        // Leaflet 地圖初始化
+                        let map = L.map('map').setView([23.5, 121], 7);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+                        let marker;
+                    </script>
+                    <script src="assets/chain1.js"></script>
                 </div>
             </div>
 

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>POI 地圖展示</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 100vh;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // 模擬從 API 拿到的資料
+        const response = `{"message":"成功獲取POI資訊。","data":{"type":"FeatureCollection","features":[{"id":"0","type":"Feature","properties":{"poi_type":"food","name":"八方雲集","addr:full":"231新北市新店區安和路三段79號","addr:city":"新北市","addr:district":"新店區"},"geometry":{"type":"Point","coordinates":[121.5177246,24.983709]}},{"id":"1","type":"Feature","properties":{"poi_type":"food","name":"探尋咖啡","addr:full":"新北市新店區永安里022鄰永安街34巷9號","addr:city":"新北市","addr:district":"新店區"},"geometry":{"type":"Point","coordinates":[121.5180829,24.9861195]}},{"id":"2","type":"Feature","properties":{"poi_type":"food","name":"QQ炸的本家","addr:full":null,"addr:city":"新北市","addr:district":"新店區"},"geometry":{"type":"Point","coordinates":[121.5201018,24.9858781]}},{"id":"3","type":"Feature","properties":{"poi_type":"food","name":"胡椒麵店","addr:full":null,"addr:city":"新北市","addr:district":"新店區"},"geometry":{"type":"Point","coordinates":[121.5203888,24.9858086]}},{"id":"4","type":"Feature","properties":{"poi_type":"food","name":"波森咖啡","addr:full":"新北市新店區新和里023鄰安和路三段130號四樓","addr:city":"新北市","addr:district":"新店區"},"geometry":{"type":"Point","coordinates":[121.516538,24.9859204]}},{"id":"5","type":"Feature","properties":{"poi_type":"food","name":"弘爺漢堡","addr:full":"新北市新店區永平里016鄰安和路三段147號四樓","addr:city":"新北市","addr:district":"新店區"},"geometry":{"type":"Point","coordinates":[121.5167695,24.9854837]}}]}}`;
+
+        // 將 JSON 字串解析為 GeoJSON
+        const geojson = JSON.parse(response).data;
+
+        // Leaflet 地圖初始化
+        const firstCoord = geojson.features[0].geometry.coordinates;
+        const map = L.map('map').setView([firstCoord[1], firstCoord[0]], 16);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap 貢獻者'
+        }).addTo(map);
+
+        // 根據 POI 類型決定顏色
+        const colorMap = {
+            food: 'blue',
+            health: 'green',
+            public: 'orange'
+        };
+
+        // 加入 GeoJSON Layer
+        L.geoJSON(geojson, {
+            pointToLayer: function (feature, latlng) {
+                const color = colorMap[feature.properties.poi_type] || 'black';
+                const name = feature.properties.name || '未命名';
+                const addr = feature.properties["addr:full"] || '無地址';
+                return L.circleMarker(latlng, {
+                    radius: 6,
+                    fillColor: color,
+                    color: color,
+                    weight: 1,
+                    fillOpacity: 0.7
+                }).bindPopup(`<b>${name}</b><br>${addr}`);
+            }
+        }).addTo(map);
+    </script>
+</body>
+
+</html>
