@@ -113,8 +113,8 @@ async function fetchAddressPointNearbyPOI(lat, lng, original_btn_text) {
         }
         // 根據 POI 類型決定顏色
         const colorMap = {
-            food: 'blue',
-            health: 'green',
+            food: 'lightblue',
+            health: 'lightgreen',
             public: 'orange',
         };
 
@@ -127,7 +127,7 @@ async function fetchAddressPointNearbyPOI(lat, lng, original_btn_text) {
                 return L.circleMarker(latlng, {
                     radius: 3.5,
                     fillColor: color,
-                    color: color,
+                    color: 'black',
                     weight: 0.5,
                     fillOpacity: 0.8
                 }).bindPopup(`<b>${name}</b><br>${addr}`);
