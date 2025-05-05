@@ -6,7 +6,7 @@ from osmnx._errors import InsufficientResponseError
 from services.geocoding import arcgis_geocode
 
 
-def get_nearby_poi(address: str, distance: int = 500) -> gpd.GeoDataFrame:
+async def get_nearby_poi(address: str, distance: int = 500) -> gpd.GeoDataFrame:
     """
     根據地址獲取附近的 POI (500 公尺內)
     :param address: 地址
