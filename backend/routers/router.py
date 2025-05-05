@@ -2,8 +2,8 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 import os
 
-from router.api import set_api_routes
-from router.page import set_page_routes
+from routers.api import set_api_routes
+from routers.page import set_page_routes
 
 
 def set_routes(app: FastAPI) -> None:
