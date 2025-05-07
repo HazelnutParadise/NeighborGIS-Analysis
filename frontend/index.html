@@ -83,65 +83,65 @@
         });
     </script>
 
-
-    <main id="app">
-        <div class="left-right-btn" id="prev-btn"></div>
-        <div class="page-container">
-            <!-- 第一頁：鄰里DNA -->
-            <div class="page" id="page1">
-                <div class="page-content">
-                    <!-- 地點查詢 -->
-                    <div class="container">
-                        <h2>地點查詢</h2>
-                        <p class="description">輸入您的地址來查尋鄰里相關資訊</p>
-                        <p class="notice">目前台北市以外地區的資料可能不完整</p>
-                        <div class="input-rows">
-                            <div class="input-row">
-                                <label for="address">地址</label>
-                                <input id="address" class="text-input" type="text" placeholder="輸入地址" required>
+    <div id="app-wrapper">
+        <main id="app">
+            <div class="left-right-btn" id="prev-btn"></div>
+            <div class="page-container">
+                <!-- 第一頁：鄰里DNA -->
+                <div class="page" id="page1">
+                    <div class="page-content">
+                        <!-- 地點查詢 -->
+                        <div class="container">
+                            <h2>地點查詢</h2>
+                            <p class="description">輸入您的地址來查尋鄰里相關資訊</p>
+                            <p class="notice">目前台北市以外地區的資料可能不完整</p>
+                            <div class="input-rows">
+                                <div class="input-row">
+                                    <label for="address">地址</label>
+                                    <input id="address" class="text-input" type="text" placeholder="輸入地址" required>
+                                </div>
+                            </div>
+                            <div class="input-rows">
+                                <button id="searchBtn" type="button">查詢</button>
+                            </div>
+                            <div id="map"></div>
+                            <div id="result" class="result-box">查詢結果將顯示於此。</div>
+                        </div>
+                        <!-- 查詢紀錄 -->
+                        <div class="container" style="min-width:  300px;max-width: 300px;">
+                            <h2>地點查詢紀錄</h2>
+                            <p class="description">以下是您查詢過的地點</p>
+                            <p class="notice">選擇多個地點後可進行比較</p>
+                            <div class="record-actions">
+                                <button id="selectAllBtn" class="small-btn"
+                                    onclick="AddressPointRecords().selectAll()">全選</button>
+                                <button id="deselectAllBtn" class="small-btn"
+                                    onclick="AddressPointRecords().deselectAll()">全不選</button>
+                                <button id="clearAllBtn" class="small-btn"
+                                    onclick="AddressPointRecords().clearAll()">清除全部</button>
+                            </div>
+                            <div class="record-list-container">
+                                <ul id="addressRecordList" class="record-list">
+                                    <!-- 查詢記錄將動態添加在這裡 -->
+                                </ul>
+                            </div>
+                            <div class="record-actions bottom-actions">
+                                <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
+                            </div>
+                            <script src="assets/record_list.js"></script>
+                            <script>AddressPointRecords().init()</script>
+                        </div>
+                        <!-- todo: (待改) -->
+                        <div class="container" style="max-width: 750px;min-width: 350px;width: min(80dvw,80vw);">
+                            <h2>附近環境分析</h2>
+                            <p class="description">了解當前地點的環境</p>
+                            <div id="nearby-analysis-result" class="result-box"
+                                style="min-width: 90%;height: 835px;margin-top: 20px;">
+                                請先在左側輸入地址進行查詢，環境分析結果將顯示於此處。
                             </div>
                         </div>
-                        <div class="input-rows">
-                            <button id="searchBtn" type="button">查詢</button>
-                        </div>
-                        <div id="map"></div>
-                        <div id="result" class="result-box">查詢結果將顯示於此。</div>
-                    </div>
-                    <!-- 查詢紀錄 -->
-                    <div class="container" style="min-width:  300px;max-width: 300px;">
-                        <h2>地點查詢紀錄</h2>
-                        <p class="description">以下是您查詢過的地點</p>
-                        <p class="notice">選擇多個地點後可進行比較</p>
-                        <div class="record-actions">
-                            <button id="selectAllBtn" class="small-btn"
-                                onclick="AddressPointRecords().selectAll()">全選</button>
-                            <button id="deselectAllBtn" class="small-btn"
-                                onclick="AddressPointRecords().deselectAll()">全不選</button>
-                            <button id="clearAllBtn" class="small-btn"
-                                onclick="AddressPointRecords().clearAll()">清除全部</button>
-                        </div>
-                        <div class="record-list-container">
-                            <ul id="addressRecordList" class="record-list">
-                                <!-- 查詢記錄將動態添加在這裡 -->
-                            </ul>
-                        </div>
-                        <div class="record-actions bottom-actions">
-                            <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
-                        </div>
-                        <script src="assets/record_list.js"></script>
-                        <script>AddressPointRecords().init()</script>
-                    </div>
-                    <!-- todo: (待改) -->
-                    <div class="container" style="max-width: 750px;min-width: 350px;width: min(80dvw,80vw);">
-                        <h2>附近環境分析</h2>
-                        <p class="description">了解當前地點的環境</p>
-                        <div id="nearby-analysis-result" class="result-box"
-                            style="min-width: 90%;height: 835px;margin-top: 20px;">
-                            請先在左側輸入地址進行查詢，環境分析結果將顯示於此處。
-                        </div>
-                    </div>
-                    <script>
-                        const SPINNER_HTML = `<div class="spinner-wrapper" style="width: 50px; margin: auto;align-self: center;">
+                        <script>
+                            const SPINNER_HTML = `<div class="spinner-wrapper" style="width: 50px; margin: auto;align-self: center;">
                             <div class="spinner">
                                 <svg viewBox="22 22 44 44">
                                     <circle class="bg" cx="44" cy="44" r="20.2" />
@@ -149,182 +149,183 @@
                                 </svg>
                             </div>
                         </div>`;
-                        const SEARCH_BTN = document.getElementById('searchBtn');
-                        const RESULT_DIV = document.getElementById('result');
+                            const SEARCH_BTN = document.getElementById('searchBtn');
+                            const RESULT_DIV = document.getElementById('result');
 
-                        // Leaflet 地圖初始化
-                        let map = L.map('map').setView([23.5, 121], 7);
-                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
-                        let marker;
-                    </script>
-                    <script src="assets/chain1.js"></script>
+                            // Leaflet 地圖初始化
+                            let map = L.map('map').setView([23.5, 121], 7);
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+                            let marker;
+                        </script>
+                        <script src="assets/chain1.js"></script>
+                    </div>
                 </div>
-            </div>
 
-            <!-- 第四頁：聚思空間 -->
-            <div class="page" id="page4">
-                <div class="page-content">
-                    <div class="container" style="width: 1150px;">
-                        <h2>建物平面配置生成器</h2>
-                        <p class="description">輸入數值來產生平面圖</p>
-                        <div style="display: flex;justify-content: space-between;">
-                            <div style="width: 300px;">
-                                <div class="input-rows">
-                                    <div class="input-row">
-                                        <label for="building_area_m2">建築面積</label>
-                                        <input id="building_area_m2" class="text-input" type="number"
-                                            placeholder="建築面積 (平方公尺)" required>
-                                    </div>
-                                    <div class="input-row">
-                                        <label for="total_units">總戶數</label>
-                                        <input id="total_units" class="text-input" type="number" placeholder="總戶數"
-                                            required>
-                                    </div>
-                                    <div class="input-row">
-                                        <label for="public_ratio">公共區域比例(公設比)</label>
-                                        <input id="public_ratio" class="text-input" type="number"
-                                            placeholder="公共區域比例（比值）" required>
-                                    </div>
-                                    <div class="input-row">
-                                        <label for="balcony_depth">陽台深度</label>
-                                        <input id="balcony_depth" class="text-input" type="number"
-                                            placeholder="陽台深度（公尺）" required>
-                                    </div>
-                                    <div class="input-row">
-                                        <label for="unit_spacing">單位間距</label>
-                                        <input id="unit_spacing" class="text-input" type="number" placeholder="單位間距（公尺）"
-                                            required>
-                                    </div>
-                                    <div class="input-row">
-                                        <label for="arrangement_type">排列方式(佈局)</label>
-                                        <select id="arrangement_type" class="text-input" type="number" required
-                                            placeholder="排列方式">
-                                            <option value="L">僅左側</option>
-                                            <option value="R">僅右側</option>
-                                            <option value="T">僅上側</option>
-                                            <option value="B">僅下側</option>
-                                            <option value="LR">左右兩側</option>
-                                            <option value="TB">上下兩側</option>
-                                        </select>
-                                    </div>
-                                    <!-- <div class="input-row">
+                <!-- 第四頁：聚思空間 -->
+                <div class="page" id="page4">
+                    <div class="page-content">
+                        <div class="container" style="width: 1150px;">
+                            <h2>建物平面配置生成器</h2>
+                            <p class="description">輸入數值來產生平面圖</p>
+                            <div style="display: flex;justify-content: space-between;">
+                                <div style="width: 300px;">
+                                    <div class="input-rows">
+                                        <div class="input-row">
+                                            <label for="building_area_m2">建築面積</label>
+                                            <input id="building_area_m2" class="text-input" type="number"
+                                                placeholder="建築面積 (平方公尺)" required>
+                                        </div>
+                                        <div class="input-row">
+                                            <label for="total_units">總戶數</label>
+                                            <input id="total_units" class="text-input" type="number" placeholder="總戶數"
+                                                required>
+                                        </div>
+                                        <div class="input-row">
+                                            <label for="public_ratio">公共區域比例(公設比)</label>
+                                            <input id="public_ratio" class="text-input" type="number"
+                                                placeholder="公共區域比例（比值）" required>
+                                        </div>
+                                        <div class="input-row">
+                                            <label for="balcony_depth">陽台深度</label>
+                                            <input id="balcony_depth" class="text-input" type="number"
+                                                placeholder="陽台深度（公尺）" required>
+                                        </div>
+                                        <div class="input-row">
+                                            <label for="unit_spacing">單位間距</label>
+                                            <input id="unit_spacing" class="text-input" type="number"
+                                                placeholder="單位間距（公尺）" required>
+                                        </div>
+                                        <div class="input-row">
+                                            <label for="arrangement_type">排列方式(佈局)</label>
+                                            <select id="arrangement_type" class="text-input" type="number" required
+                                                placeholder="排列方式">
+                                                <option value="L">僅左側</option>
+                                                <option value="R">僅右側</option>
+                                                <option value="T">僅上側</option>
+                                                <option value="B">僅下側</option>
+                                                <option value="LR">左右兩側</option>
+                                                <option value="TB">上下兩側</option>
+                                            </select>
+                                        </div>
+                                        <!-- <div class="input-row">
                                         <label for="m2_to_ping">坪數換算</label>
                                         <input id="m2_to_ping" class="text-input" type="number" placeholder="平方公尺轉換為坪數">
                                     </div> -->
+                                    </div>
+                                    <div class="input-rows">
+                                        <button id="floorGenerateBtn" type="button" onclick="generateFloor()"
+                                            style="width: 100%;">生成</button>
+                                    </div>
                                 </div>
-                                <div class="input-rows">
-                                    <button id="floorGenerateBtn" type="button" onclick="generateFloor()"
-                                        style="width: 100%;">生成</button>
+                                <div id="floorPlan" class="result-box"
+                                    style="width: 800px; height: 850px; margin-top: 20px;display: flex;justify-content: center;align-items: flex-start;">
                                 </div>
                             </div>
-                            <div id="floorPlan" class="result-box"
-                                style="width: 800px; height: 850px; margin-top: 20px;display: flex;justify-content: center;align-items: flex-start;">
-                            </div>
-                        </div>
-                        <script>
-                            const FLOOR_GENERATE_BTN = document.getElementById('floorGenerateBtn');
-                            const FLOOR_PLAN = document.getElementById('floorPlan');
-                            const generateFloor = async () => {
-                                FLOOR_GENERATE_BTN.innerText = '生成中...';
-                                FLOOR_GENERATE_BTN.disabled = true;
-                                FLOOR_PLAN.innerHTML = SPINNER_HTML;
-                                progress_bar.show();
-                                const reqData = {
-                                    building_area_m2: document.getElementById('building_area_m2').value,
-                                    total_units: document.getElementById('total_units').value,
-                                    public_ratio: document.getElementById('public_ratio').value,
-                                    balcony_depth: document.getElementById('balcony_depth').value,
-                                    arrangement_type: document.getElementById('arrangement_type').value,
-                                    unit_spacing: document.getElementById('unit_spacing').value,
-                                    // m2_to_ping: document.getElementById('m2_to_ping').value ? document.getElementById('m2_to_ping').value : null,
-                                }
-                                try {
-                                    // 檢查required欄位是否填寫
-                                    for (const key in reqData) {
-                                        const el = document.getElementById(key)
-                                        // 如果標為required
-                                        if (el.hasAttribute('required') && reqData[key] === '') {
-                                            // 如果欄位為空，則顯示提示訊息
-                                            throw new Error(`${document.querySelector(`label[for="${el.id}"]`).innerText.slice(0, -2)} 欄位必填`);
-                                        }
+                            <script>
+                                const FLOOR_GENERATE_BTN = document.getElementById('floorGenerateBtn');
+                                const FLOOR_PLAN = document.getElementById('floorPlan');
+                                const generateFloor = async () => {
+                                    FLOOR_GENERATE_BTN.innerText = '生成中...';
+                                    FLOOR_GENERATE_BTN.disabled = true;
+                                    FLOOR_PLAN.innerHTML = SPINNER_HTML;
+                                    progress_bar.show();
+                                    const reqData = {
+                                        building_area_m2: document.getElementById('building_area_m2').value,
+                                        total_units: document.getElementById('total_units').value,
+                                        public_ratio: document.getElementById('public_ratio').value,
+                                        balcony_depth: document.getElementById('balcony_depth').value,
+                                        arrangement_type: document.getElementById('arrangement_type').value,
+                                        unit_spacing: document.getElementById('unit_spacing').value,
+                                        // m2_to_ping: document.getElementById('m2_to_ping').value ? document.getElementById('m2_to_ping').value : null,
                                     }
-
-                                    const res = await fetch(`/api/generate-floor`, {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify(reqData)
-                                    });
-                                    let resJson = '';
                                     try {
-                                        resJson = await res.json();
+                                        // 檢查required欄位是否填寫
+                                        for (const key in reqData) {
+                                            const el = document.getElementById(key)
+                                            // 如果標為required
+                                            if (el.hasAttribute('required') && reqData[key] === '') {
+                                                // 如果欄位為空，則顯示提示訊息
+                                                throw new Error(`${document.querySelector(`label[for="${el.id}"]`).innerText.slice(0, -2)} 欄位必填`);
+                                            }
+                                        }
+
+                                        const res = await fetch(`/api/generate-floor`, {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json'
+                                            },
+                                            body: JSON.stringify(reqData)
+                                        });
+                                        let resJson = '';
+                                        try {
+                                            resJson = await res.json();
+                                        } catch (error) {
+                                            console.error('Error parsing JSON:', error);
+                                        }
+
+
+                                        if (!res.ok) {
+                                            const message = `查詢失敗，伺服器 ${res.status}` + (resJson ? `\n${resJson.message}` : '');
+                                            FLOOR_PLAN.innerText = message;
+                                            throw new Error(message);
+                                        }
+                                        const data = resJson.data;
+                                        FLOOR_PLAN.innerHTML = data;
                                     } catch (error) {
-                                        console.error('Error parsing JSON:', error);
+                                        FLOOR_PLAN.innerText = error.message;
+                                        alert(error.message);
+                                        console.error('Error:', error);
+                                    } finally {
+                                        FLOOR_GENERATE_BTN.innerText = '生成';
+                                        FLOOR_GENERATE_BTN.disabled = false;
+                                        // 隱藏進度條
+                                        progress_bar.hide();
                                     }
-
-
-                                    if (!res.ok) {
-                                        const message = `查詢失敗，伺服器 ${res.status}` + (resJson ? `\n${resJson.message}` : '');
-                                        FLOOR_PLAN.innerText = message;
-                                        throw new Error(message);
-                                    }
-                                    const data = resJson.data;
-                                    FLOOR_PLAN.innerHTML = data;
-                                } catch (error) {
-                                    FLOOR_PLAN.innerText = error.message;
-                                    alert(error.message);
-                                    console.error('Error:', error);
-                                } finally {
-                                    FLOOR_GENERATE_BTN.innerText = '生成';
-                                    FLOOR_GENERATE_BTN.disabled = false;
-                                    // 隱藏進度條
-                                    progress_bar.hide();
                                 }
-                            }
 
-                        </script>
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 關於我們 -->
+                <div class="page" id="aboutPage">
+                    <div class="page-content">
+                        <div class="container" style="min-width: 400px;max-width: 400px;">
+                            <h2>關於我們</h2>
+                            <p>NeighborGIS 納博聚思是一個專注於地理資訊系統的服務平台，致力於提供使用者簡單易用的地址查詢及分區資訊服務。</p>
+                            <p>我們的目標是讓每個人都能夠輕鬆獲取土地使用分區、容積率、建蔽率等關鍵資訊，協助使用者更好地了解自己的居住環境。</p>
+                            <p>如有任何建議或問題，歡迎聯絡我們。</p>
+                        </div>
+
+                        <div class="container" style="min-width: 400px;max-width: 400px;">
+                            <h2>團隊介紹</h2>
+                            <p class="description">我們的專業團隊</p>
+                            <p>納博聚思由一群熱愛地理資訊系統的專家組成，團隊成員擁有豐富的GIS經驗和專業知識。</p>
+                            <p>我們致力於將複雜的地理資訊簡化，讓每個人都能輕鬆理解和應用。</p>
+                        </div>
+
+                        <div class="container" style="min-width: 400px;max-width: 400px;">
+                            <h2>聯絡我們</h2>
+                            <p class="description">有任何問題或建議嗎？</p>
+                            <p>電子郵件：info@neighborgis.com</p>
+                            <p>地址：台北市信義區信義路五段7號</p>
+                            <p>電話：02-12345678</p>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- 關於我們 -->
-            <div class="page" id="aboutPage">
-                <div class="page-content">
-                    <div class="container" style="min-width: 400px;max-width: 400px;">
-                        <h2>關於我們</h2>
-                        <p>NeighborGIS 納博聚思是一個專注於地理資訊系統的服務平台，致力於提供使用者簡單易用的地址查詢及分區資訊服務。</p>
-                        <p>我們的目標是讓每個人都能夠輕鬆獲取土地使用分區、容積率、建蔽率等關鍵資訊，協助使用者更好地了解自己的居住環境。</p>
-                        <p>如有任何建議或問題，歡迎聯絡我們。</p>
-                    </div>
-
-                    <div class="container" style="min-width: 400px;max-width: 400px;">
-                        <h2>團隊介紹</h2>
-                        <p class="description">我們的專業團隊</p>
-                        <p>納博聚思由一群熱愛地理資訊系統的專家組成，團隊成員擁有豐富的GIS經驗和專業知識。</p>
-                        <p>我們致力於將複雜的地理資訊簡化，讓每個人都能輕鬆理解和應用。</p>
-                    </div>
-
-                    <div class="container" style="min-width: 400px;max-width: 400px;">
-                        <h2>聯絡我們</h2>
-                        <p class="description">有任何問題或建議嗎？</p>
-                        <p>電子郵件：info@neighborgis.com</p>
-                        <p>地址：台北市信義區信義路五段7號</p>
-                        <p>電話：02-12345678</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="left-right-btn" id="next-btn"></div>
-        <script src="assets/left_right_btn.js"></script>
-    </main>
+            <div class="left-right-btn" id="next-btn"></div>
+            <script src="assets/left_right_btn.js"></script>
+        </main>
+    </div>
 
     <script src="assets/switch_page.js"></script>
 
     <script src="assets/required_input.js"></script>
 
     <footer>
-        <p>© <span id="copyright-year"></span> NeighborGIS. All rights reserved.</p>
+        <p>© <span id="copyright-year"></span> 八方雲圖團隊</p>
         <p>Powered by <a class="link" href="https://hazelnut-paradise.com/">榛果繽紛樂</a></p>
         <script>
             const currentYear = new Date().getFullYear();
