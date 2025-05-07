@@ -78,7 +78,7 @@ async function fetchAddressPointInfo(userCoordinates) {
         return;
     }
     const poi_data = await fetchAddressPointNearbyPOI(lat, lng);
-    const addressPointData = {
+    let addressPointData = {
         address: data.address,
         lat: lat,
         lng: lng,
@@ -89,6 +89,7 @@ async function fetchAddressPointInfo(userCoordinates) {
         nearby_poi: poi_data,
     }
     const nearby_analysis_data = await fetchNearbyAnalysis(addressPointData, original_btn_text);
+    addressPointData.nearby_analysis_data = nearby_analysis_data;
     AddressPointRecords().add(addressPointData);
 }
 
@@ -98,15 +99,11 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
         const res = await fetch(url);
         const resJson = await res.json();
         if (!res.ok) {
-            // todo: 要改放在新容器
-            RESULT_DIV.innerHTML = `查詢失敗，伺服器 ${res.status}`;
             throw new Error(`查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '');
         }
         const data = resJson.data;
         console.table(data)
         if (data.length === 0) {
-            // todo: 要改放在新容器
-            RESULT_DIV.innerHTML += `<br>查無周邊POI`;
             SEARCH_BTN.innerText = original_btn_text;
             SEARCH_BTN.disabled = false;
             progress_bar.hide();
@@ -134,18 +131,9 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
                 }).bindPopup(`<b>${name}</b><br>${addr}`);
             }
         }).addTo(map);
-
-
-
-        // todo: 要改放在新容器
-        // let poiList = '<br>周邊POI：<br>';
-        // data.forEach((poi) => {
-        //     poiList += `${poi.name} (${poi.distance} 公尺)<br>`;
-        // });
-        // RESULT_DIV.innerHTML += poiList;
         return data;
     } catch (error) {
-        // RESULT_DIV.innerHTML += `<br>查詢周邊POI失敗，錯誤訊息： ${error.message}`;
+        alert(error.message);
     }
 }
 
@@ -215,6 +203,7 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
 
         analysisHtml += '</div>';
         nearbyAnalysisResultDiv.innerHTML = analysisHtml;
+        return resData;
     } catch (error) {
         nearbyAnalysisResultDiv.innerHTML = `查詢失敗，錯誤訊息： ${error.message}`;
         alert(`查詢失敗，錯誤訊息： ${error.message}`);
@@ -227,4 +216,4 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
     }
 }
 
-// todo: 根據點擊的紀錄動態抽換地圖上的點和poi
+// todo: 根據點擊的紀錄動態抽換地圖上的點、poi和分析結果
