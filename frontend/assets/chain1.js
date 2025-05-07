@@ -1,3 +1,12 @@
+const SEARCH_BTN = document.getElementById('searchBtn');
+const RESULT_DIV = document.getElementById('result');
+
+// Leaflet 地圖初始化
+let map = L.map('map').setView([23.5, 121], 7);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+let marker;
+let poiLayer;
+
 SEARCH_BTN.addEventListener('click', async () => {
     // 顯示進度條
     await fetchAddressPointInfo();
@@ -30,6 +39,33 @@ function showAddressPointResult(data) {
             marker = null;
         }
     }
+}
+
+function addPoiLayer(data) {
+    if (poiLayer) {
+        map.removeLayer(poiLayer);
+    }
+    // 根據 POI 類型決定顏色
+    const colorMap = {
+        food: 'lightblue',
+        health: 'lightgreen',
+        public: 'orange',
+    };
+    // 加入 GeoJSON Layer
+    poiLayer = L.geoJSON(data, {
+        pointToLayer: function (feature, latlng) {
+            const color = colorMap[feature.properties.poi_type] || 'black';
+            const name = feature.properties.name || '未命名';
+            const addr = feature.properties["addr:full"] || '無地址';
+            return L.circleMarker(latlng, {
+                radius: 3.5,
+                fillColor: color,
+                color: 'black',
+                weight: 0.5,
+                fillOpacity: 0.8
+            }).bindPopup(`<b>${name}</b><br>${addr}`);
+        }
+    }).addTo(map);
 }
 
 function showPoiAnalysisResult(resData) {
@@ -160,28 +196,7 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
             progress_bar.hide();
             return;
         }
-        // 根據 POI 類型決定顏色
-        const colorMap = {
-            food: 'lightblue',
-            health: 'lightgreen',
-            public: 'orange',
-        };
-
-        // 加入 GeoJSON Layer
-        L.geoJSON(data, {
-            pointToLayer: function (feature, latlng) {
-                const color = colorMap[feature.properties.poi_type] || 'black';
-                const name = feature.properties.name || '未命名';
-                const addr = feature.properties["addr:full"] || '無地址';
-                return L.circleMarker(latlng, {
-                    radius: 3.5,
-                    fillColor: color,
-                    color: 'black',
-                    weight: 0.5,
-                    fillOpacity: 0.8
-                }).bindPopup(`<b>${name}</b><br>${addr}`);
-            }
-        }).addTo(map);
+        addPoiLayer(data);
         return data;
     } catch (error) {
         alert(error.message);

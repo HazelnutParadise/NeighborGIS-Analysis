@@ -5,7 +5,7 @@ from langchain_core.messages import BaseMessage
 from langchain_ollama import ChatOllama
 import json
 
-llm = ChatOllama(model="gemma3:12b", base_url=OLLAMA_BASE_URL)
+llm = ChatOllama(model="gemma3:12b", base_url=OLLAMA_BASE_URL, temperature=0.1)
 
 
 class ResponseMode(Enum):

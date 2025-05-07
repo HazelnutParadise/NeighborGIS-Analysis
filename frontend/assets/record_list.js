@@ -90,7 +90,8 @@ const AddressPointRecords = () => {
                     nearby_poi: point.nearby_poi,
                     nearby_analysis_data: point.nearby_analysis_data,
                 }
-                showAddressPointResult(data)
+                showAddressPointResult(data);
+                addPoiLayer(point.nearby_poi);
                 showPoiAnalysisResult(data.nearby_analysis_data);
             };
 

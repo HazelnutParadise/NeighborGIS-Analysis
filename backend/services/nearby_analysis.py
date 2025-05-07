@@ -6,10 +6,13 @@ import json
 async def llm_nearby_analysis(data) -> dict | None:
     poi_types = ["餐飲", "醫療", "公共設施"]
     system_prompt = """
-你是一位專業的地理資訊分析師，負責分析周邊環境資料。
-你只會根據現有資料進行分析，不會評論資料本身，例如資料完整性。
-請100%遵守user的指示，並提供詳細的分析結果。
+- 你是一位專業的地理環境分析師，負責根據資料分析周邊環境。
+- 僅根據提供的 POI 資料內容進行分析，不得評論資料本身是否完整、缺乏或不足，例如「沒有資料」「資料不完整」「地址資訊不完整」「無法分析」等說法一律禁止。
+- 如果某類別的 POI 數量為 0，也不得直接指出「沒有資料」或「無法分析」，請改以中性描述進行推論，例如：「未觀察到此類型設施，可能影響某某機能」。
+- 嚴格遵守格式，不增刪任何欄位。
+- 違反以上規則將導致重大損失。
 """
+
     prompt = f"""
 以下是「{data.get('address')}」的周邊POI資料，請針對{poi_types}等方面進行分析，總結其在這些方面的優勢和劣勢。
 以簡潔明瞭的方式總結該地區生活機能特點，並比較不同生活機能類別之間的差異。
@@ -41,10 +44,8 @@ poi資料：
 """
     result = None
     try:
-        result = call_llm([
-            ('system', system_prompt),
-            ('user', prompt),
-        ], response_mode=ResponseMode.DICT)
+        result = call_llm(system_prompt+prompt,
+                          response_mode=ResponseMode.DICT)
     except Exception as e:
         raise e
 
