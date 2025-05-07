@@ -177,22 +177,25 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
                 analysisHtml += `
                     <div class="poi-analysis-card">
                         <h3 class="poi-type">${poiAnalysis.poi_type}</h3>
-                        
-                        <div class="advantages-section">
-                            <h4>優點：</h4>
-                            <ul class="advantages-list">
-                                ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
-                            </ul>
-                        </div>
-                        
-                        <div class="disadvantages-section">
-                            <h4>缺點：</h4>
-                            <ul class="disadvantages-list">
-                                ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
-                            </ul>
-                        </div>
+                        <table class="poi-analysis-table">
+                            <tr>
+                                <th>優點</th>
+                                <th>缺點</th>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <ul class="advantages-list">
+                                        ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
+                                    </ul>
+                                </td>
+                                <td>
+                                    <ul class="disadvantages-list">
+                                        ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
                     </div>
-                    <br>
                 `;
             });
         } else {
@@ -206,6 +209,7 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
                     <h3>總結分析</h3>
                     <p>${resData.summary}</p>
                 </div>
+                <br>
             `;
         }
 

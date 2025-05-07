@@ -459,6 +459,22 @@ button:disabled {
   height: 218px;
 }
 
+.poi-type {
+  margin: 0;
+  padding: 2px;
+  font-size: 1.1rem;
+}
+
+.poi-analysis-table {
+  width: 100%;
+  table-layout: fixed;
+}
+.poi-analysis-table td,
+.poi-analysis-table th {
+  width: 50%;
+  vertical-align: top;
+}
+
 .result-box svg {
   display: block; /* 消除 inline SVG 造成的空白 */
   width: 100%;
