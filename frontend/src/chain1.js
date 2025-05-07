@@ -207,7 +207,7 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
     const nearbyAnalysisResultDiv = document.getElementById('nearby-analysis-result');
     try {
         nearbyAnalysisResultDiv.innerHTML = SPINNER_HTML;
-        const res = await fetch(`/api/nearby-analysis/`, {
+        const res = await fetch(`/api/nearby-analysis`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
