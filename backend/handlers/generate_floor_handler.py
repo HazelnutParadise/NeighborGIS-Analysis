@@ -4,7 +4,7 @@ from services import floor_generate
 from structs.api_response import APIResponse
 
 
-async def post_generate_floor_handler(request):
+async def post_generate_floor_handler(request) -> JSONResponse:
     req_json = await request.json()
     building_area_m2 = float(req_json.get("building_area_m2"))
     arrangement_type = req_json.get("arrangement_type")

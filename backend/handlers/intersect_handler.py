@@ -7,7 +7,7 @@ from structs.adress_point import Coordinates, AddressPoint
 from structs.api_response import APIResponse
 
 
-async def get_intersect_handler(request: Request, x: str):
+async def get_intersect_handler(request: Request, x: str) -> JSONResponse:
     use_coordinates = request.query_params.get("use_coordinates")
     address: str = None
     coordinates: Coordinates = None

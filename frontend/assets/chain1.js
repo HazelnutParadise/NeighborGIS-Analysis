@@ -1,4 +1,3 @@
-
 SEARCH_BTN.addEventListener('click', async () => {
     // 顯示進度條
     await fetchAddressPointInfo();
@@ -78,8 +77,8 @@ async function fetchAddressPointInfo(userCoordinates) {
         progress_bar.hide();
         return;
     }
-    const poi_data = await fetchAddressPointNearbyPOI(lat, lng, original_btn_text);
-    AddressPointRecords().add({
+    const poi_data = await fetchAddressPointNearbyPOI(lat, lng);
+    const addressPointData = {
         address: data.address,
         lat: lat,
         lng: lng,
@@ -88,10 +87,12 @@ async function fetchAddressPointInfo(userCoordinates) {
         bcr: zoning.bcr ? `${zoning.bcr}` : '無資料',
         is_public_land: zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料',
         nearby_poi: poi_data,
-    });
+    }
+    const nearby_analysis_data = await fetchNearbyAnalysis(addressPointData, original_btn_text);
+    AddressPointRecords().add(addressPointData);
 }
 
-async function fetchAddressPointNearbyPOI(lat, lng, original_btn_text) {
+async function fetchAddressPointNearbyPOI(lat, lng) {
     const url = `/api/nearby-poi/${encodeURIComponent(lat)},${encodeURIComponent(lng)}`;
     try {
         const res = await fetch(url);
@@ -145,7 +146,77 @@ async function fetchAddressPointNearbyPOI(lat, lng, original_btn_text) {
         return data;
     } catch (error) {
         // RESULT_DIV.innerHTML += `<br>查詢周邊POI失敗，錯誤訊息： ${error.message}`;
-    } finally {
+    }
+}
+
+async function fetchNearbyAnalysis(data, original_btn_text) {
+    const nearbyAnalysisResultDiv = document.getElementById('nearby-analysis-result');
+    try {
+        nearbyAnalysisResultDiv.innerHTML = SPINNER_HTML;
+        const res = await fetch(`/api/nearby-analysis/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        const resJson = await res.json();
+        if (!res.ok) {
+            nearbyAnalysisResultDiv.innerHTML = `查詢失敗，伺服器 ${res.status}`;
+            throw new Error(`查詢失敗，伺服器 ${res.status}` + resJson ? `\n${resJson.message}` : '');
+        }
+        const resData = resJson.data;
+        console.table(resData)
+
+        // 更新 UI 以顯示分析結果
+        let analysisHtml = '<div class="analysis-container">';
+
+        // 處理各個 POI 類型的分析
+        if (resData.analysis && resData.analysis.length > 0) {
+            resData.analysis.forEach(poiAnalysis => {
+                analysisHtml += `
+                    <div class="poi-analysis-card">
+                        <h3 class="poi-type">${poiAnalysis.poi_type}</h3>
+                        
+                        <div class="advantages-section">
+                            <h4>優點：</h4>
+                            <ul class="advantages-list">
+                                ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div class="disadvantages-section">
+                            <h4>缺點：</h4>
+                            <ul class="disadvantages-list">
+                                ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    <br>
+                `;
+            });
+        } else {
+            analysisHtml += '<p>無分析數據</p>';
+        }
+
+        // 添加總結
+        if (resData.summary) {
+            analysisHtml += `
+                <div class="summary-section">
+                    <h3>總結分析</h3>
+                    <p>${resData.summary}</p>
+                </div>
+            `;
+        }
+
+        analysisHtml += '</div>';
+        nearbyAnalysisResultDiv.innerHTML = analysisHtml;
+    } catch (error) {
+        nearbyAnalysisResultDiv.innerHTML = `查詢失敗，錯誤訊息： ${error.message}`;
+        alert(`查詢失敗，錯誤訊息： ${error.message}`);
+        console.error('Error:', error);
+    }
+    finally {
         SEARCH_BTN.innerText = original_btn_text;
         SEARCH_BTN.disabled = false;
         progress_bar.hide();

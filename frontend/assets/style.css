@@ -441,8 +441,18 @@ button:disabled {
   border-radius: 8px;
   font-size: 1.1rem;
   line-height: 1.5;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
+  word-break: break-all;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 0 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  background-image: linear-gradient(
+    to bottom,
+    rgba(240, 244, 248, 0.9),
+    var(--output-text-box-color)
+  );
 }
 
 #result {
