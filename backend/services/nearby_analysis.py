@@ -7,6 +7,7 @@ async def llm_nearby_analysis(data) -> dict | None:
     poi_types = ["餐飲", "醫療", "公共設施"]
     system_prompt = """
 你是一位專業的地理資訊分析師，負責分析周邊環境資料。
+你只會根據現有資料進行分析，不會評論資料本身，例如資料完整性。
 請100%遵守user的指示，並提供詳細的分析結果。
 """
     prompt = f"""

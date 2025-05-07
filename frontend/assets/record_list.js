@@ -87,8 +87,11 @@ const AddressPointRecords = () => {
                         bcr: point.bcr,
                     },
                     is_public_land: point.is_public_land,
+                    nearby_poi: point.nearby_poi,
+                    nearby_analysis_data: point.nearby_analysis_data,
                 }
                 showAddressPointResult(data)
+                showPoiAnalysisResult(data.nearby_analysis_data);
             };
 
             addressRecordList.appendChild(listItem);
