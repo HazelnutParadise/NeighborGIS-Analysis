@@ -3,6 +3,7 @@ import geopandas as gpd
 import asyncio
 from osmnx.features import features_from_polygon
 from osmnx._errors import InsufficientResponseError
+from shapely.geometry import Point
 
 from structs.adress_point import Coordinates
 
@@ -19,6 +20,25 @@ async def get_nearby_poi(coordinates: Coordinates, distance: int = 500) -> gpd.G
 
     # 2. 查詢所有POI
     all_poi = await _fetch_all_poi_types(polygon_ll)
+
+    # 3. 計算每個POI到輸入座標的距離
+    if not all_poi.empty:
+        # 建立輸入座標點
+        input_point = Point(coordinates.lng, coordinates.lat)
+
+        # 建立包含輸入點的GeoDataFrame
+        input_gdf = gpd.GeoDataFrame(geometry=[input_point], crs="EPSG:4326")
+
+        # 投影到Web Mercator以計算精確距離（單位：公尺）
+        proj_input = input_gdf.to_crs(epsg=3857)
+        proj_poi = all_poi.to_crs(epsg=3857)
+
+        # 計算每個POI到輸入點的距離
+        all_poi['distance'] = proj_poi.geometry.distance(
+            proj_input.geometry.iloc[0])
+
+        # 將GeoDataFrame轉回WGS84
+        all_poi = all_poi.to_crs(epsg=4326)
 
     return all_poi
 
