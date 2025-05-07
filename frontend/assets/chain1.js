@@ -32,6 +32,57 @@ function showAddressPointResult(data) {
     }
 }
 
+function showPoiAnalysisResult(resData) {
+    const nearbyAnalysisResultDiv = document.getElementById('nearby-analysis-result');
+    // 更新 UI 以顯示分析結果
+    let analysisHtml = '<div class="analysis-container">';
+
+    // 處理各個 POI 類型的分析
+    if (resData.analysis && resData.analysis.length > 0) {
+        resData.analysis.forEach(poiAnalysis => {
+            analysisHtml += `
+                <div class="poi-analysis-card">
+                    <h3 class="poi-type">${poiAnalysis.poi_type}</h3>
+                    <table class="poi-analysis-table">
+                        <tr>
+                            <th>優點</th>
+                            <th>缺點</th>
+                        </tr>
+                        <tr>
+                            <td>
+                                <ul class="advantages-list">
+                                    ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="disadvantages-list">
+                                    ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            `;
+        });
+    } else {
+        analysisHtml += '<p>無分析數據</p>';
+    }
+
+    // 添加總結
+    if (resData.summary) {
+        analysisHtml += `
+            <div class="summary-section">
+                <h3>總結分析</h3>
+                <p>${resData.summary}</p>
+            </div>
+            <br>
+        `;
+    }
+
+    analysisHtml += '</div>';
+    nearbyAnalysisResultDiv.innerHTML = analysisHtml;
+}
+
 async function fetchAddressPointInfo(userCoordinates) {
     const original_btn_text = SEARCH_BTN.innerText;
     const original_result_text = RESULT_DIV.innerText;
@@ -156,53 +207,7 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
         const resData = resJson.data;
         console.table(resData)
 
-        // 更新 UI 以顯示分析結果
-        let analysisHtml = '<div class="analysis-container">';
-
-        // 處理各個 POI 類型的分析
-        if (resData.analysis && resData.analysis.length > 0) {
-            resData.analysis.forEach(poiAnalysis => {
-                analysisHtml += `
-                    <div class="poi-analysis-card">
-                        <h3 class="poi-type">${poiAnalysis.poi_type}</h3>
-                        <table class="poi-analysis-table">
-                            <tr>
-                                <th>優點</th>
-                                <th>缺點</th>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <ul class="advantages-list">
-                                        ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
-                                    </ul>
-                                </td>
-                                <td>
-                                    <ul class="disadvantages-list">
-                                        ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
-                                    </ul>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                `;
-            });
-        } else {
-            analysisHtml += '<p>無分析數據</p>';
-        }
-
-        // 添加總結
-        if (resData.summary) {
-            analysisHtml += `
-                <div class="summary-section">
-                    <h3>總結分析</h3>
-                    <p>${resData.summary}</p>
-                </div>
-                <br>
-            `;
-        }
-
-        analysisHtml += '</div>';
-        nearbyAnalysisResultDiv.innerHTML = analysisHtml;
+        showPoiAnalysisResult(resData);
         return resData;
     } catch (error) {
         nearbyAnalysisResultDiv.innerHTML = `查詢失敗，錯誤訊息： ${error.message}`;
