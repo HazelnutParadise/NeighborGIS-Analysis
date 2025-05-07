@@ -1,4 +1,5 @@
-document.addEventListener('DOMContentLoaded', () => {
+
+const switchPageController = () => {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const pages = document.querySelectorAll('.page');
 
@@ -55,4 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 初始顯示第一個分頁
     tabBtns[0].click();
-});
+}
+
+export default switchPageController;

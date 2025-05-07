@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-    <link rel="stylesheet" href="assets/style.css" />
+    <link rel="stylesheet" href="./src/style.css" />
 </head>
 
 <body>
@@ -33,7 +33,7 @@
                 <button class="tab-btn" data-page="aboutPage">關於我們</button>
             </div>
         </div>
-        <script src="assets/progress_bar.js"></script>
+        <script src="./src/progress_bar.js"></script>
         <script>
             const USER_COORDINATES = document.getElementById('user-coordinates');
             const progress_bar = ProgressBar();
@@ -128,7 +128,7 @@
                             <div class="record-actions bottom-actions">
                                 <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
                             </div>
-                            <script src="assets/record_list.js"></script>
+                            <script src="./src/record_list.js"></script>
                             <script>AddressPointRecords().init()</script>
                         </div>
                         <!-- todo: (待改) -->
@@ -150,7 +150,7 @@
                             </div>
                         </div>`;
                         </script>
-                        <script src="assets/chain1.js"></script>
+                        <script src="./src/chain1.js"></script>
                     </div>
                 </div>
 
@@ -309,13 +309,17 @@
                 </div>
             </div>
             <div class="left-right-btn" id="next-btn"></div>
-            <script src="assets/left_right_btn.js"></script>
         </main>
     </div>
 
-    <script src="assets/switch_page.js"></script>
-
-    <script src="assets/required_input.js"></script>
+    <script type="module">
+        import leftRightBtnController from './src/left_right_btn.js';
+        import switchPageController from './src/switch_page.js';
+        import addStarOnRequiredInputs from './src/required_input.js';
+        leftRightBtnController();
+        switchPageController();
+        addStarOnRequiredInputs();
+    </script>
 
     <footer>
         <p>© <span id="copyright-year"></span> 八方雲圖團隊</p>
