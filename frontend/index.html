@@ -116,12 +116,9 @@
                             <p class="description">以下是您查詢過的地點</p>
                             <p class="notice">選擇多個地點後可進行比較</p>
                             <div class="record-actions">
-                                <button id="selectAllBtn" class="small-btn"
-                                    onclick="AddressPointRecords().selectAll()">全選</button>
-                                <button id="deselectAllBtn" class="small-btn"
-                                    onclick="AddressPointRecords().deselectAll()">全不選</button>
-                                <button id="clearAllBtn" class="small-btn"
-                                    onclick="AddressPointRecords().clearAll()">清除全部</button>
+                                <button id="selectAllBtn" class="small-btn">全選</button>
+                                <button id="deselectAllBtn" class="small-btn">全不選</button>
+                                <button id="clearAllBtn" class="small-btn">清除全部</button>
                             </div>
                             <div class="record-list-container">
                                 <ul id="addressRecordList" class="record-list">
@@ -131,8 +128,6 @@
                             <div class="record-actions bottom-actions">
                                 <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
                             </div>
-                            <script src="./src/record_list.js"></script>
-                            <script>AddressPointRecords().init()</script>
                         </div>
                         <!-- todo: (待改) -->
                         <div class="container" style="max-width: 750px;min-width: 350px;width: min(80dvw,80vw);">
@@ -261,7 +256,9 @@
         import './src/left_right_btn.js';
         import './src/switch_page.js';
         import addStarOnRequiredInputs from './src/required_input.js';
+        import AddressPointRecords from './src/record_list.js';
         addStarOnRequiredInputs();
+        AddressPointRecords().init();
     </script>
 
     <footer>

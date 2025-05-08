@@ -1,3 +1,5 @@
+import AddressPointRecords from './record_list.js';
+
 const SEARCH_BTN = document.getElementById('searchBtn');
 const RESULT_DIV = document.getElementById('result');
 
@@ -236,4 +238,4 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
     }
 }
 
-export { fetchAddressPointInfo };
+export { fetchAddressPointInfo, showAddressPointResult, addPoiLayer, showPoiAnalysisResult };

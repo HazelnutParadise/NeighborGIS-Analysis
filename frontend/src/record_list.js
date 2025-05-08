@@ -1,3 +1,5 @@
+import { showAddressPointResult, addPoiLayer, showPoiAnalysisResult } from './chain1.js';
+
 /**
  * 地點查詢紀錄功能
  * 處理記錄顯示、清除、選擇和比較功能
@@ -158,6 +160,28 @@ const AddressPointRecords = () => {
         updateRecordList();
     }
 
+    function deselectAll() {
+        // 全不選
+        selectedAddressesIdx.length = 0;
+        updateRecordList();
+    }
+
+    function selectAll() {
+        // 全選
+        selectedAddressesIdx = addressPointList.map((_, index) => index);
+        updateRecordList();
+    }
+
+    function clearAll() {
+        if (addressPointList.length === 0) return;
+
+        if (confirm('確定要清除全部記錄嗎？')) {
+            addressPointList.length = 0;
+            selectedAddressesIdx.length = 0;
+            updateRecordList();
+        }
+    }
+
     /**
      * 比較選中的地址
      */
@@ -201,6 +225,10 @@ const AddressPointRecords = () => {
                             <td>公有地</td>
                             ${selectedAddresses.map(addr => `<td>${addr.is_public_land}</td>`).join('')}
                         </tr>
+                        <tr>
+                            <td>周邊POI數量</td>
+                            ${selectedAddresses.map(addr => `<td>${addr.nearby_poi.features.length}</td>`).join('')}
+                        </tr>
                     </tbody>
                 </table>
             </ >
@@ -233,7 +261,14 @@ const AddressPointRecords = () => {
     }
     return {
         init: () => {
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const deselectAllBtn = document.getElementById('deselectAllBtn');
+            const clearAllBtn = document.getElementById('clearAllBtn');
             const compareBtn = document.getElementById('compareBtn');
+
+            selectAllBtn.addEventListener('click', selectAll);
+            deselectAllBtn.addEventListener('click', deselectAll);
+            clearAllBtn.addEventListener('click', clearAll);
 
             // 綁定比較按鈕事件
             compareBtn.addEventListener('click', compareAddresses);
@@ -245,25 +280,9 @@ const AddressPointRecords = () => {
             addressPointList.push(address);
             updateRecordList();
         },
-        clearAll: () => {
-            if (addressPointList.length === 0) return;
-
-            if (confirm('確定要清除全部記錄嗎？')) {
-                addressPointList.length = 0;
-                selectedAddressesIdx.length = 0;
-                updateRecordList();
-            }
-        },
-        selectAll: () => {
-            // 全選
-            selectedAddressesIdx = addressPointList.map((_, index) => index);
-            updateRecordList();
-        },
-        deselectAll: () => {
-            // 全不選
-            selectedAddressesIdx.length = 0;
-            updateRecordList();
-        },
+        clearAll,
+        selectAll,
+        deselectAll,
         getSelected: () => {
             // 返回選中的地址列表，包含所有地址的詳細信息
             return selectedAddressesIdx.map(idx => addressPointList[idx]);
@@ -271,3 +290,5 @@ const AddressPointRecords = () => {
         closeCompareModal,
     }
 }
+
+export default AddressPointRecords;
