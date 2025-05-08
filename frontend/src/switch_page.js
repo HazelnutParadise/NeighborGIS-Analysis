@@ -1,3 +1,5 @@
+import { map } from './chain1.js';
+
 const tabBtns = document.querySelectorAll('.tab-btn');
 const pages = document.querySelectorAll('.page');
 

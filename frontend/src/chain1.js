@@ -2,7 +2,7 @@ const SEARCH_BTN = document.getElementById('searchBtn');
 const RESULT_DIV = document.getElementById('result');
 
 // Leaflet 地圖初始化
-let map = L.map('map').setView([23.5, 121], 7);
+export let map = L.map('map').setView([23.5, 121], 7);
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
 let marker;
 let poiLayer;
