@@ -45,11 +45,8 @@
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 
-    <script>
-        // 變數宣告
-        const addressPointList = []
-        // 已選擇的地址記錄（用於比較功能）
-        let selectedAddressesIdx = [];
+    <script type="module">
+        import { fetchAddressPointInfo } from './src/chain1.js';
         const userLoc = { lat: undefined, lng: undefined };
 
         // 獲取用戶位置
@@ -77,10 +74,16 @@
             }
         }
 
-        // 頁面載入後獲取位置
-        document.addEventListener('DOMContentLoaded', async () => {
-            getUserLocation()
-        });
+        function getUserLoc() {
+            return userLoc;
+        }
+
+        function setUserLoc(lat, lng) {
+            userLoc.lat = lat;
+            userLoc.lng = lng;
+        }
+
+        getUserLocation();
     </script>
 
     <div id="app-wrapper">
@@ -150,7 +153,9 @@
                             </div>
                         </div>`;
                         </script>
-                        <script src="./src/chain1.js"></script>
+                        <script type="module">
+                            import "./src/chain1.js";
+                        </script>
                     </div>
                 </div>
 

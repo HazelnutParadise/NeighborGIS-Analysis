@@ -3,6 +3,11 @@
  * 處理記錄顯示、清除、選擇和比較功能
  */
 
+// 變數宣告
+const addressPointList = []
+// 已選擇的地址記錄（用於比較功能）
+let selectedAddressesIdx = [];
+
 // DOM元素
 const AddressPointRecords = () => {
     /**

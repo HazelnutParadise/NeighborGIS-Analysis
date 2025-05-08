@@ -236,4 +236,4 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
     }
 }
 
-// todo: 根據點擊的紀錄動態抽換地圖上的點、poi和分析結果
+export { fetchAddressPointInfo };
