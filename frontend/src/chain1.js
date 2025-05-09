@@ -80,25 +80,34 @@ function showPoiAnalysisResult(resData) {
         resData.analysis.forEach(poiAnalysis => {
             analysisHtml += `
                 <div class="poi-analysis-card">
-                    <h3 class="poi-type">${poiAnalysis.poi_type}</h3>
-                    <table class="poi-analysis-table">
-                        <tr>
-                            <th>優點</th>
-                            <th>缺點</th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <ul class="advantages-list">
-                                    ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
-                                </ul>
-                            </td>
-                            <td>
-                                <ul class="disadvantages-list">
-                                    ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
-                                </ul>
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="poi-type-header">
+                        <h3 class="poi-type">${poiAnalysis.poi_type}</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="analysis-sections">
+                        <div class="analysis-row">
+                            <div class="analysis-column advantages-column">
+                                <div class="column-header advantages-header">
+                                    <h4>優 勢</h4>
+                                </div>
+                                <div class="column-content">
+                                    <ul class="advantages-list">
+                                        ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="analysis-column disadvantages-column">
+                                <div class="column-header disadvantages-header">
+                                    <h4>劣 勢</h4>
+                                </div>
+                                <div class="column-content">
+                                    <ul class="disadvantages-list">
+                                        ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
         });
@@ -119,6 +128,25 @@ function showPoiAnalysisResult(resData) {
 
     analysisHtml += '</div>';
     nearbyAnalysisResultDiv.innerHTML = analysisHtml;
+
+    // 添加可收合功能
+    setupCollapsibleSections();
+}
+
+// 設定可收合區塊的功能
+function setupCollapsibleSections() {
+    // 只設置 POI 類型的可收合功能
+    const poiTypeHeaders = document.querySelectorAll('.poi-type-header');
+    poiTypeHeaders.forEach(header => {
+        header.addEventListener('click', function () {
+            const analysisSection = this.nextElementSibling;
+            const icon = this.querySelector('.toggle-icon');
+
+            // 切換內容展開/收合狀態
+            analysisSection.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+        });
+    });
 }
 
 async function fetchAddressPointInfo(userCoordinates) {
