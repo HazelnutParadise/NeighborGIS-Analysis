@@ -252,22 +252,35 @@ footer {
   color: var(--interactive-color-hover);
 }
 
+/* filepath: [style.css](http://_vscodecontentref_/0) */
+/* ...existing code... */
 h1 {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  margin: 0;
-  padding-top: 1rem;
-  font-size: 1.9rem;
-  font-weight: 600;
-  text-align: center;
+  align-items: flex-start; /* 或者 center, ตามที่คุณต้องการ */
+  margin-left: 10px; /* 調整與logo之間的間距 */
+  line-height: 1.5rem;
 }
 
-.bigger-h1 {
-  font-size: 3.2rem;
+h1 .bigger-h1 {
+  font-size: 1.5rem; /* 調整主要標題字體大小 */
+  font-weight: 600; /* 根據圖片調整字重 */
+  color: #333; /* 根據圖片調整顏色 */
 }
+
+h1 span:not(.bigger-h1) {
+  font-size: 1rem; /* 調整次要標題字體大小 */
+  font-weight: 400; /* 根據圖片調整字重 */
+  color: #555; /* 根據圖片調整顏色 */
+}
+
+h1 small {
+  font-size: 0.8rem; /* 調整副標題字體大小 */
+  font-weight: 400;
+  color: #777; /* 根據圖片調整顏色 */
+  margin-top: 2px; /* 調整與上方文字的間距 */
+}
+/* ...existing code... */
 
 h2 {
   font-size: 1.5rem;
@@ -733,24 +746,12 @@ button:disabled {
     padding: 4px 10px;
   }
 
-  h1 {
-    flex-direction: row;
-    gap: 10px;
-    font-size: 1.9rem;
-    padding-top: 0;
-    padding-bottom: 0px;
-  }
-
-  .bigger-h1 {
-    font-size: 1.8rem;
-  }
-
   .page-tabs {
     flex-wrap: wrap;
     justify-content: center;
     margin-right: 0;
     margin-top: 10px;
-    bottom: 8px; /* 增加底部距離 */
+    bottom: 3px; /* 底部距離 */
     right: 0;
     left: 0; /* 讓標籤在小螢幕上置中 */
   }
