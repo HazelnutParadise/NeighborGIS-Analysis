@@ -1,11 +1,62 @@
 :root {
+  /* 主要互動色系 */
   --interactive-color: #00c4cc;
   --interactive-color-hover: #00b3b8;
   --interactive-color-2: #0096ff;
   --interactive-color-2-hover: #0077e6;
+
+  /* 基礎顏色 */
   --disabled-color: #dddcdc;
   --output-text-box-color: #f0f4f8;
   --background-color: #f5f7fa;
+
+  /* 文字顏色 */
+  --text-primary: #333;
+  --text-secondary: #555;
+  --text-tertiary: #666;
+  --text-light: #777;
+  --text-lighter: #888;
+  --text-dark: #3a3a3a;
+  --text-muted: #6c757d;
+  --text-white: #fff;
+
+  /* 邊框顏色 */
+  --border-light: #eaeaea;
+  --border-lighter: #eee;
+  --border-default: #e0e0e0;
+  --border-focus: rgba(0, 150, 255, 0.2);
+  --border-table: #ddd;
+
+  /* 背景顏色 */
+  --bg-white: #fff;
+  --bg-light: #f8f9fa;
+  --bg-lighter: #f9fafb;
+  --bg-lightest: #f2f7fd;
+  --bg-hover: #f5f8ff;
+  --bg-hover-light: #eef5ff;
+  --bg-table-alt: #f9f9f9;
+  --bg-table-header: #f2f8ff;
+
+  /* 陰影顏色 */
+  --shadow-color: rgba(0, 0, 0, 0.1);
+  --shadow-color-light: rgba(0, 0, 0, 0.06);
+  --shadow-color-lighter: rgba(0, 0, 0, 0.05);
+  --shadow-color-blue: rgba(0, 150, 255, 0.2);
+  --shadow-color-blue-light: rgba(0, 150, 255, 0.1);
+  --shadow-color-blue-lighter: rgba(0, 150, 255, 0.05);
+
+  /* 功能性顏色 */
+  --error-color: #ff5252;
+  --error-color-hover: #ff3333;
+  --error-color-light: #ffebee;
+  --error-bg: #e74c3c;
+  --error-bg-hover: #c0392b;
+  --action-bg: #4c8bf5;
+  --action-bg-hover: #3b7ae4;
+
+  /* 分析卡片顏色 */
+  --advantages-bg: #e6f7f8;
+  --disadvantages-bg: #f8f3e6;
 }
 
 * {
@@ -15,7 +66,12 @@
 body {
   font-family: "Poppins", sans-serif;
   background-color: var(--background-color);
-  color: #333;
+  background-image: linear-gradient(
+      rgba(255, 255, 255, 0.7),
+      rgba(255, 255, 255, 0.7)
+    ),
+    url("assets/background.jpg");
+  color: var(--text-primary);
   margin: 0;
   padding: 0;
 }
@@ -27,6 +83,7 @@ body {
 }
 
 #app {
+  background-color: var(--background-color);
   margin: 0;
   padding: 0;
   width: 100%;
@@ -46,10 +103,10 @@ body {
   height: 960px;
   max-height: 970px;
   /* max-width: 800px; */
-  background: #fff;
+  background: var(--bg-white);
   border-radius: 18px;
   padding: 24px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 8px var(--shadow-color);
 }
 
 header {
@@ -73,7 +130,6 @@ header > .fixed-header {
   padding: 12px 35px;
   margin-bottom: 24px;
   z-index: 999999;
-
   /* 增強的毛玻璃效果 - 極度透明 */
   background-color: rgba(248, 249, 250, 0.45);
   -webkit-backdrop-filter: blur(8px);
@@ -235,11 +291,11 @@ footer {
   padding: 24px 16px;
   text-align: center;
   font-size: 13px;
-  color: #666;
-  background-color: #f8f9fa;
-  border-top: 1px solid #eaeaea;
+  color: var(--text-tertiary);
+  background-color: var(--bg-light);
+  border-top: 1px solid var(--border-light);
   border-radius: 0 0 12px 12px;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 -2px 10px var(--shadow-color-lighter);
 }
 
 .link {
@@ -265,19 +321,19 @@ h1 {
 h1 .bigger-h1 {
   font-size: 1.5rem; /* 調整主要標題字體大小 */
   font-weight: 600; /* 根據圖片調整字重 */
-  color: #333; /* 根據圖片調整顏色 */
+  color: var(--text-primary); /* 根據圖片調整顏色 */
 }
 
 h1 span:not(.bigger-h1) {
   font-size: 1rem; /* 調整次要標題字體大小 */
   font-weight: 400; /* 根據圖片調整字重 */
-  color: #555; /* 根據圖片調整顏色 */
+  color: var(--text-secondary); /* 根據圖片調整顏色 */
 }
 
 h1 small {
   font-size: 0.8rem; /* 調整副標題字體大小 */
   font-weight: 400;
-  color: #777; /* 根據圖片調整顏色 */
+  color: var(--text-light); /* 根據圖片調整顏色 */
   margin-top: 2px; /* 調整與上方文字的間距 */
 }
 /* ...existing code... */
@@ -304,7 +360,7 @@ h2 {
   margin: 12px 0;
   padding: 16px 20px;
   text-align: center;
-  color: #3a3a3a;
+  color: var(--text-dark);
   border-left: 4px solid var(--interactive-color);
   background: linear-gradient(
     to right,
@@ -312,7 +368,7 @@ h2 {
     rgba(247, 247, 247, 0.9)
   );
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 4px var(--shadow-color-light);
   line-height: 1.6;
   transition: box-shadow 0.2s ease;
 }
@@ -339,9 +395,9 @@ select,
   box-sizing: border-box;
   height: 40px;
   padding: 0 10px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: #fff;
+  background: var(--bg-white);
   outline: none;
   min-width: 160px;
   font-family: "Poppins", sans-serif;
@@ -364,7 +420,7 @@ select,
 .choices__list--dropdown {
   z-index: 9999 !important;
 
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-default);
 }
 
 .choices__item--choice {
@@ -396,9 +452,9 @@ select,
   height: 40px;
   padding: 0 8px;
   width: 100%;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: #fff;
+  background: var(--bg-white);
   outline: none;
   font-size: 14px;
   line-height: normal;
@@ -410,9 +466,9 @@ select,
   height: 40px;
   padding: 0 8px;
   width: 80px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-default);
   border-radius: 8px;
-  background: #fff;
+  background: var(--bg-white);
   outline: none;
   font-size: 14px;
   line-height: normal;
@@ -429,7 +485,7 @@ button {
   height: 40px;
   padding: 0 16px;
   background: var(--interactive-color);
-  color: #fff;
+  color: var(--text-white);
   border: none;
   font-weight: 600;
   border-radius: 8px;
@@ -466,27 +522,50 @@ button:disabled {
   overflow-y: auto;
   display: flex;
   word-break: break-word;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1),
-    inset 0 0 2px rgba(0, 0, 0, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 2px 4px var(--shadow-color),
+    inset 0 0 2px var(--shadow-color-lighter);
+  border: 1px solid var(--shadow-color-lighter);
   background-image: linear-gradient(
     to bottom,
     rgba(240, 244, 248, 0.9),
     var(--output-text-box-color)
   );
+  scrollbar-gutter: stable both-edges;
+  scroll-behavior: smooth;
 }
 
 #result {
   height: 218px;
 }
 
-.poi-type {
-  margin: 0;
-  padding: 2px;
-  font-size: 1.1rem;
+.poi-type-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  background: linear-gradient(
+    to right,
+    rgba(0, 196, 204, 0.08),
+    rgba(247, 247, 247, 0.9)
+  );
+  cursor: pointer;
+  user-select: none;
 }
 
-.poi-analysis-table {
+.poi-type {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.poi-type-header .toggle-icon {
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+/* 移除舊的表格樣式，已經不再使用 */
+/* .poi-analysis-table {
   width: 100%;
   table-layout: fixed;
 }
@@ -494,7 +573,7 @@ button:disabled {
 .poi-analysis-table th {
   width: 50%;
   vertical-align: top;
-}
+} */
 
 .result-box svg {
   display: block; /* 消除 inline SVG 造成的空白 */
@@ -633,8 +712,12 @@ button:disabled {
 }
 
 .tab-btn {
-  background: linear-gradient(to bottom, #ffffff, #f8f9fa); /* 漸變背景 */
-  color: #555;
+  background: linear-gradient(
+    to bottom,
+    var(--bg-white),
+    var(--bg-light)
+  ); /* 漸變背景 */
+  color: var(--text-secondary);
   border: none; /* 移除邊框 */
   padding: 10px 22px;
   font-size: 14px;
@@ -643,7 +726,7 @@ button:disabled {
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 平滑過渡 */
   position: relative;
   z-index: 1;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* 頂部陰影 */
+  box-shadow: 0 -2px 10px var(--shadow-color-lighter); /* 頂部陰影 */
   overflow: hidden; /* 確保偽元素不會溢出 */
 }
 
@@ -666,10 +749,10 @@ button:disabled {
 }
 
 .tab-btn.active {
-  background: #ffffff;
+  background: var(--bg-white);
   color: var(--interactive-color-2);
   font-weight: 600;
-  box-shadow: 0 -4px 12px rgba(0, 150, 255, 0.1); /* 更明顯的陰影 */
+  box-shadow: 0 -4px 12px var(--shadow-color-blue-light); /* 更明顯的陰影 */
   z-index: 2; /* 活動標籤置於頂層 */
   transform: translateY(-2px) scale(1.03); /* 輕微放大和上移效果 */
 }
@@ -680,7 +763,7 @@ button:disabled {
 }
 
 .tab-btn:hover:not(.active) {
-  background: linear-gradient(to bottom, #ffffff, #f2f7fd);
+  background: linear-gradient(to bottom, var(--bg-white), var(--bg-lightest));
   color: var(--interactive-color-2-hover);
   transform: translateY(-1px); /* 懸停時輕微上移 */
 }
@@ -765,14 +848,16 @@ button:disabled {
 /* 記錄列表容器樣式 */
 .record-list-container {
   /* max-height: 250px; */
-  height: 710px;
-  overflow-y: auto;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  height: 680px;
+  /* overflow-y: auto; */
+  /* border: 1px solid #ddd; */
+  /* border-radius: 5px; */
+  display: flex;
   margin: 10px 0;
 }
 
 .record-list {
+  width: 100%;
   list-style-type: none;
   padding: 0;
   margin: 0;
@@ -782,6 +867,7 @@ button:disabled {
   display: flex;
   align-items: center;
   padding: 10px;
+  background-color: var(--bg-white);
   border-bottom: 1px solid #eee;
 }
 
@@ -815,22 +901,28 @@ button:disabled {
 /* 空記錄提示樣式 */
 .empty-record-notice {
   padding: 20px 15px;
-  color: #6c757d;
+  color: var(--text-muted);
   text-align: center;
   font-size: 0.95rem;
   border-radius: 8px;
-  background-color: #f8f9fa;
+  background-color: var(--bg-light);
   margin: 15px 0;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: inset 0 0 0 1px rgba(0, 150, 255, 0.1);
-  border: 1px dashed rgba(0, 150, 255, 0.2);
+  box-shadow: inset 0 0 0 1px var(--shadow-color-blue-light);
+  border: 1px dashed var(--border-focus);
+}
+
+.empty-record-notice svg {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
 }
 
 .empty-record-notice:hover {
-  background-color: #eef5ff;
+  background-color: var(--bg-hover-light);
   color: var(--interactive-color-2);
 }
 
@@ -867,15 +959,15 @@ button:disabled {
 
 .action-btn {
   padding: 8px 16px;
-  background-color: #4c8bf5;
-  color: white;
+  background-color: var(--action-bg);
+  color: var(--bg-white);
   border: none;
   cursor: pointer;
   font-weight: bold;
 }
 
 .action-btn:hover {
-  background-color: #3b7ae4;
+  background-color: var(--action-bg-hover);
 }
 
 .action-btn:disabled {
@@ -885,12 +977,12 @@ button:disabled {
 
 /* 清空紀錄按鈕樣式 */
 #clearAllBtn {
-  background-color: #e74c3c;
-  color: white;
+  background-color: var(--error-bg);
+  color: var(--bg-white);
 }
 
 #clearAllBtn:hover {
-  background-color: #c0392b;
+  background-color: var(--error-bg-hover);
 }
 
 /* 比較表格樣式 */
@@ -903,18 +995,18 @@ button:disabled {
 
 .comparison-table th,
 .comparison-table td {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-table);
   padding: 8px;
   text-align: left;
 }
 
 .comparison-table th {
-  background-color: #f2f8ff;
+  background-color: var(--bg-table-header);
   font-weight: bold;
 }
 
 .comparison-table tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: var(--bg-table-alt);
 }
 
 /* 比較模態框 */
@@ -945,10 +1037,11 @@ button:disabled {
 
 .compare-modal {
   display: block;
-  background-color: white;
+  background-color: var(--bg-white);
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2), 0 0 0 1px rgba(0, 150, 255, 0.05);
+  box-shadow: 0 10px 40px var(--shadow-color),
+    0 0 0 1px var(--shadow-color-blue-lighter);
 }
 
 @keyframes modalAppear {
@@ -978,19 +1071,19 @@ button:disabled {
   justify-content: space-between;
   align-items: center;
   padding: 16px 20px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-lighter);
 }
 
 .compare-header h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .close-btn {
   background: none;
   border: none;
-  color: #888;
+  color: var(--text-lighter);
   font-size: 1.5rem;
   cursor: pointer;
   padding: 0;
@@ -1003,7 +1096,7 @@ button:disabled {
 }
 
 .close-btn:hover {
-  color: #333;
+  color: var(--text-primary);
   background: none;
 }
 
@@ -1017,13 +1110,13 @@ button:disabled {
 .compare-table td {
   padding: 12px 15px;
   text-align: left;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-lighter);
 }
 
 .compare-table th {
-  background-color: #f9fafb;
+  background-color: var(--bg-lighter);
   font-weight: 600;
-  color: #444;
+  color: var(--text-secondary);
 }
 
 .compare-table tr:last-child td {
@@ -1031,7 +1124,7 @@ button:disabled {
 }
 
 .compare-table tr:hover td {
-  background-color: #f5f8ff;
+  background-color: var(--bg-hover);
 }
 
 /* 記錄項目樣式優化 */
@@ -1043,13 +1136,13 @@ button:disabled {
 }
 
 .record-info:hover {
-  background-color: #f5f8ff;
+  background-color: var(--bg-hover);
 }
 
 .record-title {
   font-weight: 600;
   margin-bottom: 4px;
-  color: #333;
+  color: var(--text-primary);
 }
 
 .record-details {
@@ -1057,18 +1150,18 @@ button:disabled {
   flex-wrap: wrap;
   gap: 8px;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--text-tertiary);
 }
 
 .record-details span {
-  background-color: #f0f4f8;
+  background-color: var(--output-text-box-color);
   padding: 2px 6px;
   border-radius: 4px;
 }
 
 .delete-btn {
   background: none;
-  color: #ff5252;
+  color: var(--error-color);
   border: none;
   font-size: 1.2rem;
   padding: 0;
@@ -1082,5 +1175,115 @@ button:disabled {
 }
 
 .delete-btn:hover {
-  background-color: #ffebee;
+  background-color: var(--error-color-light);
+}
+
+/* 可收合式優點缺點樣式 */
+.poi-analysis-card {
+  background-color: var(--bg-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px var(--shadow-color);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.poi-analysis-card h3.poi-type {
+  margin: 0;
+  padding: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.analysis-sections {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.analysis-sections.collapsed {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.analysis-row {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
+.analysis-column {
+  flex: 1;
+  background-color: var(--background-color);
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px var(--shadow-color-lighter);
+}
+
+.column-header {
+  padding: 10px 15px;
+  user-select: none;
+}
+
+.advantages-header {
+  background-color: var(--advantages-bg);
+}
+
+.disadvantages-header {
+  background-color: var(--disadvantages-bg);
+}
+
+.column-header h4 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.toggle-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+.toggle-icon.collapsed {
+  transform: rotate(-90deg);
+}
+
+.column-content {
+  padding: 0 15px;
+}
+
+.advantages-list,
+.disadvantages-list {
+  margin: 10px 0;
+  padding-left: 20px;
+}
+
+.advantages-list li,
+.disadvantages-list li {
+  margin-bottom: 5px;
+}
+
+/* 響應式佈局 - 小螢幕優勢劣勢縱向排列 */
+@media (max-width: 768px) {
+  .analysis-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .analysis-column {
+    margin-bottom: 10px;
+  }
+
+  /* 調整標題和內容的間距 */
+  .column-header {
+    padding: 8px 12px;
+  }
+
+  .column-content {
+    padding: 0 12px;
+  }
 }
