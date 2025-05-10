@@ -1,5 +1,5 @@
-import { showAddressPointResult, addPoiLayer, showPoiAnalysisResult } from './chain1.js';
-
+import { on, once, getEl } from '../dom.js';
+import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
 /**
  * 地點查詢紀錄功能
  * 處理記錄顯示、清除、選擇和比較功能
@@ -11,7 +11,8 @@ const addressPointList = []
 let selectedAddressesIdx = [];
 
 // DOM元素
-const AddressPointRecords = () => {
+const AddressPointRecords = (() => {
+    const addressRecordList = getEl('#addressRecordList');
     /**
      * 更新記錄列表顯示
      */
@@ -98,6 +99,7 @@ const AddressPointRecords = () => {
                     nearby_analysis_data: point.nearby_analysis_data,
                 }
                 showAddressPointResult(data);
+                drawDistanceCircle(point.lat, point.lng);
                 addPoiLayer(point.nearby_poi);
                 showPoiAnalysisResult(data.nearby_analysis_data);
             };
@@ -199,7 +201,7 @@ const AddressPointRecords = () => {
             <div class="compare-modal modal show">
                 <div class="compare-header">
                     <h3>地址比較</h3>
-                    <button class="close-btn" onclick="AddressPointRecords().closeCompareModal()">×</button>
+                    <button class="close-btn" id="closeAddressPointRecordsCompareModalBtn">×</button>
                 </div>
                 <table class="compare-table">
                     <thead>
@@ -244,6 +246,7 @@ const AddressPointRecords = () => {
         // 顯示模態框
         setTimeout(() => {
             modal.classList.add('show');
+            once(getEl('#closeAddressPointRecordsCompareModalBtn'), 'click', closeCompareModal);
         }, 10);
     }
 
@@ -251,7 +254,7 @@ const AddressPointRecords = () => {
      * 關閉比較模態框
      */
     function closeCompareModal() {
-        const modal = document.getElementById('compareModal');
+        const modal = getEl('#compareModal');
         if (modal) {
             modal.classList.remove('show');
             setTimeout(() => {
@@ -261,17 +264,17 @@ const AddressPointRecords = () => {
     }
     return {
         init: () => {
-            const selectAllBtn = document.getElementById('selectAllBtn');
-            const deselectAllBtn = document.getElementById('deselectAllBtn');
-            const clearAllBtn = document.getElementById('clearAllBtn');
-            const compareBtn = document.getElementById('compareBtn');
+            const selectAllBtn = getEl('#selectAllBtn');
+            const deselectAllBtn = getEl('#deselectAllBtn');
+            const clearAllBtn = getEl('#clearAllBtn');
+            const compareBtn = getEl('#compareBtn');
 
-            selectAllBtn.addEventListener('click', selectAll);
-            deselectAllBtn.addEventListener('click', deselectAll);
-            clearAllBtn.addEventListener('click', clearAll);
+            on(selectAllBtn, 'click', selectAll);
+            on(deselectAllBtn, 'click', deselectAll);
+            on(clearAllBtn, 'click', clearAll);
 
             // 綁定比較按鈕事件
-            compareBtn.addEventListener('click', compareAddresses);
+            on(compareBtn, 'click', compareAddresses);
 
             // 初始化記錄列表
             updateRecordList();
@@ -289,6 +292,8 @@ const AddressPointRecords = () => {
         },
         closeCompareModal,
     }
-}
+})()
+
+AddressPointRecords.init();
 
 export default AddressPointRecords;

@@ -53,10 +53,34 @@
   --error-bg-hover: #c0392b;
   --action-bg: #4c8bf5;
   --action-bg-hover: #3b7ae4;
-
   /* 分析卡片顏色 */
   --advantages-bg: #e6f7f8;
   --disadvantages-bg: #f8f3e6;
+
+  /* Tag標籤顏色 */
+  --tag-blue-bg: #e6f0ff;
+  --tag-blue-border: #c2d8ff;
+  --tag-blue-text: #0066cc;
+
+  --tag-green-bg: #e6f8f0;
+  --tag-green-border: #c2e8d8;
+  --tag-green-text: #00995e;
+
+  --tag-purple-bg: #f0e6f8;
+  --tag-purple-border: #d8c2e8;
+  --tag-purple-text: #6600cc;
+
+  --tag-orange-bg: #fff2e6;
+  --tag-orange-border: #ffe0c2;
+  --tag-orange-text: #cc6600;
+
+  --tag-teal-bg: #e6f8f8;
+  --tag-teal-border: #c2e8e8;
+  --tag-teal-text: #008080;
+
+  --tag-red-bg: #fee6e6;
+  --tag-red-border: #ffc2c2;
+  --tag-red-text: #cc0000;
 }
 
 * {
@@ -308,8 +332,6 @@ footer {
   color: var(--interactive-color-hover);
 }
 
-/* filepath: [style.css](http://_vscodecontentref_/0) */
-/* ...existing code... */
 h1 {
   display: flex;
   flex-direction: column;
@@ -563,17 +585,6 @@ button:disabled {
   color: var(--text-primary);
   font-size: 14px;
 }
-
-/* 移除舊的表格樣式，已經不再使用 */
-/* .poi-analysis-table {
-  width: 100%;
-  table-layout: fixed;
-}
-.poi-analysis-table td,
-.poi-analysis-table th {
-  width: 50%;
-  vertical-align: top;
-} */
 
 .result-box svg {
   display: block; /* 消除 inline SVG 造成的空白 */
@@ -866,36 +877,126 @@ button:disabled {
 .record-item {
   display: flex;
   align-items: center;
-  padding: 10px;
+  padding: 14px;
   background-color: var(--bg-white);
-  border-bottom: 1px solid #eee;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border-lighter);
+  box-shadow: 0 2px 6px var(--shadow-color-lighter);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.record-item:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  background: linear-gradient(
+    to bottom,
+    var(--interactive-color),
+    var(--interactive-color-2)
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.record-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow-color-blue-light);
+  border-color: var(--border-focus);
+}
+
+.record-item:hover:before {
+  opacity: 1;
 }
 
 .record-item:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 
 .record-checkbox {
-  margin-right: 10px;
+  margin-right: 12px;
+  position: relative;
+  z-index: 1;
+}
+
+.record-checkbox input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-default);
+  border-radius: 5px;
+  background-color: var(--bg-white);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px var(--shadow-color-lighter);
+}
+
+.record-checkbox input[type="checkbox"]:checked {
+  background-color: var(--interactive-color-2);
+  border-color: var(--interactive-color-2-hover);
+}
+
+.record-checkbox input[type="checkbox"]:checked::before {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.record-checkbox input[type="checkbox"]:hover {
+  border-color: var(--interactive-color-2);
 }
 
 .record-address {
   flex-grow: 1;
   margin-right: 10px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  transition: color 0.2s;
+  padding-left: 8px;
+  line-height: 1.4;
 }
 
 .record-delete {
-  background-color: #ff4d4d;
-  color: white;
-  border: none;
-  border-radius: 3px;
-  padding: 3px 6px;
+  background-color: transparent;
+  color: var(--text-lighter);
+  border: 1px solid var(--border-default);
+  border-radius: 6px;
+  padding: 4px 10px;
   cursor: pointer;
   font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  box-shadow: 0 1px 3px var(--shadow-color-lighter);
 }
 
 .record-delete:hover {
-  background-color: #ff3333;
+  background-color: var(--error-bg);
+  color: white;
+  border-color: var(--error-color);
+}
+
+.record-delete:hover::before {
+  content: "×";
+  display: inline-block;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin-right: 2px;
+  line-height: 0.8;
 }
 
 /* 空記錄提示樣式 */
@@ -1131,18 +1232,29 @@ button:disabled {
 .record-info {
   flex: 1;
   cursor: pointer;
-  padding: 0 8px;
-  transition: background-color 0.2s;
+  padding: 0 10px;
+  transition: all 0.2s ease;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
 }
 
 .record-info:hover {
-  background-color: var(--bg-hover);
+  background-color: var(--bg-hover-light);
 }
 
 .record-title {
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
   color: var(--text-primary);
+  position: relative;
+  padding-left: 2px;
+  transition: color 0.2s, transform 0.15s;
+}
+
+.record-info:hover .record-title {
+  color: var(--interactive-color-2);
+  transform: translateX(2px);
 }
 
 .record-details {
@@ -1151,31 +1263,157 @@ button:disabled {
   gap: 8px;
   font-size: 0.85rem;
   color: var(--text-tertiary);
+  margin-top: 4px;
 }
 
 .record-details span {
   background-color: var(--output-text-box-color);
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
+  box-shadow: 0 1px 2px var(--shadow-color-lighter);
+  position: relative;
+  overflow: hidden;
+  font-weight: 500;
+}
+
+/* 使用屬性選擇器來依據內容或類別應用不同顏色 */
+.record-details span[data-type="距離"],
+.record-details span:nth-child(3n + 1) {
+  background-color: var(--tag-blue-bg);
+  border-color: var(--tag-blue-border);
+  color: var(--tag-blue-text);
+}
+
+.record-details span[data-type="面積"],
+.record-details span:nth-child(3n + 2) {
+  background-color: var(--tag-green-bg);
+  border-color: var(--tag-green-border);
+  color: var(--tag-green-text);
+}
+
+.record-details span[data-type="類型"],
+.record-details span:nth-child(3n + 3) {
+  background-color: var(--tag-purple-bg);
+  border-color: var(--tag-purple-border);
+  color: var(--tag-purple-text);
+}
+
+.record-details span[data-type="價格"] {
+  background-color: var(--tag-orange-bg);
+  border-color: var(--tag-orange-border);
+  color: var(--tag-orange-text);
+}
+
+.record-details span[data-type="狀態"] {
+  background-color: var(--tag-teal-bg);
+  border-color: var(--tag-teal-border);
+  color: var(--tag-teal-text);
+}
+
+.record-details span[data-type="評分"] {
+  background-color: var(--tag-red-bg);
+  border-color: var(--tag-red-border);
+  color: var(--tag-red-text);
+}
+
+.record-details span::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: translateX(-100%);
+  transition: transform 0.4s ease-out;
+  z-index: 0;
+}
+
+.record-details span:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.record-details span:hover::before {
+  transform: translateX(100%);
+}
+
+/* 懸浮時的顏色增強 */
+.record-details span[data-type="距離"]:hover,
+.record-details span:nth-child(3n + 1):hover {
+  background-color: #d9e6ff;
+  border-color: #99bbff;
+}
+
+.record-details span[data-type="面積"]:hover,
+.record-details span:nth-child(3n + 2):hover {
+  background-color: #d9f2e6;
+  border-color: #99dfbf;
+}
+
+.record-details span[data-type="類型"]:hover,
+.record-details span:nth-child(3n + 3):hover {
+  background-color: #e6d9f2;
+  border-color: #bf99df;
+}
+
+.record-details span[data-type="價格"]:hover {
+  background-color: #ffe6cc;
+  border-color: #ffcc99;
+}
+
+.record-details span[data-type="狀態"]:hover {
+  background-color: #d9f2f2;
+  border-color: #99dfdf;
+}
+
+.record-details span[data-type="評分"]:hover {
+  background-color: #ffd9d9;
+  border-color: #ff9999;
 }
 
 .delete-btn {
-  background: none;
-  color: var(--error-color);
-  border: none;
-  font-size: 1.2rem;
+  background: transparent;
+  color: var(--text-lighter);
+  border: 1px solid var(--border-default);
+  font-size: 1rem;
   padding: 0;
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 3px var(--shadow-color-lighter);
+  position: relative;
+  overflow: hidden;
+}
+
+.delete-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--error-color);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: -1;
 }
 
 .delete-btn:hover {
-  background-color: var(--error-color-light);
+  color: white;
+  border-color: var(--error-color);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(255, 82, 82, 0.25);
+}
+
+.delete-btn:hover::before {
+  opacity: 1;
 }
 
 /* 可收合式優點缺點樣式 */

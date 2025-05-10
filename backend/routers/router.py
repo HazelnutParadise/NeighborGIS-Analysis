@@ -15,10 +15,5 @@ def set_routes(app: FastAPI) -> None:
             directory=os.path.join("frontend", "dist", "assets")
         )
     )
-    app.mount(
-        "/src", StaticFiles(
-            directory=os.path.join("frontend", "src")
-        )
-    )
     set_api_routes(app)
     set_page_routes(app)
