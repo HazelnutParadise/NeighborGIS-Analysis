@@ -98,7 +98,7 @@ async function fetchAddressPointInfo(userCoordinates) {
     }
     const nearby_analysis_data = await fetchNearbyAnalysis(addressPointData, original_btn_text);
     addressPointData.nearby_analysis_data = nearby_analysis_data;
-    AddressPointRecords().add(addressPointData);
+    AddressPointRecords.add(addressPointData);
 }
 
 async function fetchAddressPointNearbyPOI(lat, lng) {

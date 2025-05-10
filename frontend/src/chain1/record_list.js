@@ -11,7 +11,7 @@ const addressPointList = []
 let selectedAddressesIdx = [];
 
 // DOM元素
-const AddressPointRecords = () => {
+const AddressPointRecords = (() => {
     const addressRecordList = getEl('#addressRecordList');
     /**
      * 更新記錄列表顯示
@@ -292,6 +292,8 @@ const AddressPointRecords = () => {
         },
         closeCompareModal,
     }
-}
+})()
+
+AddressPointRecords.init();
 
 export default AddressPointRecords;

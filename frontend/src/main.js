@@ -12,6 +12,4 @@ import './chain4/floor_plan.js';
 import './left_right_btn.js';
 import './switch_page.js';
 import addStarOnRequiredInputs from './required_input.js';
-import AddressPointRecords from './chain1/record_list.js';
 addStarOnRequiredInputs();
-AddressPointRecords().init();
