@@ -245,7 +245,7 @@ const AddressPointRecords = () => {
         // 顯示模態框
         setTimeout(() => {
             modal.classList.add('show');
-            once(document.getElementById('closeAddressPointRecordsCompareModalBtn'), 'click', closeCompareModal);
+            once(getEl('#closeAddressPointRecordsCompareModalBtn'), 'click', closeCompareModal);
         }, 10);
     }
 
@@ -253,7 +253,7 @@ const AddressPointRecords = () => {
      * 關閉比較模態框
      */
     function closeCompareModal() {
-        const modal = document.getElementById('compareModal');
+        const modal = getEl('#compareModal');
         if (modal) {
             modal.classList.remove('show');
             setTimeout(() => {
@@ -263,10 +263,10 @@ const AddressPointRecords = () => {
     }
     return {
         init: () => {
-            const selectAllBtn = document.getElementById('selectAllBtn');
-            const deselectAllBtn = document.getElementById('deselectAllBtn');
-            const clearAllBtn = document.getElementById('clearAllBtn');
-            const compareBtn = document.getElementById('compareBtn');
+            const selectAllBtn = getEl('#selectAllBtn');
+            const deselectAllBtn = getEl('#deselectAllBtn');
+            const clearAllBtn = getEl('#clearAllBtn');
+            const compareBtn = getEl('#compareBtn');
 
             selectAllBtn.addEventListener('click', selectAll);
             deselectAllBtn.addEventListener('click', deselectAll);

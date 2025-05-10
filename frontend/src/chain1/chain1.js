@@ -4,8 +4,8 @@ import SpinnerHTML from '../components/spinner.js';
 import { getEl, on } from '../dom.js';
 import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
 
-const SEARCH_BTN = document.getElementById('searchBtn');
-const RESULT_DIV = document.getElementById('result');
+const SEARCH_BTN = getEl('#searchBtn');
+const RESULT_DIV = getEl('#result');
 
 // 自動使用目前位置執行
 const userLoc = { lat: undefined, lng: undefined };
@@ -46,7 +46,7 @@ async function fetchAddressPointInfo(userCoordinates) {
     SEARCH_BTN.disabled = true;
     SEARCH_BTN.innerText = '查詢中...';
     RESULT_DIV.innerHTML = SpinnerHTML;
-    const address = document.getElementById('address').value;
+    const address = getEl('#address').value;
     let url;
     if (!userCoordinates) {
         if (!address) {
@@ -126,7 +126,7 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
 }
 
 async function fetchNearbyAnalysis(data, original_btn_text) {
-    const nearbyAnalysisResultDiv = document.getElementById('nearby-analysis-result');
+    const nearbyAnalysisResultDiv = getEl('#nearby-analysis-result');
     try {
         nearbyAnalysisResultDiv.innerHTML = SpinnerHTML;
         const res = await fetch(`/api/nearby-analysis`, {

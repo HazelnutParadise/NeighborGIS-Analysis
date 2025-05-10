@@ -16,7 +16,7 @@ on(FLOOR_GENERATE_BTN, 'click', async () => {
         balcony_depth: getEl('#balcony_depth').value,
         arrangement_type: getEl('#arrangement_type').value,
         unit_spacing: getEl('#unit_spacing').value,
-        // m2_to_ping: document.getElementById('m2_to_ping').value ? document.getElementById('m2_to_ping').value : null,
+        // m2_to_ping: getEl('#m2_to_ping').value ? getEl('#m2_to_ping').value : null,
     }
     try {
         // 檢查required欄位是否填寫

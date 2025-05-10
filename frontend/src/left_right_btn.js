@@ -1,3 +1,5 @@
+import { getEl } from "./dom";
+
 /**
  * 左右切換按鈕功能
  * 讓使用者可以切換不同的容器，將當前容器置中顯示
@@ -5,8 +7,8 @@
  * 支持在不同分頁內進行滑動
  */
 // 獲取所有容器與按鈕元素
-const prevBtn = document.getElementById('prev-btn');
-const nextBtn = document.getElementById('next-btn');
+const prevBtn = getEl('#prev-btn');
+const nextBtn = getEl('#next-btn');
 
 // 當前活動的分頁容器和容器元素
 let currentScrollContainer = null;
