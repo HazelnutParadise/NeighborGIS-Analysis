@@ -1,4 +1,4 @@
-import { once } from '../dom.js';
+import { once, getEl } from '../dom.js';
 import { showAddressPointResult, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
 /**
  * 地點查詢紀錄功能
@@ -12,6 +12,7 @@ let selectedAddressesIdx = [];
 
 // DOM元素
 const AddressPointRecords = () => {
+    const addressRecordList = getEl('#addressRecordList');
     /**
      * 更新記錄列表顯示
      */

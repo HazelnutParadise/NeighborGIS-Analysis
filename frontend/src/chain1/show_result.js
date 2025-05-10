@@ -1,5 +1,5 @@
-import { getEl } from "../dom";
-import { map } from './map.js';
+import { map } from './map';
+import { on, getEl } from "../dom";
 
 let marker;
 let circle;
@@ -75,7 +75,7 @@ export const addPoiLayer = (data) => {
 }
 
 export const showPoiAnalysisResult = (resData) => {
-    const nearbyAnalysisResultDiv = document.getElementById('nearby-analysis-result');
+    const nearbyAnalysisResultDiv = getEl('#nearby-analysis-result');
     // 更新 UI 以顯示分析結果
     let analysisHtml = '<div class="analysis-container">';
 
@@ -142,7 +142,7 @@ function setupCollapsibleSections() {
     // 只設置 POI 類型的可收合功能
     const poiTypeHeaders = document.querySelectorAll('.poi-type-header');
     poiTypeHeaders.forEach(header => {
-        header.addEventListener('click', function () {
+        on(header, 'click', function () {
             const analysisSection = this.nextElementSibling;
             const icon = this.querySelector('.toggle-icon');
 
