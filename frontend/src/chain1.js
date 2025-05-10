@@ -5,7 +5,11 @@ const RESULT_DIV = document.getElementById('result');
 
 // Leaflet 地圖初始化
 export let map = L.map('map').setView([23.5, 121], 7);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+    subdomains: 'abcd',
+    maxZoom: 20
+}).addTo(map);
 let marker;
 let poiLayer;
 
@@ -41,6 +45,18 @@ function showAddressPointResult(data) {
             marker = null;
         }
     }
+}
+
+function drawDistanceCircle(lat, lng) {
+    const distance = 500; // 半徑 500 公尺
+    const circle = L.circle([lat, lng], {
+        color: 'red',
+        fillColor: '#f03',
+        fillOpacity: 0.2,
+        radius: distance
+    }).addTo(map);
+    // 設定圓圈的 popup
+    circle.bindPopup(`距離：${distance} 公尺`);
 }
 
 function addPoiLayer(data) {
@@ -226,6 +242,7 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
             progress_bar.hide();
             return;
         }
+        drawDistanceCircle(lat, lng);
         addPoiLayer(data);
         return data;
     } catch (error) {
