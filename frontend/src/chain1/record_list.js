@@ -1,3 +1,4 @@
+import { once } from '../dom.js';
 import { showAddressPointResult, addPoiLayer, showPoiAnalysisResult } from './chain1.js';
 
 /**
@@ -199,7 +200,7 @@ const AddressPointRecords = () => {
             <div class="compare-modal modal show">
                 <div class="compare-header">
                     <h3>地址比較</h3>
-                    <button class="close-btn" onclick="AddressPointRecords().closeCompareModal()">×</button>
+                    <button class="close-btn" id="closeAddressPointRecordsCompareModalBtn">×</button>
                 </div>
                 <table class="compare-table">
                     <thead>
@@ -244,6 +245,7 @@ const AddressPointRecords = () => {
         // 顯示模態框
         setTimeout(() => {
             modal.classList.add('show');
+            once(document.getElementById('closeAddressPointRecordsCompareModalBtn'), 'click', closeCompareModal);
         }, 10);
     }
 

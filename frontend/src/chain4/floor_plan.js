@@ -21,7 +21,7 @@ on(FLOOR_GENERATE_BTN, 'click', async () => {
     try {
         // 檢查required欄位是否填寫
         for (const key in reqData) {
-            const el = selector.getEl(`#${key}`)
+            const el = getEl(`#${key}`)
             // 如果標為required
             if (el.hasAttribute('required') && reqData[key] === '') {
                 // 如果欄位為空，則顯示提示訊息

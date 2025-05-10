@@ -1,6 +1,7 @@
 import AddressPointRecords from './record_list.js';
 import ProgressBar from '../progress_bar.js';
 import SpinnerHTML from '../components/spinner.js';
+import { getEl, on } from '../dom.js';
 
 const SEARCH_BTN = document.getElementById('searchBtn');
 const RESULT_DIV = document.getElementById('result');
@@ -15,7 +16,35 @@ L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
 let marker;
 let poiLayer;
 
-SEARCH_BTN.addEventListener('click', async () => {
+// 自動使用目前位置執行
+const userLoc = { lat: undefined, lng: undefined };
+const USER_COORDINATES = getEl('#user-coordinates');
+(function getUserLocation() {
+    ProgressBar.show()
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            async (position) => {
+                const lat = position.coords.latitude.toFixed(6);
+                const lng = position.coords.longitude.toFixed(6);
+                USER_COORDINATES.innerHTML = `目前座標: ${lat}, ${lng}`;
+                userLoc.lat = lat;
+                userLoc.lng = lng;
+                ProgressBar.hide()
+                await fetchAddressPointInfo(userLoc);
+            },
+            (error) => {
+                console.error("無法取得位置", error);
+                USER_COORDINATES.innerHTML = "無法取得位置";
+                ProgressBar.hide()
+            }
+        );
+    } else {
+        USER_COORDINATES.innerHTML = "瀏覽器不支援定位服務";
+        ProgressBar.hide()
+    }
+})();
+
+on(SEARCH_BTN, 'click', async () => {
     // 顯示進度條
     await fetchAddressPointInfo();
 });
@@ -285,4 +314,4 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
     }
 }
 
-export { fetchAddressPointInfo, showAddressPointResult, addPoiLayer, showPoiAnalysisResult };
+export { showAddressPointResult, addPoiLayer, showPoiAnalysisResult };

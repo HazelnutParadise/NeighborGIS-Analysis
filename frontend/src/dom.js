@@ -47,6 +47,15 @@ export function off(el, event, handler, options) {
     );
 }
 
+export function once(el, event, handler, options) {
+    if (!el) return;
+    const onceHandler = function (e) {
+        handler(e);
+        off(el, event, onceHandler, options);
+    };
+    on(el, event, onceHandler, options);
+}
+
 /**
  * ✅ 移除指定元素上所有事件
  */
