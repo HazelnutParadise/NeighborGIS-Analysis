@@ -1,6 +1,5 @@
 import { once } from '../dom.js';
-import { addPoiLayer, showPoiAnalysisResult } from './chain1.js';
-import { showAddressPointResult } from './show_result.js';
+import { showAddressPointResult, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
 /**
  * 地點查詢紀錄功能
  * 處理記錄顯示、清除、選擇和比較功能

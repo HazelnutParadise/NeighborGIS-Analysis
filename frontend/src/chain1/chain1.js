@@ -2,14 +2,10 @@ import AddressPointRecords from './record_list.js';
 import ProgressBar from '../progress_bar.js';
 import SpinnerHTML from '../components/spinner.js';
 import { getEl, on } from '../dom.js';
-import { map } from './map.js';
-import { showAddressPointResult } from './show_result.js';
+import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
 
 const SEARCH_BTN = document.getElementById('searchBtn');
 const RESULT_DIV = document.getElementById('result');
-
-
-let poiLayer;
 
 // 自動使用目前位置執行
 const userLoc = { lat: undefined, lng: undefined };
@@ -43,125 +39,6 @@ on(SEARCH_BTN, 'click', async () => {
     // 顯示進度條
     await fetchAddressPointInfo();
 });
-
-
-function drawDistanceCircle(lat, lng) {
-    const distance = 500; // 半徑 500 公尺
-    const circle = L.circle([lat, lng], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.2,
-        radius: distance
-    }).addTo(map);
-    // 設定圓圈的 popup
-    circle.bindPopup(`距離：${distance} 公尺`);
-}
-
-function addPoiLayer(data) {
-    if (poiLayer) {
-        map.removeLayer(poiLayer);
-    }
-    // 根據 POI 類型決定顏色
-    const colorMap = {
-        food: 'lightblue',
-        health: 'lightgreen',
-        public: 'orange',
-    };
-    // 加入 GeoJSON Layer
-    poiLayer = L.geoJSON(data, {
-        pointToLayer: function (feature, latlng) {
-            const color = colorMap[feature.properties.poi_type] || 'black';
-            const name = feature.properties.name || '未命名';
-            const addr = feature.properties["addr:full"] || '無地址';
-            return L.circleMarker(latlng, {
-                radius: 3.5,
-                fillColor: color,
-                color: 'black',
-                weight: 0.5,
-                fillOpacity: 0.8
-            }).bindPopup(`<b>${name}</b><br>${addr}`);
-        }
-    }).addTo(map);
-}
-
-function showPoiAnalysisResult(resData) {
-    const nearbyAnalysisResultDiv = document.getElementById('nearby-analysis-result');
-    // 更新 UI 以顯示分析結果
-    let analysisHtml = '<div class="analysis-container">';
-
-    // 處理各個 POI 類型的分析
-    if (resData.analysis && resData.analysis.length > 0) {
-        resData.analysis.forEach(poiAnalysis => {
-            analysisHtml += `
-                <div class="poi-analysis-card">
-                    <div class="poi-type-header">
-                        <h3 class="poi-type">${poiAnalysis.poi_type}</h3>
-                        <span class="toggle-icon">▼</span>
-                    </div>
-                    <div class="analysis-sections">
-                        <div class="analysis-row">
-                            <div class="analysis-column advantages-column">
-                                <div class="column-header advantages-header">
-                                    <h4>優 勢</h4>
-                                </div>
-                                <div class="column-content">
-                                    <ul class="advantages-list">
-                                        ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="analysis-column disadvantages-column">
-                                <div class="column-header disadvantages-header">
-                                    <h4>劣 勢</h4>
-                                </div>
-                                <div class="column-content">
-                                    <ul class="disadvantages-list">
-                                        ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        });
-    } else {
-        analysisHtml += '<p>無分析數據</p>';
-    }
-
-    // 添加總結
-    if (resData.summary) {
-        analysisHtml += `
-            <div class="summary-section">
-                <h3>總結分析</h3>
-                <p>${resData.summary}</p>
-            </div>
-            <br>
-        `;
-    }
-
-    analysisHtml += '</div>';
-    nearbyAnalysisResultDiv.innerHTML = analysisHtml;
-
-    // 添加可收合功能
-    setupCollapsibleSections();
-}
-
-// 設定可收合區塊的功能
-function setupCollapsibleSections() {
-    // 只設置 POI 類型的可收合功能
-    const poiTypeHeaders = document.querySelectorAll('.poi-type-header');
-    poiTypeHeaders.forEach(header => {
-        header.addEventListener('click', function () {
-            const analysisSection = this.nextElementSibling;
-            const icon = this.querySelector('.toggle-icon');
-
-            // 切換內容展開/收合狀態
-            analysisSection.classList.toggle('collapsed');
-            icon.classList.toggle('collapsed');
-        });
-    });
-}
 
 async function fetchAddressPointInfo(userCoordinates) {
     const original_btn_text = SEARCH_BTN.innerText;
@@ -280,5 +157,3 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
         ProgressBar.hide();
     }
 }
-
-export { showAddressPointResult, addPoiLayer, showPoiAnalysisResult };
