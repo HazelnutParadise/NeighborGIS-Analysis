@@ -1,9 +1,11 @@
-const ProgressBar = () => {
+import { getEl } from "./dom";
+
+const ProgressBar = (() => {
     let call_idx = 0;
     let timeCount = 0;
     let timeCounter = null;
     let hideTimer = null;
-    const PROGRESS_BAR = document.querySelector('.progress-bar');
+    const PROGRESS_BAR = getEl('#progressBar');
 
     // 進度條控制函數
     function show() {
@@ -91,4 +93,6 @@ const ProgressBar = () => {
         forceHide,
         getStatus
     };
-}
+})();
+
+export default ProgressBar;

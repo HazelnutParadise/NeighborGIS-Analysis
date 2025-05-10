@@ -1,4 +1,6 @@
 import AddressPointRecords from './record_list.js';
+import ProgressBar from '../progress_bar.js';
+import SpinnerHTML from '../components/spinner.js';
 
 const SEARCH_BTN = document.getElementById('searchBtn');
 const RESULT_DIV = document.getElementById('result');
@@ -170,7 +172,7 @@ async function fetchAddressPointInfo(userCoordinates) {
     const original_result_text = RESULT_DIV.innerText;
     SEARCH_BTN.disabled = true;
     SEARCH_BTN.innerText = '查詢中...';
-    RESULT_DIV.innerHTML = SPINNER_HTML;
+    RESULT_DIV.innerHTML = SpinnerHTML;
     const address = document.getElementById('address').value;
     let url;
     if (!userCoordinates) {
@@ -184,7 +186,7 @@ async function fetchAddressPointInfo(userCoordinates) {
     } else {
         url = `/api/intersect/${encodeURIComponent(userCoordinates.lat)},${encodeURIComponent(userCoordinates.lng)}?use_coordinates=true`;
     }
-    progress_bar.show();
+    ProgressBar.show();
     let lat, lng;
     let data, zoning = null;
     try {
@@ -207,7 +209,7 @@ async function fetchAddressPointInfo(userCoordinates) {
         console.error('Error:', error);
         SEARCH_BTN.innerText = original_btn_text;
         SEARCH_BTN.disabled = false;
-        progress_bar.hide();
+        ProgressBar.hide();
         return;
     }
     const poi_data = await fetchAddressPointNearbyPOI(lat, lng);
@@ -239,7 +241,7 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
         if (data.length === 0) {
             SEARCH_BTN.innerText = original_btn_text;
             SEARCH_BTN.disabled = false;
-            progress_bar.hide();
+            ProgressBar.hide();
             return;
         }
         drawDistanceCircle(lat, lng);
@@ -253,7 +255,7 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
 async function fetchNearbyAnalysis(data, original_btn_text) {
     const nearbyAnalysisResultDiv = document.getElementById('nearby-analysis-result');
     try {
-        nearbyAnalysisResultDiv.innerHTML = SPINNER_HTML;
+        nearbyAnalysisResultDiv.innerHTML = SpinnerHTML;
         const res = await fetch(`/api/nearby-analysis`, {
             method: 'POST',
             headers: {
@@ -279,7 +281,7 @@ async function fetchNearbyAnalysis(data, original_btn_text) {
     finally {
         SEARCH_BTN.innerText = original_btn_text;
         SEARCH_BTN.disabled = false;
-        progress_bar.hide();
+        ProgressBar.hide();
     }
 }
 
