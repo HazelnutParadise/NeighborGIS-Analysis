@@ -2,18 +2,13 @@ import AddressPointRecords from './record_list.js';
 import ProgressBar from '../progress_bar.js';
 import SpinnerHTML from '../components/spinner.js';
 import { getEl, on } from '../dom.js';
+import { map } from './map.js';
+import { showAddressPointResult } from './show_result.js';
 
 const SEARCH_BTN = document.getElementById('searchBtn');
 const RESULT_DIV = document.getElementById('result');
 
-// Leaflet 地圖初始化
-export let map = L.map('map').setView([23.5, 121], 7);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-    subdomains: 'abcd',
-    maxZoom: 20
-}).addTo(map);
-let marker;
+
 let poiLayer;
 
 // 自動使用目前位置執行
@@ -49,34 +44,6 @@ on(SEARCH_BTN, 'click', async () => {
     await fetchAddressPointInfo();
 });
 
-function showAddressPointResult(data) {
-    const coordinates = data.coordinates;
-    const lat = Number(coordinates.lat);
-    const lng = Number(coordinates.lng);
-    const zoning = data.zoning;
-    RESULT_DIV.innerText =
-        `${data.address}\n` +
-        `經度：${lng}\n` +
-        `緯度：${lat}\n` +
-        `使用分區：${zoning.zone && zoning.zone !== '無資料' ? zoning.zone : '無資料'}\n` +
-        `容積率：${zoning.far && zoning.far !== '無資料' ? `${zoning.far}%` : '無資料'}\n` +
-        `建蔽率：${zoning.bcr && zoning.bcr !== '無資料' ? `${zoning.bcr}%` : '無資料'}\n` +
-        // 若查不到使用分區，則判定該點不在台北市，顯示為無資料
-        `是否為公有地：${zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料'}`;
-
-    // 標記地圖
-    if (!isNaN(lat) && !isNaN(lng) && lat !== 0 && lng !== 0) {
-        if (marker) map.removeLayer(marker);
-        marker = L.marker([lat, lng]).addTo(map);
-        marker.bindPopup(data.address).openPopup();
-        map.setView([lat, lng], 16);
-    } else {
-        if (marker) {
-            map.removeLayer(marker);
-            marker = null;
-        }
-    }
-}
 
 function drawDistanceCircle(lat, lng) {
     const distance = 500; // 半徑 500 公尺
