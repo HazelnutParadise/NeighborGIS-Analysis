@@ -37,6 +37,9 @@ export const showAddressPointResult = (data) => {
 
 export const drawDistanceCircle = (lat, lng) => {
     const distance = 500; // 半徑 500 公尺
+    if (circle) {
+        map.removeLayer(circle);
+    }
     circle = L.circle([lat, lng], {
         color: 'red',
         fillColor: '#f03',

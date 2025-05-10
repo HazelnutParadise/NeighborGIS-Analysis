@@ -1,5 +1,5 @@
-import { once, getEl } from '../dom.js';
-import { showAddressPointResult, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
+import { on, once, getEl } from '../dom.js';
+import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
 /**
  * 地點查詢紀錄功能
  * 處理記錄顯示、清除、選擇和比較功能
@@ -99,6 +99,7 @@ const AddressPointRecords = () => {
                     nearby_analysis_data: point.nearby_analysis_data,
                 }
                 showAddressPointResult(data);
+                drawDistanceCircle(point.lat, point.lng);
                 addPoiLayer(point.nearby_poi);
                 showPoiAnalysisResult(data.nearby_analysis_data);
             };
@@ -268,12 +269,12 @@ const AddressPointRecords = () => {
             const clearAllBtn = getEl('#clearAllBtn');
             const compareBtn = getEl('#compareBtn');
 
-            selectAllBtn.addEventListener('click', selectAll);
-            deselectAllBtn.addEventListener('click', deselectAll);
-            clearAllBtn.addEventListener('click', clearAll);
+            on(selectAllBtn, 'click', selectAll);
+            on(deselectAllBtn, 'click', deselectAll);
+            on(clearAllBtn, 'click', clearAll);
 
             // 綁定比較按鈕事件
-            compareBtn.addEventListener('click', compareAddresses);
+            on(compareBtn, 'click', compareAddresses);
 
             // 初始化記錄列表
             updateRecordList();
