@@ -4,3 +4,9 @@ services:
     ports:
       - "8030:8000"
     restart: unless-stopped
+    networks:
+      - ollama-net
+
+networks:
+  ollama-net:
+    external: true
