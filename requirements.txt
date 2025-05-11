@@ -10,5 +10,5 @@ langchain-ollama
 pydotenv
 osmnx
 sqlalchemy
-psycopg2
+psycopg2-binary
 geoalchemy2
