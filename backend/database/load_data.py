@@ -2,6 +2,8 @@ from enum import Enum
 import os
 import geopandas as gpd
 from database.connect import POSTGIS_ENGINE
+import concurrent.futures
+from typing import Dict, List, Tuple
 
 
 # 🔧 所有要載入的地理資料（Enum 名稱 ➜ 檔案路徑）
@@ -14,13 +16,28 @@ GEO_FILES = {
 
 def load_data_into_db() -> Enum:
     """
-    讀取地理檔案並寫入資料庫，建立 DBTableName Enum（表名為小寫）
+    平行讀取地理檔案並寫入資料庫，建立 DBTableName Enum（表名為小寫）
     """
     tables = {}
-    for enum_name, file_path in GEO_FILES.items():
-        table_name = enum_name.lower()  # 表名全小寫
-        _insert_to_postgis(file_path, table_name)
-        tables[enum_name] = table_name
+
+    # 使用 ThreadPoolExecutor 進行平行處理
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        # 提交所有任務
+        future_to_enum = {
+            executor.submit(_insert_to_postgis, file_path, enum_name.lower()): enum_name
+            for enum_name, file_path in GEO_FILES.items()
+        }
+
+        # 收集結果
+        for future in concurrent.futures.as_completed(future_to_enum):
+            enum_name = future_to_enum[future]
+            try:
+                # 獲取結果（若有）
+                future.result()
+                tables[enum_name] = enum_name.lower()
+            except Exception as e:
+                print(f"處理 {enum_name} 時發生錯誤: {e}")
+
     return Enum("DBTableName", tables)
 
 
