@@ -1,6 +1,7 @@
-import asyncio
 from enum import Enum
 from sqlalchemy import text
+
+
 from database.connect import POSTGIS_ENGINE
 from database.load_data import DBTableName
 from structs.adress_point import AddressPoint

@@ -1,6 +1,4 @@
-import asyncio
 from llm.llm import call_llm, ResponseMode
-import json
 
 
 async def llm_nearby_analysis(data) -> dict | None:
