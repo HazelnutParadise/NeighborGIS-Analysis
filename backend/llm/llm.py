@@ -1,5 +1,5 @@
 from enum import Enum
-from llm.llm_config import OLLAMA_BASE_URL
+from config.consts import OLLAMA_BASE_URL
 from typing import Any
 from langchain_core.messages import BaseMessage
 from langchain_ollama import ChatOllama
