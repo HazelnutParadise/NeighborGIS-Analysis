@@ -4,7 +4,7 @@ import asyncio
 
 from routers.router import set_routes
 from services.nearby_analysis import llm_nearby_analysis
-from database.connect import connect_db
+from database.connect import create_postgis_engine
 
 app = FastAPI()
 
@@ -12,7 +12,7 @@ set_routes(app)
 
 
 if __name__ == "__main__":
-    connect_db()
+    create_postgis_engine()
     # asyncio.run(llm_nearby_analysis({
     #     "address": "台北市信義區松高路12號",
     #     "nearby_poi": [
