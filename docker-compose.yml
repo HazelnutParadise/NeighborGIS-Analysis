@@ -18,7 +18,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgrespassword
     volumes:
-      - mnt/hdd0/neighborgis/postgis-data:/var/lib/postgresql/data
+      - /mnt/hdd0/neighborgis/postgis-data:/var/lib/postgresql/data
     # ports:
     #   - "5432:5432"
     networks:
