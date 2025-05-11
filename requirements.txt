@@ -9,3 +9,4 @@ uvicorn
 langchain-ollama
 pydotenv
 osmnx
+sqlalchemy
