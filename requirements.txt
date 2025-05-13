@@ -9,3 +9,6 @@ uvicorn
 langchain-ollama
 pydotenv
 osmnx
+sqlalchemy
+psycopg2-binary
+geoalchemy2

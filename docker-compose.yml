@@ -4,3 +4,33 @@ services:
     ports:
       - "8030:8000"
     restart: unless-stopped
+    networks:
+      - ollama-net
+      - neighborgis-net
+    depends_on:
+      - postgis
+
+  postgis:
+    image: postgis/postgis:17-3.5
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: neighborgis
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    volumes:
+      - /mnt/hdd0/neighborgis/postgis-data:/var/lib/postgresql/data
+    # ports:
+    #   - "5432:5432"
+    networks:
+      - neighborgis-net
+
+networks:
+  ollama-net:
+    external: true
+  neighborgis-net:
+    driver: bridge
+    external: false
+
+volumes:
+  postgis-data:
+    driver: local

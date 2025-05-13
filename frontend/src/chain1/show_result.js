@@ -37,17 +37,72 @@ export const showAddressPointResult = (data) => {
 
 export const drawDistanceCircle = (lat, lng) => {
     const distance = 500; // 半徑 500 公尺
+
     if (circle) {
         map.removeLayer(circle);
     }
+
+    // 改進視覺效果
     circle = L.circle([lat, lng], {
-        color: 'red',
-        fillColor: '#f03',
-        fillOpacity: 0.2,
-        radius: distance
+        color: '#4285F4',         // Google 藍色
+        weight: 1,                // 線條粗細
+        fillColor: '#4285F4',     // 填充顏色
+        fillOpacity: 0.15,        // 提高透明度以便更好地看到地圖
+        radius: distance,
+        // 增加互動效果
+        interactive: true
     }).addTo(map);
-    // 設定圓圈的 popup
-    circle.bindPopup(`距離：${distance} 公尺`);
+
+    // 建立彈出視窗內容
+    const popupContent = `
+        <div style="text-align: center;">
+            <strong>步行範圍</strong><br>
+            半徑：${distance} 公尺<br>
+            <small>約 ${Math.round(distance / 80)} 分鐘步行距離</small>
+        </div>`;
+
+    // 建立跟隨滑鼠的工具提示，不使用標準的 popup
+    let tooltip = L.tooltip({
+        permanent: false,
+        direction: 'top',
+        className: 'custom-tooltip',
+        offset: [0, -10],
+        opacity: 0.9
+    });
+
+    // 滑鼠移入時顯示工具提示
+    circle.on('mouseover', function (e) {
+        tooltip
+            .setContent(popupContent)
+            .setLatLng(e.latlng)
+            .addTo(map);
+    });
+
+    // 滑鼠移動時更新工具提示位置
+    circle.on('mousemove', function (e) {
+        tooltip.setLatLng(e.latlng);
+    });
+
+    // 滑鼠移出時移除工具提示
+    circle.on('mouseout', function () {
+        map.closeTooltip(tooltip);
+    });
+
+    // 鼠標點擊圓形時不要做任何特殊處理
+    circle.on('click', function (e) {
+        // 阻止事件傳播，避免點擊時打開或關閉工具提示
+        L.DomEvent.stopPropagation(e);
+    });
+
+    // 可以加入半透明的脈動效果來突顯重要性
+    setTimeout(() => {
+        circle.setStyle({ fillOpacity: 0.2 });
+        setTimeout(() => {
+            circle.setStyle({ fillOpacity: 0.15 });
+        }, 700);
+    }, 200);
+
+    return circle; // 返回繪製的圓形，方便後續操作
 }
 
 export const addPoiLayer = (data) => {
@@ -126,7 +181,7 @@ export const showPoiAnalysisResult = (resData) => {
     if (resData.summary) {
         analysisHtml += `
             <div class="summary-section">
-                <h3>總結分析</h3>
+                <h3 class="tag">總結分析</h3>
                 <p>${resData.summary}</p>
             </div>
             <br>
