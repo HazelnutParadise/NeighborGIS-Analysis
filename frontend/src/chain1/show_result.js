@@ -181,7 +181,7 @@ export const showPoiAnalysisResult = (resData) => {
     if (resData.summary) {
         analysisHtml += `
             <div class="summary-section">
-                <h3>總結分析</h3>
+                <h3 class="tag">總結分析</h3>
                 <p>${resData.summary}</p>
             </div>
             <br>

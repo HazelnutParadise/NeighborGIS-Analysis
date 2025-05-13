@@ -217,7 +217,7 @@ const AddressPointRecords = (() => {
         // 初始化一個空的內容區域，稍後會更新
         modalContent.innerHTML = `
             <div class="compare-header">
-                <h3>地址比較</h3>
+                <h3>地點比較</h3>
                 <button class="close-btn" id="closeAddressPointRecordsCompareModalBtn">×</button>
             </div>
             <div class="compare-body" id="compareModalBody">
@@ -279,7 +279,7 @@ const AddressPointRecords = (() => {
                 </tbody>
             </table>
             <div class="compare-summary">
-                <h4>比較結果分析</h4>
+                <h4 class="tag">比較結果分析</h4>
                 <div id="compareSummary_${currentCompareId}" class="summary-content compare-summary-content">
                     ${SpinnerHTML}
                 </div>
