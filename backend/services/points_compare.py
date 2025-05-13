@@ -1,15 +1,23 @@
 from llm.llm import call_llm, ResponseMode
 
 
-async def llm_compare_points(data) -> str | None:
+async def llm_compare_points(data: list[dict]) -> str | None:
     aspect_to_be_compared = ['使用分區', '容積率', '建蔽率', '是否為公有地', '周邊POI']
+    points_data_str = ""
+    for i, point_data in enumerate(data, start=1):
+        points_data_str += f"{i}. {point_data['address']}：\n"
+        for key, value in point_data.items():
+            if key == "address" or key == "nearby_poi":
+                continue
+            points_data_str += f"   - {key}：{value}。\n"
+        points_data_str += "\n"
+    print(points_data_str)
     prompt = f"""
 以下是{len(data)}個地點的相關資料，請針對{aspect_to_be_compared}等方面進行比較，並生成一段總結。
 ```
-{data}
+""" + points_data_str + """
 ```
 
-- 你是一位專業的地理環境分析師，負責根據資料分析周邊環境。
 - 請考慮所有提到的分析面向。
 - 請將所有地點的資料納入比較，不得忽略任何地點。
 - 每一個地點都在不同區域。

@@ -49,10 +49,19 @@ export function off(el, event, handler, options) {
 
 export function once(el, event, handler, options) {
     if (!el) return;
+
+    // 創建一個包裝函數，並保留對它的引用
     const onceHandler = function (e) {
-        handler(e);
+        // 先移除事件監聽，避免在處理過程中可能再次觸發
         off(el, event, onceHandler, options);
+        // 執行原始處理器
+        handler(e);
     };
+
+    // 將包裝函數和原始處理器關聯起來，方便後續識別
+    onceHandler._originalHandler = handler;
+
+    // 註冊事件
     on(el, event, onceHandler, options);
 }
 

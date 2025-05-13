@@ -7,13 +7,18 @@ import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysi
  */
 
 // 變數宣告
-const addressPointList = []
+const addressPointList = [];
 // 已選擇的地址記錄（用於比較功能）
 let selectedAddressesIdx = [];
 
 // DOM元素
 const AddressPointRecords = (() => {
     const addressRecordList = getEl('#addressRecordList');
+    // 模態框元素參考
+    let compareModal = null;
+    let compareModalContent = null;
+    let compareId = 0; // 用於生成唯一ID
+
     /**
      * 更新記錄列表顯示
      */
@@ -98,7 +103,7 @@ const AddressPointRecords = (() => {
                     is_public_land: point.is_public_land,
                     nearby_poi: point.nearby_poi,
                     nearby_analysis_data: point.nearby_analysis_data,
-                }
+                };
                 showAddressPointResult(data);
                 drawDistanceCircle(point.lat, point.lng);
                 addPoiLayer(point.nearby_poi);
@@ -106,7 +111,8 @@ const AddressPointRecords = (() => {
             };
 
             addressRecordList.appendChild(listItem);
-        });   // 根據選擇數量更新比較按鈕狀態
+        });
+        // 根據選擇數量更新比較按鈕狀態
         updateCompareButtonState();
     }
 
@@ -186,62 +192,13 @@ const AddressPointRecords = (() => {
     }
 
     /**
-     * 比較選中的地址
+     * 創建比較模態框 - 只在初始化時創建一次
      */
-    function compareAddresses() {
-        if (selectedAddressesIdx.length < 2) {
-            alert('請至少選擇兩個地址進行比較');
+    function initCompareModal() {
+        // 檢查是否已存在模態框
+        if (document.getElementById('compareModal')) {
             return;
         }
-
-        // 獲取選中地址的詳細信息
-        const selectedAddresses = selectedAddressesIdx.map(idx => addressPointList[idx]);
-
-        // 創建比較表格
-        let compareContent = `
-            <div class="compare-header">
-                <h3>地址比較</h3>
-                <button class="close-btn" id="closeAddressPointRecordsCompareModalBtn">×</button>
-            </div>
-            <div class="compare-body">
-                <table class="compare-table">
-                    <thead>
-                        <tr>
-                            <th>比較項目</th>
-                            ${selectedAddresses.map(addr => `<th>${addr.address}</th>`).join('')}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>使用分區</td>
-                            ${selectedAddresses.map(addr => `<td>${addr.zoning}</td>`).join('')}
-                        </tr>
-                        <tr>
-                            <td>容積率</td>
-                            ${selectedAddresses.map(addr => `<td>${addr.far + (addr.far !== '無資料' ? '%' : '')}</td>`).join('')}
-                        </tr>
-                        <tr>
-                            <td>建蔽率</td>
-                            ${selectedAddresses.map(addr => `<td>${addr.bcr + (addr.bcr !== '無資料' ? '%' : '')}</td>`).join('')}
-                        </tr>
-                        <tr>
-                            <td>公有地</td>
-                            ${selectedAddresses.map(addr => `<td>${addr.is_public_land}</td>`).join('')}
-                        </tr>
-                        <tr>
-                            <td>周邊POI數量</td>
-                            ${selectedAddresses.map(addr => `<td>${addr.nearby_poi.features.length}</td>`).join('')}
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="compare-summary">
-                    <h4>比較結果分析</h4>
-                    <div id="compareSummary" class="summary-content">
-                        ${SpinnerHTML}
-                    </div>
-                </div>
-            </div>
-        `;
 
         // 創建模態框
         const modal = document.createElement('div');
@@ -256,29 +213,128 @@ const AddressPointRecords = (() => {
         modalContent.className = 'compare-modal';
         modalContent.style.maxWidth = 'calc(100% - 30px)'; // 確保兩側有足夠空間
         modalContent.style.overflowY = 'auto'; // 整個模態框可捲動
-        modalContent.innerHTML = compareContent;
+
+        // 初始化一個空的內容區域，稍後會更新
+        modalContent.innerHTML = `
+            <div class="compare-header">
+                <h3>地址比較</h3>
+                <button class="close-btn" id="closeAddressPointRecordsCompareModalBtn">×</button>
+            </div>
+            <div class="compare-body" id="compareModalBody">
+                <!-- 動態內容將在這裡更新 -->
+            </div>
+        `;
 
         modal.appendChild(modalContent);
         document.body.appendChild(modal);
 
-        // 鎖定背景滾動
-        document.body.classList.add('modal-open');
+        // 綁定關閉按鈕事件，只綁定一次
+        const closeBtn = getEl('#closeAddressPointRecordsCompareModalBtn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', closeCompareModal);
+        }
 
-        // 比較勾選地點
-        const compareSummary = getEl('#compareSummary');
-        compareSummary.innerHTML = SpinnerHTML;
+        // 保存對模態框的引用
+        compareModal = modal;
+        compareModalContent = getEl('#compareModalBody');
+
+        return modal;
+    }
+
+    /**
+     * 生成比較內容HTML
+     * @param {Array} selectedAddresses - 選中的地址列表
+     * @returns {String} 比較內容HTML
+     */
+    function generateCompareContent(selectedAddresses, currentCompareId) {
+        return `
+            <table class="compare-table">
+                <thead>
+                    <tr>
+                        <th>比較項目</th>
+                        ${selectedAddresses.map(addr => `<th>${addr.address}</th>`).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>使用分區</td>
+                        ${selectedAddresses.map(addr => `<td>${addr.zoning}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <td>容積率</td>
+                        ${selectedAddresses.map(addr => `<td>${addr.far + (addr.far !== '無資料' ? '%' : '')}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <td>建蔽率</td>
+                        ${selectedAddresses.map(addr => `<td>${addr.bcr + (addr.bcr !== '無資料' ? '%' : '')}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <td>公有地</td>
+                        ${selectedAddresses.map(addr => `<td>${addr.is_public_land}</td>`).join('')}
+                    </tr>
+                    <tr>
+                        <td>周邊POI數量</td>
+                        ${selectedAddresses.map(addr => `<td>${addr.nearby_poi.features.length}</td>`).join('')}
+                    </tr>
+                </tbody>
+            </table>
+            <div class="compare-summary">
+                <h4>比較結果分析</h4>
+                <div id="compareSummary_${currentCompareId}" class="summary-content compare-summary-content">
+                    ${SpinnerHTML}
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 比較選中的地址
+     */
+    function compareAddresses() {
+        if (selectedAddressesIdx.length < 2) {
+            alert('請至少選擇兩個地址進行比較');
+            return;
+        }
+
+        // 增加比較ID
+        compareId++;
+        const currentCompareId = compareId;
+
+        // 獲取選中地址的詳細信息
+        const selectedAddresses = selectedAddressesIdx.map(idx => addressPointList[idx]);
+
+        // 生成比較內容，使用當前的compareId
+        const compareContent = generateCompareContent(selectedAddresses, currentCompareId);
+
+        // 更新模態框內容
+        compareModalContent.innerHTML = compareContent;
+
+        // 顯示模態框
+        document.body.classList.add('modal-open');
+        compareModal.classList.add('show');
+
+        // 直接使用當前compareId獲取summary元素
+        const summaryElementId = `compareSummary_${currentCompareId}`;
+
+        // 取得比較結果
         getCompareSummary(selectedAddresses).then((summary) => {
             // 為比較結果添加高亮顯示
             const formattedSummary = formatComparisonResult(summary);
-            // 更新比較結果
-            compareSummary.innerHTML = formattedSummary;
-        });
 
-        // 顯示模態框
-        setTimeout(() => {
-            modal.classList.add('show');
-            once(getEl('#closeAddressPointRecordsCompareModalBtn'), 'click', closeCompareModal);
-        }, 10);
+            // 使用ID選擇器確保找到正確的元素
+            const currentSummaryElement = document.getElementById(summaryElementId);
+            if (currentSummaryElement) {
+                currentSummaryElement.innerHTML = formattedSummary;
+            } else {
+                console.error(`無法找到比較結果元素: ${summaryElementId}`);
+            }
+        }).catch(error => {
+            const currentSummaryElement = document.getElementById(summaryElementId);
+            if (currentSummaryElement) {
+                currentSummaryElement.innerHTML = '<p class="error-message">獲取比較結果時出錯</p>';
+            }
+            console.error('比較請求失敗:', error);
+        });
     }
 
     async function getCompareSummary(data) {
@@ -315,7 +371,7 @@ const AddressPointRecords = (() => {
             // 高亮負面評價詞彙
             .replace(/較差|不足|劣勢|不利|不推薦|不適合|問題|缺點|較低|較少/g, match => `<span class="highlight-worse">${match}</span>`)
             // 高亮中性評價詞彙
-            .replace(/相似|差異|比較|不同|各有|可能|視情況/g, match => `<span class="highlight-neutral">${match}</span>`);
+            .replace(/相似|差異|不同|各有|可能|視情況/g, match => `<span class="highlight-neutral">${match}</span>`);
 
         // 確保段落正確換行
         formattedText = formattedText.replace(/\n/g, '</p><p>');
@@ -327,18 +383,13 @@ const AddressPointRecords = (() => {
      * 關閉比較模態框
      */
     function closeCompareModal() {
-        const modal = getEl('#compareModal');
-        if (modal) {
-            modal.classList.remove('show');
-
-            // 延遲移除，等待動畫完成
-            setTimeout(() => {
-                document.body.removeChild(modal);
-                // 解除背景滾動鎖定
-                document.body.classList.remove('modal-open');
-            }, 300);
+        if (compareModal) {
+            compareModal.classList.remove('show');
+            // 解除背景滾動鎖定
+            document.body.classList.remove('modal-open');
         }
     }
+
     return {
         init: () => {
             const selectAllBtn = getEl('#selectAllBtn');
@@ -352,6 +403,9 @@ const AddressPointRecords = (() => {
 
             // 綁定比較按鈕事件
             on(compareBtn, 'click', compareAddresses);
+
+            // 初始化模態框
+            initCompareModal();
 
             // 初始化記錄列表
             updateRecordList();
@@ -368,8 +422,9 @@ const AddressPointRecords = (() => {
             return selectedAddressesIdx.map(idx => addressPointList[idx]);
         },
         closeCompareModal,
-    }
-})()
+        compareSelectedAddresses: compareAddresses,
+    };
+})();
 
 AddressPointRecords.init();
 
