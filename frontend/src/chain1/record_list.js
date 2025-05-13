@@ -1,4 +1,5 @@
 import { on, once, getEl } from '../dom.js';
+import SpinnerHTML from '../components/spinner.js';
 import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
 /**
  * 地點查詢紀錄功能
@@ -198,11 +199,11 @@ const AddressPointRecords = (() => {
 
         // 創建比較表格
         let compareContent = `
-            <div class="compare-modal modal show">
-                <div class="compare-header">
-                    <h3>地址比較</h3>
-                    <button class="close-btn" id="closeAddressPointRecordsCompareModalBtn">×</button>
-                </div>
+            <div class="compare-header">
+                <h3>地址比較</h3>
+                <button class="close-btn" id="closeAddressPointRecordsCompareModalBtn">×</button>
+            </div>
+            <div class="compare-body">
                 <table class="compare-table">
                     <thead>
                         <tr>
@@ -217,11 +218,11 @@ const AddressPointRecords = (() => {
                         </tr>
                         <tr>
                             <td>容積率</td>
-                            ${selectedAddresses.map(addr => `<td>${addr.far}</td>`).join('')}
+                            ${selectedAddresses.map(addr => `<td>${addr.far + (addr.far !== '無資料' ? '%' : '')}</td>`).join('')}
                         </tr>
                         <tr>
                             <td>建蔽率</td>
-                            ${selectedAddresses.map(addr => `<td>${addr.bcr}</td>`).join('')}
+                            ${selectedAddresses.map(addr => `<td>${addr.bcr + (addr.bcr !== '無資料' ? '%' : '')}</td>`).join('')}
                         </tr>
                         <tr>
                             <td>公有地</td>
@@ -233,21 +234,93 @@ const AddressPointRecords = (() => {
                         </tr>
                     </tbody>
                 </table>
-            </ >
-    `;
+                <div class="compare-summary">
+                    <h4>比較結果分析</h4>
+                    <div id="compareSummary" class="summary-content">
+                        ${SpinnerHTML}
+                    </div>
+                </div>
+            </div>
+        `;
 
         // 創建模態框
         const modal = document.createElement('div');
         modal.className = 'modal';
         modal.id = 'compareModal';
-        modal.innerHTML = compareContent;
+
+        // 設置模態框樣式，使其有適當的捲軸空間
+        modal.style.paddingLeft = '15px';
+        modal.style.paddingRight = '15px';
+
+        const modalContent = document.createElement('div');
+        modalContent.className = 'compare-modal';
+        modalContent.style.maxWidth = 'calc(100% - 30px)'; // 確保兩側有足夠空間
+        modalContent.style.overflowY = 'auto'; // 整個模態框可捲動
+        modalContent.innerHTML = compareContent;
+
+        modal.appendChild(modalContent);
         document.body.appendChild(modal);
+
+        // 鎖定背景滾動
+        document.body.classList.add('modal-open');
+
+        // 比較勾選地點
+        const compareSummary = getEl('#compareSummary');
+        compareSummary.innerHTML = SpinnerHTML;
+        getCompareSummary(selectedAddresses).then((summary) => {
+            // 為比較結果添加高亮顯示
+            const formattedSummary = formatComparisonResult(summary);
+            // 更新比較結果
+            compareSummary.innerHTML = formattedSummary;
+        });
 
         // 顯示模態框
         setTimeout(() => {
             modal.classList.add('show');
             once(getEl('#closeAddressPointRecordsCompareModalBtn'), 'click', closeCompareModal);
         }, 10);
+    }
+
+    async function getCompareSummary(data) {
+        try {
+            const result = await fetch('/api/compare-points', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            if (!result.ok) {
+                console.error('Error fetching compare summary:', result.statusText);
+                return '無法獲取比較結果';
+            }
+            const resultJson = await result.json();
+            return resultJson.data;
+        } catch (error) {
+            console.error('Error fetching compare summary:', error);
+            return '無法獲取比較結果';
+        }
+    }
+
+    /**
+     * 格式化比較結果，添加高亮顯示
+     */
+    function formatComparisonResult(summary) {
+        if (!summary || typeof summary !== 'string') return '無法獲取比較結果';
+
+        // 添加高亮標記
+        let formattedText = summary
+            // 高亮正面評價詞彙
+            .replace(/更好|較佳|優勢|有利|推薦|適合|理想|優點|較高|較多/g, match => `<span class="highlight-better">${match}</span>`)
+            // 高亮負面評價詞彙
+            .replace(/較差|不足|劣勢|不利|不推薦|不適合|問題|缺點|較低|較少/g, match => `<span class="highlight-worse">${match}</span>`)
+            // 高亮中性評價詞彙
+            .replace(/相似|差異|比較|不同|各有|可能|視情況/g, match => `<span class="highlight-neutral">${match}</span>`);
+
+        // 確保段落正確換行
+        formattedText = formattedText.replace(/\n/g, '</p><p>');
+
+        return `<p>${formattedText}</p>`;
     }
 
     /**
@@ -257,8 +330,12 @@ const AddressPointRecords = (() => {
         const modal = getEl('#compareModal');
         if (modal) {
             modal.classList.remove('show');
+
+            // 延遲移除，等待動畫完成
             setTimeout(() => {
                 document.body.removeChild(modal);
+                // 解除背景滾動鎖定
+                document.body.classList.remove('modal-open');
             }, 300);
         }
     }

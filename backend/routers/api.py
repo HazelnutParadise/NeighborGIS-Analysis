@@ -4,6 +4,7 @@ from handlers.intersect_handler import get_intersect_handler
 from handlers.generate_floor_handler import post_generate_floor_handler
 from handlers.poi_handler import get_nearby_poi_handler
 from handlers.nearby_analysis_handler import post_nearby_analysis_handler
+from handlers.points_compare_handler import post_points_compare_handler
 
 
 def set_api_routes(app: FastAPI) -> None:
@@ -27,5 +28,9 @@ def set_api_routes(app: FastAPI) -> None:
     @api_router.post("/nearby-analysis")
     async def api_nearby_analysis(request: Request):
         return await post_nearby_analysis_handler(request)
+
+    @api_router.post("/compare-points")
+    async def api_compare_points(request: Request):
+        return await post_points_compare_handler(request)
 
     app.include_router(api_router)
