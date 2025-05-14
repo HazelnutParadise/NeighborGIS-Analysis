@@ -8,6 +8,10 @@ from functools import wraps
 from threading import Lock
 
 
+TOP_K = 20  # 預設保留的 top K 個 cache
+MIN_LIFETIME_SECONDS = 5*60  # 預設最小生命週期
+
+
 class CacheEntry:
     def __init__(self, value: Any):
         self.value = value
@@ -95,7 +99,8 @@ class SmartCacheManager:
 
 
 # 全域統一一個 SmartCacheManager
-_default_manager = SmartCacheManager(min_lifetime_seconds=300, top_k=10)
+_default_manager = SmartCacheManager(
+    min_lifetime_seconds=MIN_LIFETIME_SECONDS, top_k=TOP_K)
 
 
 def smart_cache(key: str = "", expire: int = None, verbose: bool = False):

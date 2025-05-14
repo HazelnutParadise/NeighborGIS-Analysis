@@ -1,6 +1,8 @@
 from llm.llm import call_llm, ResponseMode
+from utils.cache import smart_cache
 
 
+@smart_cache()
 async def llm_compare_points(data: list[dict]) -> str | None:
     aspect_to_be_compared = ['使用分區', '容積率', '建蔽率', '是否為公有地', '周邊POI']
     points_data_str = ""
