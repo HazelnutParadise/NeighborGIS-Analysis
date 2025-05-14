@@ -1,6 +1,6 @@
 import { on, once, getEl } from '../dom.js';
 import SpinnerHTML from '../components/spinner.js';
-import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
+import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult, showPoiList } from './show_result.js';
 /**
  * 地點查詢紀錄功能
  * 處理記錄顯示、清除、選擇和比較功能
@@ -107,6 +107,7 @@ const AddressPointRecords = (() => {
                 showAddressPointResult(data);
                 drawDistanceCircle(point.lat, point.lng);
                 addPoiLayer(point.nearby_poi);
+                showPoiList(point.nearby_poi);
                 showPoiAnalysisResult(data.nearby_analysis_data);
             };
 

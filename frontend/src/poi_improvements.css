@@ -55,12 +55,17 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 3px;
+  gap: 5px; /* Add gap for spacing between items */
 }
 
 .poi-name {
   font-weight: 500;
   font-size: 0.9rem;
   color: var(--text-primary);
+  flex-grow: 1; /* Allow name to take available space */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .poi-distance {
@@ -69,6 +74,7 @@
   background: rgba(0, 0, 0, 0.04);
   padding: 1px 6px;
   border-radius: 10px;
+  white-space: nowrap; /* Prevent distance from wrapping */
 }
 
 .poi-address {
@@ -89,4 +95,31 @@
   top: 0;
   font-size: 0.7rem;
   opacity: 0.7;
+}
+
+/* Google Maps button style */
+.poi-google-maps-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 4px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.poi-google-maps-btn svg {
+  stroke: var(--text-secondary);
+  transition: stroke 0.2s ease;
+}
+
+.poi-google-maps-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: var(--border-light);
+}
+
+.poi-google-maps-btn:hover svg {
+  stroke: var(--text-primary);
 }

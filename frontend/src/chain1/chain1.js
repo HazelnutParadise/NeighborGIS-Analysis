@@ -102,6 +102,8 @@ async function fetchAddressPointInfo(userCoordinates) {
 }
 
 async function fetchAddressPointNearbyPOI(lat, lng) {
+    const poi_list = getEl('#poi-list');
+    poi_list.innerHTML = SpinnerHTML;
     const url = `/api/nearby-poi/${encodeURIComponent(lat)},${encodeURIComponent(lng)}`;
     try {
         const res = await fetch(url);
@@ -124,6 +126,7 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
     } catch (error) {
         console.error('Error:', error);
         alert(error.message);
+        poi_list.innerHTML = `查詢失敗，錯誤訊息： ${error.message}`;
     }
 }
 

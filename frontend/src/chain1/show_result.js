@@ -210,6 +210,9 @@ export const showPoiList = (data) => {
                 .sort((a, b) => (a.properties.distance_meters || 0) - (b.properties.distance_meters || 0))
                 .forEach(feature => {
                     const { name = '未命名', distance = '距離不詳', 'addr:full': address = '無地址' } = feature.properties;
+                    const coordinates = feature.geometry.coordinates; // [longitude, latitude]
+                    const googleMapsUrl = `https://www.google.com/maps?q=${coordinates[1]},${coordinates[0]}`;
+
                     // 轉換距離字符串為數字和單位
                     let distanceDisplay = distance;
                     if (typeof distance === 'string' && distance.includes('公尺')) {
@@ -230,12 +233,15 @@ export const showPoiList = (data) => {
                             distanceDisplay = `${Math.round(distance)}m`;
                         }
                     }                // 截取地址，如果太長則顯示省略號
-                    const shortAddress = typeof address === 'string' && address.length > 25 ? address.substring(0, 25) + '...' : address;
+                    const shortAddress = typeof address === 'string' ? (address.length > 25 ? address.substring(0, 25) + '...' : address) : "無地址資訊";
 
                     poiHtml += `
                         <div class="poi-item">
                             <div class="poi-item-header">
                                 <span class="poi-name">${name}</span>
+                                <a href="${googleMapsUrl}" target="_blank" class="poi-google-maps-btn" title="在 Google 地圖上查看">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                </a>
                                 <span class="poi-distance">${distanceDisplay}</span>
                             </div>
                             <div class="poi-address" title="${address}">${shortAddress}</div>
@@ -253,23 +259,20 @@ export const showPoiList = (data) => {
 
     // 添加使用指南提示 (僅在有 POI 數據時顯示)
     if (data.features && data.features.length > 0) {
-        const poiGuide = document.createElement('div');
-        poiGuide.className = 'poi-guide';
-        poiGuide.innerHTML = `
-            <div class="poi-guide-content">
-                <div class="poi-guide-icon">💡</div>
-                <div class="poi-guide-text">點擊項目可在地圖上查看位置</div>
-            </div>
-        `;
-        poiListDiv.prepend(poiGuide);
+        // const poiGuide = document.createElement('div');
+        // poiGuide.className = 'poi-guide';
+        // poiGuide.innerHTML = `
+
+        // `;
+        // poiListDiv.prepend(poiGuide);
 
         // 3秒後淡出指南提示
-        setTimeout(() => {
-            poiGuide.classList.add('fade-out');
-            setTimeout(() => {
-                poiGuide.remove();
-            }, 500);
-        }, 5000);
+        // setTimeout(() => {
+        //     poiGuide.classList.add('fade-out');
+        //     setTimeout(() => {
+        //         poiGuide.remove();
+        //     }, 500);
+        // }, 5000);
 
         // 添加類別標題的收起/展開功能
         const categoryHeaders = document.querySelectorAll('.poi-category-header[data-toggle="collapse"]');
