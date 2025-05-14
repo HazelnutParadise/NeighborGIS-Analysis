@@ -108,8 +108,7 @@ export const drawDistanceCircle = (lat, lng) => {
 export const addPoiLayer = (data) => {
     if (poiLayer) {
         map.removeLayer(poiLayer);
-    }
-    // 根據 POI 類型決定顏色
+    }    // 根據 POI 類型決定顏色
     const colorMap = {
         food: 'lightblue',
         health: 'lightgreen',
@@ -132,6 +131,210 @@ export const addPoiLayer = (data) => {
     }).addTo(map);
 }
 
+export const showPoiList = (data) => {
+    const poiListDiv = getEl('#poi-list');
+
+    // 如果沒有 POI 數據，顯示提示訊息
+    if (!data || !data.features || data.features.length === 0) {
+        poiListDiv.innerHTML = `
+            <div class="empty-poi-notice">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>附近找不到 POI 資訊</span>
+                <small>可能是當前區域無資料或搜尋範圍內無相關設施</small>
+            </div>
+        `;
+        return;
+    }
+
+    // 將 POI 資料按類型分組
+    const poiByType = {};
+    data.features.forEach(feature => {
+        const poiType = feature.properties.poi_type;
+        if (!poiByType[poiType]) {
+            poiByType[poiType] = [];
+        }
+        poiByType[poiType].push(feature);
+    });
+
+    // 顯示 POI 分類和數量摘要
+    let poiHtml = '<div class="poi-summary">';    // 定義類型對應的文字和樣式類
+    const typeInfo = {
+        'food': { text: '餐飲', class: 'food-type', icon: 'utensils', emoji: '🍽️' },
+        'health': { text: '醫療', class: 'health-type', icon: 'heartbeat', emoji: '🏥' },
+        'public': { text: '公共設施', class: 'public-type', icon: 'building', emoji: '🏢' }
+    };
+
+    // 添加 POI 類型摘要信息
+    Object.keys(poiByType).forEach(poiType => {
+        const info = typeInfo[poiType] || { text: poiType, class: 'other-type', icon: 'map-marker' };
+        const count = poiByType[poiType] && Array.isArray(poiByType[poiType]) ? poiByType[poiType].length : 0; // Check if poiByType[poiType] is an array
+        poiHtml += `
+            <div class="poi-type-summary ${info.class}">
+                <div class="poi-type-icon">
+                    ${info.emoji}
+                </div>
+                <div class="poi-type-info">
+                    <span class="poi-type-name">${info.text}</span>
+                    <span class="poi-type-count">${count} 個</span>
+                </div>
+            </div>
+        `;
+    });
+
+    poiHtml += '</div>';
+
+    // 添加 POI 詳細列表
+    poiHtml += '<div class="poi-list-container">';
+
+    // 依次顯示每種類型的 POI
+    Object.keys(poiByType).forEach(poiType => {
+        const info = typeInfo[poiType] || { text: poiType, class: 'other-type' };
+        const poiCount = poiByType[poiType] && Array.isArray(poiByType[poiType]) ? poiByType[poiType].length : 0; // Check if poiByType[poiType] is an array
+        poiHtml += `
+            <div class="poi-category">
+                <div class="poi-category-header ${info.class}-header" data-toggle="collapse">
+                    <h4>${info.emoji} ${info.text}</h4>
+                    <div class="poi-header-right">
+                        <span class="poi-count">${poiCount}個</span>
+                        <span class="poi-toggle-icon">▾</span>
+                    </div>
+                </div>
+                <div class="poi-items">
+        `;// 添加該類型的 POI 項目，按距離排序
+        if (poiByType[poiType] && Array.isArray(poiByType[poiType])) { // Check if poiByType[poiType] is an array
+            poiByType[poiType]
+                .sort((a, b) => (a.properties.distance_meters || 0) - (b.properties.distance_meters || 0))
+                .forEach(feature => {
+                    const { name = '未命名', distance = '距離不詳', 'addr:full': address = '無地址' } = feature.properties;
+                    // 轉換距離字符串為數字和單位
+                    let distanceDisplay = distance;
+                    if (typeof distance === 'string' && distance.includes('公尺')) {
+                        const distanceNumber = parseFloat(distance);
+                        if (!isNaN(distanceNumber)) {
+                            // 若距離小於 100 公尺，顯示「附近」
+                            if (distanceNumber < 100) {
+                                distanceDisplay = `附近`;
+                            } else {
+                                distanceDisplay = `${Math.round(distanceNumber)}m`;
+                            }
+                        }
+                    } else if (typeof distance === 'number') {
+                        // 直接處理數字類型的距離
+                        if (distance < 100) {
+                            distanceDisplay = `附近`;
+                        } else {
+                            distanceDisplay = `${Math.round(distance)}m`;
+                        }
+                    }                // 截取地址，如果太長則顯示省略號
+                    const shortAddress = typeof address === 'string' && address.length > 25 ? address.substring(0, 25) + '...' : address;
+
+                    poiHtml += `
+                        <div class="poi-item">
+                            <div class="poi-item-header">
+                                <span class="poi-name">${name}</span>
+                                <span class="poi-distance">${distanceDisplay}</span>
+                            </div>
+                            <div class="poi-address" title="${address}">${shortAddress}</div>
+                        </div>
+                    `;
+                });
+        }
+
+        poiHtml += `
+                </div>
+            </div>
+        `;
+    }); poiHtml += '</div>';    // 更新 DOM
+    poiListDiv.innerHTML = poiHtml;
+
+    // 添加使用指南提示 (僅在有 POI 數據時顯示)
+    if (data.features && data.features.length > 0) {
+        const poiGuide = document.createElement('div');
+        poiGuide.className = 'poi-guide';
+        poiGuide.innerHTML = `
+            <div class="poi-guide-content">
+                <div class="poi-guide-icon">💡</div>
+                <div class="poi-guide-text">點擊項目可在地圖上查看位置</div>
+            </div>
+        `;
+        poiListDiv.prepend(poiGuide);
+
+        // 3秒後淡出指南提示
+        setTimeout(() => {
+            poiGuide.classList.add('fade-out');
+            setTimeout(() => {
+                poiGuide.remove();
+            }, 500);
+        }, 5000);
+
+        // 添加類別標題的收起/展開功能
+        const categoryHeaders = document.querySelectorAll('.poi-category-header[data-toggle="collapse"]');
+        categoryHeaders.forEach(header => {
+            header.addEventListener('click', function () {
+                const poiItems = this.nextElementSibling;
+                const toggleIcon = this.querySelector('.poi-toggle-icon');
+
+                // 切換顯示/隱藏
+                if (poiItems.style.display === 'none') {
+                    poiItems.style.display = 'block';
+                    toggleIcon.textContent = '▾';
+                    toggleIcon.style.transform = 'rotate(0deg)';
+                } else {
+                    poiItems.style.display = 'none';
+                    toggleIcon.textContent = '▸';
+                    toggleIcon.style.transform = 'rotate(-90deg)';
+                }
+            });
+        });
+    }
+
+    // 添加點擊事件，點擊 POI 項目時在地圖上高亮顯示
+    document.querySelectorAll('.poi-item').forEach((item, index) => {
+        const poiData = JSON.stringify(data.features[index].geometry.coordinates);
+        item.setAttribute('data-coordinates', poiData);
+
+        on(item, 'click', function () {
+            // 獲取所有 POI 項目
+            const poiItems = document.querySelectorAll('.poi-item');
+
+            // 重置所有 POI 項目的選中狀態
+            poiItems.forEach(i => i.classList.remove('active'));            // 標記當前 POI 項目為活動狀態
+            item.classList.add('active');
+
+            // 獲取坐標並設置地圖視圖
+            const coordinates = JSON.parse(this.getAttribute('data-coordinates'));
+            const latlng = L.latLng(coordinates[1], coordinates[0]); // GeoJSON 是 [經度, 緯度]，Leaflet 是 [緯度, 經度]
+
+            // 在地圖上高亮顯示 POI
+            poiLayer.eachLayer(layer => {
+                // 重置所有圖層的樣式
+                layer.setStyle({
+                    radius: 3.5,
+                    weight: 0.5,
+                    fillOpacity: 0.8
+                });
+
+                const layerCoords = layer.getLatLng();
+                if (layerCoords.lat === latlng.lat && layerCoords.lng === latlng.lng) {
+                    // 高亮選中的 POI
+                    layer.setStyle({
+                        radius: 7,
+                        weight: 2,
+                        fillOpacity: 1,
+                        color: '#0066cc'
+                    });
+                    layer.openPopup();
+                    map.setView(layerCoords, 17);
+                }
+            });
+        });
+    });
+}
+
 export const showPoiAnalysisResult = (resData) => {
     const nearbyAnalysisResultDiv = getEl('#nearby-analysis-result');
     // 更新 UI 以顯示分析結果
@@ -140,6 +343,8 @@ export const showPoiAnalysisResult = (resData) => {
     // 處理各個 POI 類型的分析
     if (resData.analysis && resData.analysis.length > 0) {
         resData.analysis.forEach(poiAnalysis => {
+            const advantagesList = poiAnalysis.advantages && Array.isArray(poiAnalysis.advantages) ? poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('') : '';
+            const disadvantagesList = poiAnalysis.disadvantages && Array.isArray(poiAnalysis.disadvantages) ? poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('') : '';
             analysisHtml += `
                 <div class="poi-analysis-card">
                     <div class="poi-type-header">
@@ -154,7 +359,7 @@ export const showPoiAnalysisResult = (resData) => {
                                 </div>
                                 <div class="column-content">
                                     <ul class="advantages-list">
-                                        ${poiAnalysis.advantages.map(adv => `<li>${adv}</li>`).join('')}
+                                        ${advantagesList}
                                     </ul>
                                 </div>
                             </div>
@@ -164,7 +369,7 @@ export const showPoiAnalysisResult = (resData) => {
                                 </div>
                                 <div class="column-content">
                                     <ul class="disadvantages-list">
-                                        ${poiAnalysis.disadvantages.map(dis => `<li>${dis}</li>`).join('')}
+                                        ${disadvantagesList}
                                     </ul>
                                 </div>
                             </div>

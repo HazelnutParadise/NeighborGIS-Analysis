@@ -2,7 +2,7 @@ import AddressPointRecords from './record_list.js';
 import ProgressBar from '../progress_bar.js';
 import SpinnerHTML from '../components/spinner.js';
 import { getEl, on } from '../dom.js';
-import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
+import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult, showPoiList } from './show_result.js';
 
 const SEARCH_BTN = getEl('#searchBtn');
 const RESULT_DIV = getEl('#result');
@@ -119,8 +119,10 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
         }
         drawDistanceCircle(lat, lng);
         addPoiLayer(data);
+        showPoiList(data);
         return data;
     } catch (error) {
+        console.error('Error:', error);
         alert(error.message);
     }
 }

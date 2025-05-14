@@ -10,7 +10,11 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="./src/style.css" />
+    <link rel="stylesheet" href="./src/custom_poi_styles.css" />
+    <link rel="stylesheet" href="./src/poi_enhancements.css" />
+    <link rel="stylesheet" href="./src/poi_improvements.css" />
 </head>
 
 <body>
@@ -90,7 +94,18 @@
                                 <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
                             </div>
                         </div>
-                        <!-- todo: (待改) -->
+                        <!-- poi列表 -->
+                        <div class="container" style="min-width: 300px;max-width: 300px;">
+                            <h2>附近POI</h2>
+                            <p class="description">探索周邊生活設施</p>
+                            <!-- <p class="notice">選擇多個地點後可進行比較</p> -->
+                            <div class="result-box" style="height: 630px; overflow-y: auto; padding: 10px;">
+                                <ul id="poi-list" style="width: 100%; padding: 0;">
+                                    <!-- 查詢記錄將動態添加在這裡 -->
+                                </ul>
+                            </div>
+                        </div>
+                        <!-- 附近環境分析 -->
                         <div class="container" style="max-width: 750px;min-width: 350px;width: min(80dvw,80vw);">
                             <h2>附近環境分析</h2>
                             <p class="description">了解當前地點的環境</p>

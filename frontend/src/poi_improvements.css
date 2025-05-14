@@ -1,0 +1,92 @@
+/* POI 類別標題樣式 */
+.poi-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.poi-category-header:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.poi-category-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.poi-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.poi-toggle-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+/* POI 項目改進樣式 */
+.poi-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.poi-item:last-child {
+  border-bottom: none;
+}
+
+.poi-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  transform: translateX(2px);
+}
+
+.poi-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3px;
+}
+
+.poi-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.poi-distance {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 1px 6px;
+  border-radius: 10px;
+}
+
+.poi-address {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+  position: relative;
+  padding-left: 10px;
+}
+
+.poi-address::before {
+  content: "📍";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
