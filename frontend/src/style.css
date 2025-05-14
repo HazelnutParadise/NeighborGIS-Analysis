@@ -911,6 +911,7 @@ button:disabled {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px var(--shadow-color-blue-light);
   border-color: var(--border-focus);
+  background-color: var(--bg-hover-light);
 }
 
 .record-item:hover:before {
@@ -1517,10 +1518,6 @@ button:disabled {
   overflow: hidden;
 }
 
-.record-info:hover {
-  background-color: var(--bg-hover-light);
-}
-
 .record-title {
   font-weight: 600;
   margin-bottom: 6px;
@@ -1530,7 +1527,7 @@ button:disabled {
   transition: color 0.2s, transform 0.15s;
 }
 
-.record-info:hover .record-title {
+.record-item:hover .record-title {
   color: var(--interactive-color-2);
   transform: translateX(2px);
 }
