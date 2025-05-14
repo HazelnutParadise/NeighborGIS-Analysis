@@ -1,0 +1,420 @@
+/* Combined POI Styles */
+
+/* === Base POI Styles (Primarily from poi_improvements.css, with additions) === */
+
+/* POI 類別標題樣式 */
+.poi-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.poi-category-header:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* Combined .poi-category-header h4 from poi_improvements.css and enhancements */
+.poi-category-header h4 {
+  margin: 0;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  position: relative; /* For shimmer effect from poi_enhancements.css */
+  overflow: hidden; /* For shimmer effect from poi_enhancements.css */
+}
+
+/* Shimmer effect for .poi-category-header h4 from poi_enhancements.css */
+.poi-category-header h4::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+  pointer-events: none;
+}
+
+.poi-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.poi-toggle-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+}
+
+/* POI 項目樣式 - Combined from poi_improvements.css and custom_poi_styles.css */
+.poi-item {
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  animation: slideIn 0.3s ease-out; /* From custom_poi_styles.css */
+  animation-fill-mode: both; /* From custom_poi_styles.css */
+}
+
+.poi-item:last-child {
+  border-bottom: none;
+}
+
+.poi-item:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+  transform: translateX(2px);
+}
+
+/* Staggered animation for .poi-item from custom_poi_styles.css */
+.poi-item:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.poi-item:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.poi-item:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.poi-item:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.poi-item:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.poi-item:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.poi-item:nth-child(7) {
+  animation-delay: 0.35s;
+}
+.poi-item:nth-child(8) {
+  animation-delay: 0.4s;
+}
+.poi-item:nth-child(9) {
+  animation-delay: 0.45s;
+}
+.poi-item:nth-child(10) {
+  animation-delay: 0.5s;
+}
+
+/* .poi-item-header from custom_poi_styles.css (preferred due to gap: 10px) */
+.poi-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 3px;
+}
+
+.poi-name {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  flex-grow: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.poi-distance {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.04);
+  padding: 1px 6px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+/* .poi-address and .poi-address::before (single version, identical in improvements/enhancements) */
+.poi-address {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.1;
+  position: relative;
+  padding-left: 10px;
+}
+
+.poi-address::before {
+  content: "📍";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 0.7rem;
+  opacity: 0.7;
+}
+
+/* Hover effect for .poi-address from poi_enhancements.css */
+.poi-item:hover .poi-address {
+  white-space: normal;
+  transition: all 0.3s ease;
+}
+
+.poi-google-maps-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 4px;
+  background-color: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.poi-google-maps-btn svg {
+  stroke: var(--text-secondary);
+  transition: stroke 0.2s ease;
+}
+
+.poi-google-maps-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: var(--border-light);
+}
+
+.poi-google-maps-btn:hover svg {
+  stroke: var(--text-primary);
+}
+
+/* === POI Enhancements (from poi_enhancements.css) === */
+.poi-type-summary:hover .poi-type-icon {
+  transform: scale(1.1) rotate(5deg);
+  transition: transform 0.3s ease;
+}
+
+.poi-type-summary:hover .poi-type-name {
+  text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Enhanced type backgrounds */
+.food-type {
+  background: linear-gradient(
+    to right,
+    rgba(66, 133, 244, 0.1),
+    rgba(66, 133, 244, 0.2)
+  );
+  animation-delay: 0s; /* For float animation, if .poi-type-summary also has .food-type */
+}
+
+.health-type {
+  background: linear-gradient(
+    to right,
+    rgba(52, 168, 83, 0.1),
+    rgba(52, 168, 83, 0.2)
+  );
+  animation-delay: 0.6s; /* For float animation */
+}
+
+.public-type {
+  background: linear-gradient(
+    to right,
+    rgba(251, 188, 5, 0.1),
+    rgba(251, 188, 5, 0.2)
+  );
+  animation-delay: 1.2s; /* For float animation */
+}
+
+/* Float animation for .poi-type-summary */
+.poi-type-summary {
+  animation: float 3.5s infinite ease-in-out;
+}
+
+/* Hover effect for .poi-category */
+.poi-category {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.poi-category:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+/* Enhanced empty POI notice */
+.empty-poi-notice svg {
+  filter: drop-shadow(0 2px 3px rgba(0, 150, 255, 0.2));
+}
+
+/* Breathing effect for .poi-count */
+.poi-count {
+  position: relative;
+  overflow: hidden;
+  animation: breathe 3s infinite ease-in-out;
+}
+
+/* === Custom POI Styles (from custom_poi_styles.css - remaining parts) === */
+.poi-type-icon {
+  /* Base style for poi-type-icon, used with .poi-type-summary:hover .poi-type-icon */
+  font-size: 1.5rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.poi-guide {
+  background-color: rgba(66, 133, 244, 0.1);
+  border-radius: 8px;
+  margin-bottom: 8px;
+  padding: 6px 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  border-left: 3px solid #4285f4;
+}
+
+.poi-guide.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.poi-guide-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.poi-guide-icon {
+  font-size: 1.2rem;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.poi-guide-text {
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+/* Leaflet Popup Styles for POI types */
+.food-popup .leaflet-popup-content-wrapper {
+  background-color: rgba(66, 133, 244, 0.1);
+  border-left: 4px solid #4285f4;
+}
+.food-popup .leaflet-popup-tip {
+  background-color: #4285f4;
+}
+
+.health-popup .leaflet-popup-content-wrapper {
+  background-color: rgba(52, 168, 83, 0.1);
+  border-left: 4px solid #34a853;
+}
+.health-popup .leaflet-popup-tip {
+  background-color: #34a853;
+}
+
+.public-popup .leaflet-popup-content-wrapper {
+  background-color: rgba(251, 188, 5, 0.1);
+  border-left: 4px solid #fbbc05;
+}
+.public-popup .leaflet-popup-tip {
+  background-color: #fbbc05;
+}
+
+/* POI Marker Styles */
+.poi-marker {
+  transition: all 0.3s ease;
+}
+
+.poi-marker:hover {
+  transform: scale(1.3);
+}
+
+.poi-marker.active {
+  animation: pulsate 1.5s infinite ease-in-out;
+}
+
+/* === Animations (Consolidated) === */
+@keyframes float {
+  0% {
+    transform: translateY(0px) scale(0.98);
+  }
+  50% {
+    transform: translateY(-3px) scale(1);
+  }
+  100% {
+    transform: translateY(0px) scale(0.98);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  50% {
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.2);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes pulsate {
+  /* For .poi-marker.active */
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  /* For .poi-item */
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
