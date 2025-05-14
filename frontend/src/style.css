@@ -557,6 +557,7 @@ button:disabled {
   );
   scrollbar-gutter: stable both-edges;
   scroll-behavior: smooth;
+  scrollbar-width: thin;
 }
 
 #result {
@@ -814,7 +815,7 @@ button:disabled {
   scroll-behavior: smooth;
   gap: 10px;
   padding: 10px 0;
-  scrollbar-width: thin;
+  /* scrollbar-width: thin; */
   scrollbar-color: #00c4cc var(--background-color);
 }
 
