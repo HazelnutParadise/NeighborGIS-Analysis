@@ -1,6 +1,6 @@
 import { on, once, getEl } from '../dom.js';
 import SpinnerHTML from '../components/spinner.js';
-import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult } from './show_result.js';
+import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult, showPoiList } from './show_result.js';
 /**
  * 地點查詢紀錄功能
  * 處理記錄顯示、清除、選擇和比較功能
@@ -87,8 +87,12 @@ const AddressPointRecords = (() => {
             listItem.appendChild(infoDiv);
             listItem.appendChild(deleteBtn);
 
-            // 點擊整個區域時在地圖上顯示該點
-            infoDiv.onclick = function () {
+            // 點擊整個列表項時在地圖上顯示該點
+            listItem.onclick = function (event) { // 將 event 加入參數
+                // 檢查點擊事件是否來自刪除按鈕或核取方塊，若是則不執行
+                if (event.target === deleteBtn || event.target === checkbox) {
+                    return;
+                }
                 const data = {
                     address: point.address,
                     coordinates: {
@@ -107,6 +111,7 @@ const AddressPointRecords = (() => {
                 showAddressPointResult(data);
                 drawDistanceCircle(point.lat, point.lng);
                 addPoiLayer(point.nearby_poi);
+                showPoiList(point.nearby_poi);
                 showPoiAnalysisResult(data.nearby_analysis_data);
             };
 

@@ -1,6 +1,8 @@
 from llm.llm import call_llm, ResponseMode
+from utils.cache import smart_cache
 
 
+@smart_cache()
 async def llm_nearby_analysis(data) -> dict | None:
     poi_types = ["餐飲", "醫療", "公共設施"]
     prompt = f"""

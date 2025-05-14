@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:400,600&display=swap">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     <link rel="stylesheet" href="./src/style.css" />
+    <link rel="stylesheet" href="./src/poi.css" />
 </head>
 
 <body>
@@ -72,7 +74,7 @@
                             <div id="result" class="result-box">查詢結果將顯示於此。</div>
                         </div>
                         <!-- 查詢紀錄 -->
-                        <div class="container" style="min-width:  300px;max-width: 300px;">
+                        <div class="container" style="min-width:  350px;max-width: 350px;">
                             <h2>地點查詢紀錄</h2>
                             <p class="description">以下是您查詢過的地點</p>
                             <p class="notice">選擇多個地點後可進行比較</p>
@@ -90,7 +92,22 @@
                                 <button id="compareBtn" class="action-btn" disabled>比較所選地點</button>
                             </div>
                         </div>
-                        <!-- todo: (待改) -->
+                        <!-- poi列表 -->
+                        <div class="container" style="min-width: 300px;max-width: 300px;">
+                            <h2>附近POI</h2>
+                            <p class="description">探索周邊生活設施</p>
+                            <p class="notice">
+                                💡點擊項目可在地圖上查看位置
+                            </p>
+                            <div class="result-box"
+                                style="height: 785px; overflow-y: auto; padding: 10px;margin-top: 15px;">
+                                <div id="poi-list" style="width: 100%; padding: 0;">
+                                    <!-- 查詢記錄將動態添加在這裡 -->
+                                    請先在左側輸入地址進行查詢，附近POI列表將顯示於此處。
+                                </div>
+                            </div>
+                        </div>
+                        <!-- 附近環境分析 -->
                         <div class="container" style="max-width: 750px;min-width: 350px;width: min(80dvw,80vw);">
                             <h2>附近環境分析</h2>
                             <p class="description">了解當前地點的環境</p>

@@ -3,7 +3,6 @@ import os
 import geopandas as gpd
 from database.connect import POSTGIS_ENGINE
 import concurrent.futures
-from typing import Dict, List, Tuple
 
 
 # 🔧 所有要載入的地理資料（Enum 名稱 ➜ 檔案路徑）
