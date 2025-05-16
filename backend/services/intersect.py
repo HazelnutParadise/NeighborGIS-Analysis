@@ -66,11 +66,17 @@ async def intersect_with_zones(address_point: AddressPoint) -> Zoning:
         is_pub = conn.execute(sql_pub, {"pt_wkt": pt_wkt}).scalar()
         is_public = "Y" if is_pub else "N"
 
+    zone_value = safe_extract(zone_row.get("zone")) if zone_row else None
+
+    far_extracted = safe_extract(zone_row.get("far")) if zone_row else None
+    far_value = far_extracted if far_extracted and far_extracted != "0" else None
+
+    bcr_extracted = safe_extract(zone_row.get("bcr")) if zone_row else None
+    bcr_value = bcr_extracted if bcr_extracted and bcr_extracted != "0" else None
+
     return Zoning(
-        zone=safe_extract(zone_row["zone"]) if zone_row else None,
-        far=f if (f := safe_extract(
-            zone_row["far"])) != "0" else None if zone_row else None,
-        bcr=b if (b := safe_extract(
-            zone_row["bcr"])) != "0" else None if zone_row else None,
+        zone=zone_value,
+        far=far_value,
+        bcr=bcr_value,
         is_public_land=is_public,
     )
