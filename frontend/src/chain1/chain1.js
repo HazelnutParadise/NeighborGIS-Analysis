@@ -3,6 +3,7 @@ import ProgressBar from '../progress_bar.js';
 import SpinnerHTML from '../components/spinner.js';
 import { getEl, on } from '../dom.js';
 import { showAddressPointResult, drawDistanceCircle, addPoiLayer, showPoiAnalysisResult, showPoiList } from './show_result.js';
+import NoPOIHTML from '../components/no_poi.js';
 
 const SEARCH_BTN = getEl('#searchBtn');
 const RESULT_DIV = getEl('#result');
@@ -85,7 +86,7 @@ async function fetchAddressPointInfo(userCoordinates) {
         ProgressBar.hide();
         return;
     }
-    const poi_data = await fetchAddressPointNearbyPOI(lat, lng);
+    const poi_data = await fetchAddressPointNearbyPOI(lat, lng, original_btn_text);
     let addressPointData = {
         address: data.address,
         lat: lat,
@@ -96,12 +97,13 @@ async function fetchAddressPointInfo(userCoordinates) {
         is_public_land: zoning.is_public_land && zoning.zone ? (zoning.is_public_land === "Y" ? '是' : '否') : '無資料',
         nearby_poi: poi_data,
     }
-    const nearby_analysis_data = await fetchNearbyAnalysis(addressPointData, original_btn_text);
+    const nearby_analysis_data = poi_data ? await fetchNearbyAnalysis(addressPointData, original_btn_text) : null;
+    if (!poi_data) getEl('#nearby-analysis-result').innerHTML = NoPOIHTML;
     addressPointData.nearby_analysis_data = nearby_analysis_data;
     AddressPointRecords.add(addressPointData);
 }
 
-async function fetchAddressPointNearbyPOI(lat, lng) {
+async function fetchAddressPointNearbyPOI(lat, lng, original_btn_text) {
     const poi_list = getEl('#poi-list');
     poi_list.innerHTML = SpinnerHTML;
     const url = `/api/nearby-poi/${encodeURIComponent(lat)},${encodeURIComponent(lng)}`;
@@ -127,6 +129,10 @@ async function fetchAddressPointNearbyPOI(lat, lng) {
         console.error('Error:', error);
         alert(error.message);
         poi_list.innerHTML = `查詢失敗，錯誤訊息： ${error.message}`;
+    } finally {
+        SEARCH_BTN.innerText = original_btn_text;
+        SEARCH_BTN.disabled = false;
+        ProgressBar.hide();
     }
 }
 

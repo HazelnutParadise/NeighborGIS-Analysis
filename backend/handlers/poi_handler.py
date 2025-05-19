@@ -16,7 +16,6 @@ async def get_nearby_poi_handler(coordinates: str) -> JSONResponse:
         return JSONResponse(
             status_code=404,
             content=asdict(APIResponse(
-                status_code=404,
                 message="查無該地址附近的POI資訊。"
             )))
     poisJSON = pois.to_json()
